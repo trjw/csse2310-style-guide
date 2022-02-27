@@ -40,9 +40,9 @@
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
 
-\title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version 2.1.0}
+\title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version 2.2.0}
 \author{The University of Queensland\\School of Information Technology and Electrical Engineering}
-\date{August 2021}
+\date{February 2022}
 
 \begin{document}
 
@@ -54,23 +54,32 @@ Where the style guide is open to interpretation, the choices you make regarding 
 must be consistent throughout your project.
 
 \section{Naming Conventions}
-\subsection{Variable and File names}
+\subsection{Variable names}
 \label{sec:naming-variable}
-Variable names and file names will begin with a lowercase letter and names with multiple words 
-will use initial capitals for subsequent words and no underscores. 
-Names that are chosen should be meaningful. Hungarian notation\footnote{Hungarian notation is where the name 
-or a prefix or suffix within the name indicates the type of the variable. This can include single letters, e.g.
-integer variable names beginning with an `i' or pointer variable names ending with `p'.}
- is NOT to be used for variable names.
+Variable names will begin with a lowercase letter and names with multiple words 
+will use initial capitals for subsequent words and no underscores -- sometimes called camel case\footnote{This variant of camel case 
+in which the first letter is lower case is sometimes called lower camel case or dromedary case.}. 
+Names that are chosen should be meaningful. Hungarian notation\footnote{Hungarian notation is where characters at the start of 
+the name indicate the type of the variable. Examples include \texttt{int iCount;} \texttt{char* pFileName;} and
+\texttt{double dbPi}.}
+ is NOT to be used.
 It is permissible to use names like \texttt{i} or \texttt{j} for integer loop counters.
-Source files must be named with the suffix \texttt{.c} or \texttt{.h} (lower case).
 
 Example variable names: \texttt{book}, \texttt{newCount}, \texttt{setWordLength}, \texttt{dictionaryLength}, 
 \texttt{wordList}, \texttt{cursor}, \texttt{fileHandle}
 
-Example filenames: \texttt{hello.c}, \texttt{stringRoutines.c}, \texttt{shared.h}
+Unacceptable variable names (use of Hungarian notation): \texttt{int iCount; int* ptrNum; double dAverage;}
 
-Unacceptable variable names (use of Hungarian notation): \texttt{FILE *fp; char *aPtr; char *thingStr;}
+It is permissible to use variable names like \texttt{str} to indicate a generic string if, for instance, a function does take a generic
+string parameter. (This is permissible even though the name indicates the type.) However, if the string variable always has a particular meaning in the context of your program/function then a more appropriate variable name should
+be used, e.g. \texttt{name} or \texttt{fileName}.
+\subsection{File names}
+\label{sec:naming-files}
+File names will begin with a lowercase letter and names with multiple words 
+will use initial capitals for subsequent words and no underscores. 
+Names that are chosen should be meaningful. Source files must be named with the suffix \texttt{.c} or \texttt{.h} (lower case).
+
+Example filenames: \texttt{hello.c}, \texttt{stringRoutines.c}, \texttt{shared.h}
 
 \subsection{Defined constants and macros}
 \label{sec:naming-constants}
@@ -89,12 +98,13 @@ Example function names: \texttt{main()}, \texttt{reset\_secret\_string()}
 Note that function pointers are variables and should use variable naming, as per~\ref{sec:naming-variable}.
 
 Example: \texttt{int (*sortingFunction)(void*, void*) = alpha_sort;}\newline
-where \texttt{alpha_sort} is the name of a function.
+where \texttt{sortingFunction} is the name of a variable and \texttt{alpha_sort} is the name of a function.
 
 \subsection{Type names}
 \label{sec:type-names}
 Type names (i.e. from typedefs), structure and union names should begin with capital letters 
-and use initial capitals for subsequent words and no underscores.
+and use initial capitals for subsequent words and no underscores. Members within structs and unions should
+follow the variable naming convention as per section~\ref{sec:naming-variable}.
 
 Example typedef/structure/union names: \texttt{Contact}, \texttt{FileData}, \texttt{struct Node}
 
@@ -165,11 +175,12 @@ Comments must be present and meaningful for each of the following:
 Function comments should describe parameters, return values and any error conditions. (``Error conditions'' means
 the conditions under which the return value indicates an error and/or the conditions under which the 
 function does not return, i.e. the program exits.)
-Function comments should not include parameter types (these are apparent from the function prototype/definition), 
+Function comments do not need to include the \textit{types} of parameters (these are apparent from the function prototype/definition), 
 nor should they repeat the function prototype. If an adequate comment is given for a function 
-declaration, it need not be repeated for the associated function definition, even if these are in 
+declaration (prototype), it need not be repeated for the associated function definition, even if these are in 
 different files. If a declaration (prototype) and
-definition are in the same file then either may be commented. If the declaration and definition are in different files
+definition are in the same file then either may be commented -- but your approach should be consistent, i.e. either comment
+all prototypes or all definitions -- not half-half. If the declaration and definition are in different files
 (e.g. the declaration is in a \texttt{.h} file and the definition is in a \texttt{.c} file) then there must be a comment
 associated with the declaration in the \texttt{.h} file. There is no need to have a comment with the definition, 
 but if you do, it must be consistent with the comment associated with the declaration.
@@ -177,10 +188,76 @@ No comment is needed for the \texttt{main()} function.
 
 Comments can use either \texttt{/* ... */} or \texttt{//} notation.
 
-See examples~\ref{lst:braces-function} and~\ref{lst:vertical-whitespace} below for examples of function 
+\subsection{Function comments}
+The following is the recommended comment format to ensure that your function comment meets the requirements above.
+\lstset{caption={Recommend function comment template}, label={lst:function-comment}}
+\begin{lstlisting}
+/* function_name()
+ * ---------------
+ * Description of what the function does ...
+ *
+ * arg1: description of what this argument contains (and, if applicable, 
+ *           any assumptions about the value, e.g. not null, string length not 0, etc.)
+ * argument2: ... (repeat for all arguments)
+ *
+ * Returns: description of what is returned
+ * Errors: (if applicable) description of what happens if an error occurs, e.g. what value is 
+ *     returned or if the program exits (i.e. function does not return) under certain circumstances.
+ * Reference: (if applicable) if this function is copied or inspired then you can include the reference
+ *     in the function header.
+ */
+int function_name(char* arg1, int argument2) { ...
+\end{lstlisting}
+
+See examples~\ref{lst:code-reference}, ~\ref{lst:braces-function} and~\ref{lst:vertical-whitespace} below for examples of function 
 comments.
 
-\clearpage
+Comments do not need to follow this format exactly -- this is a suggested template. The key thing is that each function comment 
+must describe the behaviour of the function in terms of the parameters, must describe what is returned (may be obvious as 
+part of the behaviour description), and must describe any error conditions and what happens when those errors occur (e.g.
+certain value returned or program exits or ...).
+
+\subsection{Code references}
+If you are required to include a code reference (e.g. you are using code from a man page, or using non-public code you have 
+written previously, or you have been inspired by some third party source), then a reference comment must be provided
+\textbf{adjacent} to the code itself (i.e. not in a header file or in a comment at the top of the file). If the reference applies to a whole
+function then you may include the reference in the function comment. See the examples below:
+ 
+\lstset{caption={Example code reference -- in a function comment}, label={lst:code-reference}}
+\begin{lstlisting}
+/* string_comparator()
+ * ---------------
+ * qsort() comparator function that compares two strings.
+ *
+ * str1, str2: pointers to strings (char*) that we're comparing. 
+ *
+ * Returns: an integer less then, equal to, or greater than zero if the string pointed to by 
+ *    str1 is less than, equal to or greater than the string pointed to by str2
+ * Reference: This code is taken from the qsort(3) man page.
+ */
+static int string_comparator(const void *str1, const void *str2)
+{
+    // Compare the strings. Note that we must cast the void* pointers
+    // to pointers to strings, and then dereference them
+    return strcmp(* (char * const *) str1, * (char * const *) str2);
+}
+\end{lstlisting}
+
+\lstset{caption={Example code reference -- code you have previously written}, label={lst:code-reference2}}
+\begin{lstlisting}
+// The following block of code is taken from code submitted by me for the CSSE2010 AVR 
+// programming assignment in semester two, 2021. 
+...
+\end{lstlisting}
+
+\lstset{caption={Example code reference -- code you have previously written}, label={lst:code-reference2}}
+\begin{lstlisting}
+// The following code is inspired by the code at https://stackoverflow.com/questions/57858964
+...
+\end{lstlisting}
+
+Note that it is not permissible to \textit{copy} code from third parties.
+
 \section{Braces}
 Use braces \texttt{\{ \}} around statements in the body of if, else, for, while, do, etc statements.
 The C language does not require braces when the body contains only one statement, but you must 
@@ -196,10 +273,14 @@ arguments or in the left most column of the next line.
 
 \lstset{caption={Correct braces for a function}, label={lst:braces-function}}
 \begin{lstlisting}
-/**
- * Calculates the integer sum of integers 1 through n.
- * Returns this sum, or 0 if n is 0 or less.
- * (Note: won't work if n is large enough to cause the sum to overflow)
+/* sum()
+ * ---------------
+ * Calculates the sum of integers from 1 to n.
+ *
+ * n: the maximum integer to be summed
+ *
+ * Returns: the integer sum of integers 1 to n, or 0 if n is 0 or less
+ * Errors: will return an erroneous value if n is large enough to cause the sum to overflow
  */
 int sum(int n) { /* This brace can be at the start of the next line */
     int i, s = 0;
@@ -277,15 +358,30 @@ Blank lines are also used to separate groups of statements from each other to ma
 
 \lstset{caption={Acceptable vertical whitespace between functions}, label={lst:vertical-whitespace}}
 \begin{lstlisting}
-/* Returns the product of x and y.  
- * Return value will not be meaningful if the product can't be
- * represented in an integer, i.e overflows the bits available.
+/* multiply()
+ * ---------------
+ * Multiplies two integers.
+ *
+ * x, y: the numbers to be multiplied
+ *
+ * Returns: the product of x and y
+ * Errors: The return value will not be meaningful if the product can't be represented in an 
+ *     integer, i.e. overflows the bits available.
  */
 int multiply(int x, int y) {
     return x * y;
 }
 
-// Divide x by y. It is assumed that y does not equal zero.
+/* divide()
+ * ---------------
+ * Divides one integer by another. (The remainder is discarded.)
+ *
+ * x: the dividend
+ * y: the divisor - assumed not to be zero
+ *
+ * Returns: x divided by y 
+ * Errors: Behaviour is undefined if y is zero
+ */
 int divide(int x, int y) {
     return x / y;
 }
@@ -303,9 +399,10 @@ prior to semicolons at the end of a line, but a semicolon can be on a line by it
 
 When declaring a pointer there must be a single space on one side of the \texttt{*}. It can be either side
 but you must be consistent in your approach.
-
+\clearpage
+%%\setlength{\columnsep}{20pt}
 \begin{multicols}{2}
-\textbf{Acceptable horizontal whitespace}
+\noindent\textbf{Acceptable horizontal whitespace}
 \lstset{caption={Acceptable horizontal whitespace: commas}, label={lst:horiz-good-comma}}
 \begin{lstlisting}
 add_up(a, b, c, d);
@@ -340,7 +437,7 @@ char *b;
 \vfill
 \columnbreak
 
-\textbf{Unacceptable horizontal whitespace}
+\noindent\textbf{Unacceptable horizontal whitespace}
 \lstset{caption={Unacceptable horizontal whitespace: commas}, label={lst:horiz-bad-comma}}
 \begin{lstlisting}
 add_up(a,b,c,d);
@@ -372,7 +469,6 @@ char * b;
 
 \end{multicols}
 
-\clearpage
 \section{Indentation}
 Use indentation to indicate the level of nesting.
 Indentation must occur in multiples of four spaces.
@@ -404,7 +500,7 @@ if (month >= 1 && month <= 3) {
     quarter = 4;
 }
 \end{lstlisting}
-
+\clearpage
 \lstset{caption={Correct indentation: switch statement}, label={lst:indentation-switch}}
 \begin{lstlisting}
 switch (month) {
@@ -426,7 +522,6 @@ switch (month) {
 If you use the gnu \texttt{indent} tool consider the following options as a \underline{starting point}:\\
 \texttt{-linux -i4 -cli4 -l79 --no-tabs}
 
-\clearpage
 \section{Line Length}
 Lines must not exceed 79 columns in length including whitespace.
 The ``standard'' screen size is 80 columns.
@@ -462,7 +557,7 @@ if (expressionA || expressionB || expressionC || expressionD ||
 \section{Overall}
 \label{sec:overall}
 Source code should be written to be clear and readable.
-Anything which works against your code being clear and readable may incur additional ``general'' penalties.
+Anything which works against your code being clear and readable may be penalised.
 For example (but not restricted to):
 \begin{itemize}
 \item Global variables must not be used unless there is no other way to implement the required functionality, for example, 
