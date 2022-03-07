@@ -190,7 +190,7 @@ Comments can use either \texttt{/* ... */} or \texttt{//} notation.
 
 \subsection{Function comments}
 The following is the recommended comment format to ensure that your function comment meets the requirements above.
-\lstset{caption={Recommend function comment template}, label={lst:function-comment}}
+\lstset{caption={Recommended function comment template}, label={lst:function-comment}}
 \begin{lstlisting}
 /* function_name()
  * ---------------
@@ -201,8 +201,8 @@ The following is the recommended comment format to ensure that your function com
  * argument2: ... (repeat for all arguments)
  *
  * Returns: description of what is returned
- * Errors: (if applicable) description of what happens if an error occurs, e.g. what value is 
- *     returned or if the program exits (i.e. function does not return) under certain circumstances.
+ * Errors: (if applicable) description of errors that might occur and what happens if they do, e.g.
+ *     the return value will be invalid, or the program exits (i.e. function does not return). 
  * Reference: (if applicable) if this function is copied or inspired then you can include the reference
  *     in the function header.
  */
@@ -250,7 +250,7 @@ static int string_comparator(const void *str1, const void *str2)
 ...
 \end{lstlisting}
 
-\lstset{caption={Example code reference -- code you have previously written}, label={lst:code-reference2}}
+\lstset{caption={Example code reference -- code you have been inspired by}, label={lst:code-reference2}}
 \begin{lstlisting}
 // The following code is inspired by the code at https://stackoverflow.com/questions/57858964
 ...
