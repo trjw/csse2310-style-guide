@@ -42,7 +42,7 @@
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version 2.2.0}
 \author{The University of Queensland\\School of Information Technology and Electrical Engineering}
-\date{February 2022}
+\date{March 2022}
 
 \begin{document}
 
@@ -56,7 +56,7 @@ must be consistent throughout your project.
 \section{Naming Conventions}
 \subsection{Variable names}
 \label{sec:naming-variable}
-Variable names will begin with a lowercase letter and names with multiple words 
+Variable names and the names of struct/union members will begin with a lowercase letter and names with multiple words 
 will use initial capitals for subsequent words and no underscores -- sometimes called camel case\footnote{This variant of camel case 
 in which the first letter is lower case is sometimes called lower camel case or dromedary case.}. 
 Names that are chosen should be meaningful. Hungarian notation\footnote{Hungarian notation is where characters at the start of 
@@ -188,6 +188,10 @@ No comment is needed for the \texttt{main()} function.
 
 Comments can use either \texttt{/* ... */} or \texttt{//} notation.
 
+Comments must not be used to comment out unused code. Use conditional compilation to prevent a block of
+code being compiled, e.g. \texttt{\#if 0 ... \#endif}, or remove the code completely. Any use of conditional compilation in
+this way must be accompanied by a comment that explains the reason for its use.
+
 \subsection{Function comments}
 The following is the recommended comment format to ensure that your function comment meets the requirements above.
 \lstset{caption={Recommended function comment template}, label={lst:function-comment}}
@@ -271,6 +275,7 @@ Braces for structure/union/enum declarations and array initialisations do not ne
 The opening brace for a function definition may be either at the end of the line following the 
 arguments or in the left most column of the next line.
 
+\begin{multicols}{2}
 \lstset{caption={Correct braces for a function}, label={lst:braces-function}}
 \begin{lstlisting}
 /* sum()
@@ -279,13 +284,18 @@ arguments or in the left most column of the next line.
  *
  * n: the maximum integer to be summed
  *
- * Returns: the integer sum of integers 1 to n, or 0 if n is 0 or less
- * Errors: will return an erroneous value if n is large enough to cause the sum to overflow
+ * Returns: the integer sum of integers 1 to n,
+ *     or 0 if n is 0 or less
+ * Errors: will return an erroneous value if n 
+ *     is large enough to cause the sum to
+ *     overflow
  */
-int sum(int n) { /* This brace can be at the start of the next line */
+int sum(int n) { // This brace can be at the
+                 // start of the next line
     int i, s = 0;
 
-    for (i = 1; i <= n; i++) { /* This brace must be here */
+    for (i = 1; i <= n; i++) { // This brace must 
+                               // be here
         s += i;
     }
 
@@ -293,7 +303,7 @@ int sum(int n) { /* This brace can be at the start of the next line */
 }
 \end{lstlisting}
 
-\begin{multicols}{2}
+
 \lstset{caption={Correct braces: for loop}, label={lst:braces-for}}
 \begin{lstlisting}
 for (...; ...; ...) {
@@ -307,7 +317,8 @@ while (...) {
     ...
 }
 \end{lstlisting}
-
+\vfill
+\columnbreak
 \lstset{caption={Correct braces: do while loop}, label={lst:braces-do-while}}
 \begin{lstlisting}
 do {
@@ -321,8 +332,7 @@ if (...) {
     ...
 }
 \end{lstlisting}
-\vfill
-\columnbreak
+
 
 \lstset{caption={Correct braces: if-else}, label={lst:braces-if-else}}
 \begin{lstlisting}
@@ -399,8 +409,9 @@ prior to semicolons at the end of a line, but a semicolon can be on a line by it
 
 When declaring a pointer there must be a single space on one side of the \texttt{*}. It can be either side
 but you must be consistent in your approach.
-\clearpage
+
 %%\setlength{\columnsep}{20pt}
+\clearpage
 \begin{multicols}{2}
 \noindent\textbf{Acceptable horizontal whitespace}
 \lstset{caption={Acceptable horizontal whitespace: commas}, label={lst:horiz-good-comma}}
@@ -560,13 +571,11 @@ Source code should be written to be clear and readable.
 Anything which works against your code being clear and readable may be penalised.
 For example (but not restricted to):
 \begin{itemize}
-\item Global variables must not be used unless there is no other way to implement the required functionality, for example, 
+\item Global and static variables must not be used unless there is no other way to implement the required functionality, for example, 
 they can be used with signal handlers. (Global constants, declared using \texttt{const} are permitted.)
 \item ``Magic numbers'' are to be avoided. Defined constants should be used instead of number and character literals scattered throughout code without context. 0 and 1 are almost never magic numbers.
 \end{itemize}
 
-%\begin{multicols}{2}
-%\setlength{\columnsep}{-2.5cm}
 \begin{minipage}{0.32\linewidth}
 \lstset{caption={Unacceptable use of magic numbers}, label={lst:magic-num-unacceptable}}
 \begin{lstlisting}
@@ -585,9 +594,7 @@ if (strlen(passwd) < 8) {
 \hspace{0.2cm}
 \end{minipage}
 \begin{minipage}{0.55\linewidth}
-%\vfill
-%\columnbreak
-%
+
 \lstset{caption={Use of constants to avoid magic numbers}, label={lst:constants-instead-of-magic}}
 \begin{lstlisting}
 #define NUM_LETTERS_IN_ALPHABET 26
@@ -603,13 +610,11 @@ if (strlen(passwd) < minPasswordLength) {
     ....
 }
 \end{lstlisting}
-%\end{multicols}
 \end{minipage}
 
 
 \subsection{Compilation}
-Your assignments will use the C99 standard, and must be compiled with the following flags as a minimum: \texttt{-Wall -pedantic -std=gnu99}
-
+Your assignments will use the C99 standard, and must be compiled with the following flags as a minimum: \texttt{-Wall -pedantic -std=gnu99} .
 No warnings or errors should be reported.
 If warnings or errors are reported, they will be treated as style violations.
 
