@@ -6,6 +6,9 @@
 \usepackage{tabularx}
 \usepackage{wrapfig}
 \usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage[right, displaymath, mathlines]{lineno}
+
 %\usepackage{courier}
 \setlength{\columnsep}{1cm}
 
@@ -40,13 +43,35 @@
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
 
-\title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version 2.2.0}
+\title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version 2.3.0}
 \author{The University of Queensland\\School of Information Technology and Electrical Engineering}
-\date{March 2022}
+\date{February 2023}
+\fancypagestyle{plain}{
+	\fancyhead{}
+	\fancyfoot{}
+	\fancyfoot[L]{\small{\copyright{~2023 The University of Queensland}}}
+	\fancyfoot[R]{\thepage}
+	\renewcommand{\headrulewidth}{0.5pt}
+	\renewcommand{\footrulewidth}{0.5pt}
+}
+\fancypagestyle{fancy}{
+	\fancyhead{}
+	\fancyfoot{}
+	\fancyhead[R]{CSSE2310 Style Guide Version 2.3.0}
+	\fancyfoot[L]{\small{\copyright{~2023 The University of Queensland}}}
+	\fancyfoot[R]{\thepage}
+	\renewcommand{\headrulewidth}{0.5pt}
+	\renewcommand{\footrulewidth}{0.5pt}
+}
+\pagestyle{fancy}
+\lfoot{\small{\copyright{~2023 The University of Queensland}}}
+
 
 \begin{document}
 
 \maketitle
+\thispagestyle{plain}
+\linenumbers
 
 Programs written for CSSE2310/7231 assignments must follow the style guidelines outlined in this document.
 
@@ -75,7 +100,7 @@ string parameter. (This is permissible even though the name indicates the type.)
 be used, e.g. \texttt{name} or \texttt{fileName}.
 \subsection{File names}
 \label{sec:naming-files}
-File names will begin with a lowercase letter and names with multiple words 
+C source file names will begin with a lowercase letter and names with multiple words 
 will use initial capitals for subsequent words and no underscores. 
 Names that are chosen should be meaningful. Source files must be named with the suffix \texttt{.c} or \texttt{.h} (lower case).
 
@@ -108,6 +133,7 @@ follow the variable naming convention as per section~\ref{sec:naming-variable}.
 
 Example typedef/structure/union names: \texttt{Contact}, \texttt{FileData}, \texttt{struct Node}
 
+\nolinenumbers
 \begin{multicols}{2}
 \lstset{caption={Struct naming and declaration}, label={lst:naming-struct}}
 \begin{lstlisting}
@@ -130,11 +156,13 @@ typedef struct {
 } Point;
 \end{lstlisting}
 \end{multicols}
+\linenumbers
 
 \subsection{Enumerated Types}
 Enumerated types must be named in the same way as any other type (see~\ref{sec:type-names}).
 Members of an enumerated type must follow the same naming as constants (see~\ref{sec:naming-constants}).
 
+\nolinenumbers
 \begin{multicols}{2}
 \lstset{caption={Enumerated type naming and horizontal layout}, label={lst:enum-horizontal}}
 \begin{lstlisting}
@@ -156,7 +184,7 @@ enum ExitCodes {
 };
 \end{lstlisting}
 \end{multicols}
-
+\linenumbers
 
 \section{Comments}
 Comments should be generously added to describe the intent of the code.
@@ -195,10 +223,12 @@ this way must be accompanied by a comment that explains the reason for its use.
 \subsection{Function comments}
 The following is the recommended comment format to ensure that your function comment meets the requirements above.
 \lstset{caption={Recommended function comment template}, label={lst:function-comment}}
+
+\nolinenumbers
 \begin{lstlisting}
 /* function_name()
  * ---------------
- * Description of what the function does ...
+ * Description of what the function does in terms of the parameters goes here...
  *
  * arg1: description of what this argument contains (and, if applicable, 
  *           any assumptions about the value, e.g. not null, string length not 0, etc.)
@@ -207,11 +237,11 @@ The following is the recommended comment format to ensure that your function com
  * Returns: description of what is returned
  * Errors: (if applicable) description of errors that might occur and what happens if they do, e.g.
  *     the return value will be invalid, or the program exits (i.e. function does not return). 
- * Reference: (if applicable) if this function is copied or inspired then you can include the reference
- *     in the function header.
+ * REF: (if applicable) if this whole function is copied/inspired then you can reference the source here
  */
 int function_name(char* arg1, int argument2) { ...
 \end{lstlisting}
+\linenumbers
 
 See examples~\ref{lst:code-reference}, ~\ref{lst:braces-function} and~\ref{lst:vertical-whitespace} below for examples of function 
 comments.
@@ -222,12 +252,15 @@ part of the behaviour description), and must describe any error conditions and w
 certain value returned or program exits or ...).
 
 \subsection{Code references}
-If you are required to include a code reference (e.g. you are using code from a man page, or using non-public code you have 
+If you are required to include a code reference (for example -- but not limited to -- you are using code from a man page, or using non-public code you have 
 written previously, or you have been inspired by some third party source), then a reference comment must be provided
 \textbf{adjacent} to the code itself (i.e. not in a header file or in a comment at the top of the file). If the reference applies to a whole
-function then you may include the reference in the function comment. See the examples below:
+function then you may include the reference in the function comment. All reference lines in a comment must contain the text ``\texttt{REF:}'' (in uppercase, 
+without the quotes) to indicate that the line contains reference information. This pattern will be searched for in your code, so it is important that match this exactly.
+See the examples below:
  
 \lstset{caption={Example code reference -- in a function comment}, label={lst:code-reference}}
+\nolinenumbers
 \begin{lstlisting}
 /* string_comparator()
  * ---------------
@@ -237,7 +270,7 @@ function then you may include the reference in the function comment. See the exa
  *
  * Returns: an integer less then, equal to, or greater than zero if the string pointed to by 
  *    str1 is less than, equal to or greater than the string pointed to by str2
- * Reference: This code is taken from the qsort(3) man page.
+ * REF: This code is taken from the qsort(3) man page.
  */
 static int string_comparator(const void *str1, const void *str2)
 {
@@ -247,18 +280,20 @@ static int string_comparator(const void *str1, const void *str2)
 }
 \end{lstlisting}
 
+
 \lstset{caption={Example code reference -- code you have previously written}, label={lst:code-reference2}}
 \begin{lstlisting}
-// The following block of code is taken from code submitted by me for the CSSE2010 AVR 
-// programming assignment in semester two, 2021. 
-...
+// REF: The following block of code is taken from code submitted by me for the
+// REF: CSSE2010 AVR programming assignment in semester two, 2022. 
 \end{lstlisting}
 
 \lstset{caption={Example code reference -- code you have been inspired by}, label={lst:code-reference2}}
 \begin{lstlisting}
-// The following code is inspired by the code at https://stackoverflow.com/questions/57858964
-...
+/* REF: The following code is inspired by the code at 
+   REF: https://stackoverflow.com/questions/14685406
+*/
 \end{lstlisting}
+\linenumbers
 
 Note that it is not permissible to \textit{copy} code from third parties.
 
@@ -277,6 +312,7 @@ arguments or in the left most column of the next line.
 
 \begin{multicols}{2}
 \lstset{caption={Correct braces for a function}, label={lst:braces-function}}
+\nolinenumbers
 \begin{lstlisting}
 /* sum()
  * ---------------
@@ -356,6 +392,7 @@ switch (...) {
 }
 \end{lstlisting}
 \end{multicols}
+\linenumbers
 
 \section{Whitespace}
 Meaningful parts of code are grouped together by using the whitespace as a separator.
@@ -367,6 +404,7 @@ You must use single blank lines to separate functions from each other.
 Blank lines are also used to separate groups of statements from each other to make the major steps of an algorithm distinguishable.
 
 \lstset{caption={Acceptable vertical whitespace between functions}, label={lst:vertical-whitespace}}
+\nolinenumbers
 \begin{lstlisting}
 /* multiply()
  * ---------------
@@ -396,6 +434,7 @@ int divide(int x, int y) {
     return x / y;
 }
 \end{lstlisting}
+\linenumbers
 
 \subsection{Horizontal whitespace}
 Use horizontal whitespace to organize each line of code into meaningful parts.
@@ -410,20 +449,27 @@ prior to semicolons at the end of a line, but a semicolon can be on a line by it
 When declaring a pointer there must be a single space on one side of the \texttt{*}. It can be either side
 but you must be consistent in your approach.
 
-%%\setlength{\columnsep}{20pt}
-\clearpage
-\begin{multicols}{2}
+%\setlength{\columnsep}{20pt}
+\vspace{0.3cm}
 \noindent\textbf{Acceptable horizontal whitespace}
+\nolinenumbers
+\begin{multicols}{2}
 \lstset{caption={Acceptable horizontal whitespace: commas}, label={lst:horiz-good-comma}}
 \begin{lstlisting}
 add_up(a, b, c, d);
 int *a, b, c[10];
 \end{lstlisting}
 
+\vfill
+\columnbreak
+
 \lstset{caption={Acceptable horizontal whitespace: semi-colons}, label={lst:horiz-good-semicolon}}
 \begin{lstlisting}
 for (i = 0; i < 10; i++)
 \end{lstlisting}
+
+\vfill
+\columnbreak
 
 \lstset{caption={Acceptable horizontal whitespace: assignment and binary operators}, label={lst:horiz-good-assign}}
 \begin{lstlisting}
@@ -445,9 +491,7 @@ char *b;
 //must be consistent in your program
 \end{lstlisting}
 
-\vfill
-\columnbreak
-
+\vspace{0.3cm}
 \noindent\textbf{Unacceptable horizontal whitespace}
 \lstset{caption={Unacceptable horizontal whitespace: commas}, label={lst:horiz-bad-comma}}
 \begin{lstlisting}
@@ -479,6 +523,7 @@ char * b;
 \end{lstlisting}
 
 \end{multicols}
+\linenumbers
 
 \section{Indentation}
 Use indentation to indicate the level of nesting.
@@ -490,6 +535,7 @@ You should indent once each time a statement is nested inside the body of anothe
 Always indent whether or not the control structure uses braces.
 
 \lstset{caption={Correct indentation: if statement}, label={lst:indentation-if}}
+\nolinenumbers
 \begin{lstlisting}
 if (day == 31) {
     monthTotal = 0;
@@ -529,6 +575,7 @@ switch (month) {
         break;
 }
 \end{lstlisting}
+\linenumbers
 
 If you use the gnu \texttt{indent} tool consider the following options as a \underline{starting point}:\\
 \texttt{-linux -i4 -cli4 -l79 --no-tabs}
@@ -544,6 +591,7 @@ The continuation line must be double indented (8 spaces) so that it is clearly i
 If more than one continuation line is required, no further indenting is required.
 
 \lstset{caption={Correct line length and indentation}, label={lst:line-length}}
+\nolinenumbers
 \begin{lstlisting}
 someFunction(longExpression1, longExpression2, .....,
         longExpressionN);
@@ -564,6 +612,7 @@ if (expressionA || expressionB || expressionC || expressionD ||
     ...
 }
 \end{lstlisting}
+\linenumbers
 
 \section{Overall}
 \label{sec:overall}
@@ -575,6 +624,7 @@ For example (but not restricted to):
 they can be used with signal handlers. (Global constants, declared using \texttt{const} are permitted.)
 \item ``Magic numbers'' are to be avoided. Defined constants should be used instead of number and character literals scattered throughout code without context. 0 and 1 are almost never magic numbers.
 \end{itemize}
+\nolinenumbers
 
 \begin{minipage}{0.32\linewidth}
 \lstset{caption={Unacceptable use of magic numbers}, label={lst:magic-num-unacceptable}}
@@ -612,7 +662,7 @@ if (strlen(passwd) < minPasswordLength) {
 \end{lstlisting}
 \end{minipage}
 
-
+\linenumbers
 \subsection{Compilation}
 Your assignments will use the C99 standard, and must be compiled with the following flags as a minimum: \texttt{-Wall -pedantic -std=gnu99} .
 No warnings or errors should be reported.
@@ -634,7 +684,6 @@ Files must use Unix line endings (\texttt{\textbackslash n}).
 Functions should not exceed 50 lines in length, including any comments within the function but excluding any
 comments prior to the function.
 If a function is longer than 50 lines, then it is a good candidate for being broken into meaningful smaller functions.
-In exceptional circumstances (which should be documented with a comment), functions may be longer than 50 lines.
 
 \subsection{Modularity}
 Principles of modularity should be observed.
