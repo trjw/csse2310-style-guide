@@ -125,6 +125,11 @@ Note that function pointers are variables and should use variable naming, as per
 Example: \texttt{int (*sortingFunction)(void*, void*) = alpha_sort;}\newline
 where \texttt{sortingFunction} is the name of a variable and \texttt{alpha_sort} is the name of a function.
 
+Uppercase letters and numbers may be used in function names where that usage is conventional (e.g. use of a standard 
+abbreviation) and the function name begins with a lowercase letter.
+
+Example function names: \texttt{calculate\_GPA()}, \texttt{check_W3C_compliance()}
+
 \subsection{Type names}
 \label{sec:type-names}
 Type names (i.e. from typedefs), structure and union names should begin with capital letters 
@@ -200,6 +205,13 @@ Comments must be present and meaningful for each of the following:
     \item Struct definitions
 \end{itemize}
 
+Comments can use either \texttt{/* ... */} or \texttt{//} notation.
+
+Comments must not be used to comment out unused code. Use conditional compilation to prevent a block of
+code being compiled, e.g. \texttt{\#if 0 ... \#endif}, or remove the code completely. Any use of conditional compilation in
+this way must be accompanied by a comment that explains the reason for its use.
+
+\subsection{Function comments}
 Function comments should describe parameters, return values and any error conditions. (``Error conditions'' means
 the conditions under which the return value indicates an error and/or the conditions under which the 
 function does not return, i.e. the program exits.)
@@ -214,13 +226,10 @@ associated with the declaration in the \texttt{.h} file. There is no need to hav
 but if you do, it must be consistent with the comment associated with the declaration.
 No comment is needed for the \texttt{main()} function.
 
-Comments can use either \texttt{/* ... */} or \texttt{//} notation.
+The presence of a function comment \textbf{does not remove the need for comments within a function}. It is likely that only a very short
+function would have no comments within the body of the function. Any function of reasonable length will almost certainly need
+comments within the function to describe the intent of the code.
 
-Comments must not be used to comment out unused code. Use conditional compilation to prevent a block of
-code being compiled, e.g. \texttt{\#if 0 ... \#endif}, or remove the code completely. Any use of conditional compilation in
-this way must be accompanied by a comment that explains the reason for its use.
-
-\subsection{Function comments}
 The following is the recommended comment format to ensure that your function comment meets the requirements above.
 \lstset{caption={Recommended function comment template}, label={lst:function-comment}}
 
@@ -243,7 +252,7 @@ int function_name(char* arg1, int argument2) { ...
 \end{lstlisting}
 \linenumbers
 
-See examples~\ref{lst:code-reference}, ~\ref{lst:braces-function} and~\ref{lst:vertical-whitespace} below for examples of function 
+See examples~\ref{lst:code-reference-fn}, ~\ref{lst:code-reference-ai}, ~\ref{lst:code-reference-ai2}, ~\ref{lst:braces-function} and~\ref{lst:vertical-whitespace} below for examples of function 
 comments.
 
 Comments do not need to follow this format exactly -- this is a suggested template. The key thing is that each function comment 
@@ -252,50 +261,91 @@ part of the behaviour description), and must describe any error conditions and w
 certain value returned or program exits or ...).
 
 \subsection{Code references}
-If you are required to include a code reference (for example -- but not limited to -- you are using code from a man page, or using non-public code you have 
+If you are required (by the assignment specification) 
+to include a code reference (for example -- but not limited to -- you are using code from a man page, or using non-public code you have 
 written previously, or you have been inspired by some third party source), then a reference comment must be provided
 \textbf{adjacent} to the code itself (i.e. not in a header file or in a comment at the top of the file). If the reference applies to a whole
-function then you may include the reference in the function comment. All reference lines in a comment must contain the text ``\texttt{REF:}'' (in uppercase, 
+function then you may include the reference in the function comment, provided the function comment is with the definition, not the declaration\footnote{See ``Function comments'' above for the required location of function comments}. All reference lines 
+in a comment (i.e. the first and continuation lines) must contain the text ``\texttt{REF:}'' (in uppercase, 
 without the quotes) to indicate that the line contains reference information. This pattern will be searched for in your code, so it is important that match this exactly.
 See the examples below:
- 
-\lstset{caption={Example code reference -- in a function comment}, label={lst:code-reference}}
+
 \nolinenumbers
+\lstset{caption={Example code reference -- code you have previously written}, label={lst:code-reference-prev}}
+\begin{lstlisting}
+// REF: The following block of code is taken from code submitted by me for the
+// REF: CSSE2010 AVR programming assignment in semester two, 2022. 
+\end{lstlisting}
+
+\lstset{caption={Example code reference -- code you have been inspired by}, label={lst:code-reference-inspired}}
+\begin{lstlisting}
+// REF: The following code is inspired by the code at 
+// REF: https://stackoverflow.com/questions/14685406
+\end{lstlisting}
+
+ 
+\lstset{caption={Example code reference -- in a function comment}, label={lst:code-reference-fn}}
 \begin{lstlisting}
 /* string_comparator()
- * ---------------
+ * -------------------
  * qsort() comparator function that compares two strings.
  *
  * str1, str2: pointers to strings (char*) that we're comparing. 
  *
  * Returns: an integer less then, equal to, or greater than zero if the string pointed to by 
  *    str1 is less than, equal to or greater than the string pointed to by str2
- * REF: This code is taken from the qsort(3) man page.
+ * REF: This function is taken from the qsort(3) man page. The name of the function 
+ * REF: and spacing have been modified to comply with the style guide.
  */
 static int string_comparator(const void *str1, const void *str2)
 {
     // Compare the strings. Note that we must cast the void* pointers
     // to pointers to strings, and then dereference them
-    return strcmp(* (char * const *) str1, * (char * const *) str2);
+    return strcmp(*(char* const*)str1, *(char* const*)str2);
 }
 \end{lstlisting}
 
-
-\lstset{caption={Example code reference -- code you have previously written}, label={lst:code-reference2}}
+\lstset{caption={Example code reference -- in a function comment -- for AI generated code}, label={lst:code-reference-ai}}
 \begin{lstlisting}
-// REF: The following block of code is taken from code submitted by me for the
-// REF: CSSE2010 AVR programming assignment in semester two, 2022. 
+/* absolute_value()
+ * ----------------
+ * Function returns the absolute value of its argument (x).
+ *
+ * REF: This function was generated by ChatGPT.
+ * REF: The function name was then modified to comply with the style guide.
+ */
+int absolute_value(int x) {
+    if (x < 0) {
+        return -x;
+    } else {
+        return x;
+    }
+}
 \end{lstlisting}
 
-\lstset{caption={Example code reference -- code you have been inspired by}, label={lst:code-reference2}}
+\lstset{caption={Example code reference -- in a function comment -- for AI generated code (2)}, label={lst:code-reference-ai2}}
 \begin{lstlisting}
-/* REF: The following code is inspired by the code at 
-   REF: https://stackoverflow.com/questions/14685406
-*/
+/* abs()
+ * -----
+ * Function returns the absolute value of a number (n).
+ *
+ * REF: This function and most of the description above was generated by Github CoPilot.
+ * REF: The indentation was then modified to comply with the style guide.
+ */
+int abs(int n) {
+    if (n < 0) {
+        return -n;
+    }
+    return n;
+}
 \end{lstlisting}
+
 \linenumbers
 
-Note that it is not permissible to \textit{copy} code from third parties.
+Note that the examples above show how to reference code from various sources. Just because code is referenced
+does not necessarily mean that you can use it. See your assignment specification for details of the code that can
+be used in that particular assignment. For code generated by, or modified with input from, AI tools, you must
+document your interaction with the tool as described in the \textit{Documentation required for the use of AI tools} document.
 
 \section{Braces}
 Use braces \texttt{\{ \}} around statements in the body of if, else, for, while, do, etc statements.
@@ -450,26 +500,20 @@ When declaring a pointer there must be a single space on one side of the \texttt
 but you must be consistent in your approach.
 
 %\setlength{\columnsep}{20pt}
-\vspace{0.3cm}
-\noindent\textbf{Acceptable horizontal whitespace}
+
 \nolinenumbers
 \begin{multicols}{2}
+\noindent\textbf{Acceptable horizontal whitespace}
 \lstset{caption={Acceptable horizontal whitespace: commas}, label={lst:horiz-good-comma}}
 \begin{lstlisting}
 add_up(a, b, c, d);
 int *a, b, c[10];
 \end{lstlisting}
 
-\vfill
-\columnbreak
-
 \lstset{caption={Acceptable horizontal whitespace: semi-colons}, label={lst:horiz-good-semicolon}}
 \begin{lstlisting}
 for (i = 0; i < 10; i++)
 \end{lstlisting}
-
-\vfill
-\columnbreak
 
 \lstset{caption={Acceptable horizontal whitespace: assignment and binary operators}, label={lst:horiz-good-assign}}
 \begin{lstlisting}
@@ -490,8 +534,8 @@ char *b;
 //Either style can be used, but you 
 //must be consistent in your program
 \end{lstlisting}
-
-\vspace{0.3cm}
+\vfill
+\columnbreak
 \noindent\textbf{Unacceptable horizontal whitespace}
 \lstset{caption={Unacceptable horizontal whitespace: commas}, label={lst:horiz-bad-comma}}
 \begin{lstlisting}
@@ -557,7 +601,7 @@ if (month >= 1 && month <= 3) {
     quarter = 4;
 }
 \end{lstlisting}
-\clearpage
+
 \lstset{caption={Correct indentation: switch statement}, label={lst:indentation-switch}}
 \begin{lstlisting}
 switch (month) {
@@ -589,7 +633,7 @@ If a long line needs to be broken up, you need to take care that the continuatio
 For example, the expression could be broken after a comma in a function call (ideally never in the middle of a parameter expression), or after the last operator that fits on the line.
 The continuation line must be double indented (8 spaces) so that it is clearly identifiable.
 If more than one continuation line is required, no further indenting is required.
-
+\clearpage
 \lstset{caption={Correct line length and indentation}, label={lst:line-length}}
 \nolinenumbers
 \begin{lstlisting}
