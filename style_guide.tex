@@ -43,9 +43,9 @@
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
 
-\title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version 2.4.0}
+\title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \textcolor{red}{2.4.1}}
 \author{The University of Queensland\\School of Information Technology and Electrical Engineering}
-\date{August 2023}
+\date{\textcolor{red}{September} 2023}
 \fancypagestyle{plain}{
 	\fancyhead{}
 	\fancyfoot{}
@@ -57,7 +57,7 @@
 \fancypagestyle{fancy}{
 	\fancyhead{}
 	\fancyfoot{}
-	\fancyhead[R]{CSSE2310 Style Guide Version 2.3.0}
+	\fancyhead[R]{CSSE2310 Style Guide Version \textcolor{red}{2.4.1}}
 	\fancyfoot[L]{\small{\copyright{~2023 The University of Queensland}}}
 	\fancyfoot[R]{\thepage}
 	\renewcommand{\headrulewidth}{0.5pt}
@@ -70,6 +70,10 @@
 \begin{document}
 
 \maketitle
+\vspace{-1.2cm}
+\begin{center}
+\textcolor{red}{Changes since version 2.4.0 (August 2023) are highlighted in red}
+\end{center}
 \thispagestyle{plain}
 \linenumbers
 
@@ -199,6 +203,7 @@ so it is not necessary to comment every line within a function.
 
 Comments must be present and meaningful for each of the following:
 \begin{itemize}
+\itemsep 0em
     \item Global variables\footnote{See the note about global variables in section~\ref{sec:overall}}
     \item Function declarations or definitions
     \item Enum definitions
@@ -212,7 +217,7 @@ code being compiled, e.g. \texttt{\#if 0 ... \#endif}, or remove the code comple
 this way must be accompanied by a comment that explains the reason for its use.
 
 \subsection{Function comments}
-Function comments should describe parameters, return values and any error conditions. (``Error conditions'' means
+Function comments should describe parameters, return values\textcolor{red}{, any global variables\footnote{\textcolor{red}{See the note about global variables in section~\ref{sec:overall}}} modified by the function} and any error conditions. (``Error conditions'' means
 the conditions under which the return value indicates an error and/or the conditions under which the 
 function does not return, i.e. the program exits.)
 Function comments do not need to include the \textit{types} of parameters (these are apparent from the function prototype/definition), 
@@ -234,7 +239,7 @@ The following is the recommended comment format to ensure that your function com
 \lstset{caption={Recommended function comment template}, label={lst:function-comment}}
 
 \nolinenumbers
-\begin{lstlisting}
+\begin{lstlisting}[mathescape=true]
 /* function_name()
  * ---------------
  * Description of what the function does in terms of the parameters goes here...
@@ -244,6 +249,7 @@ The following is the recommended comment format to ensure that your function com
  * argument2: ... (repeat for all arguments)
  *
  * Returns: description of what is returned
+ * $\textcolor{red}{\texttt{Global variables modified: (if applicable) list of global variable names modified by this function}}$
  * Errors: (if applicable) description of errors that might occur and what happens if they do, e.g.
  *     the return value will be invalid, or the program exits (i.e. function does not return). 
  * REF: (if applicable) if this whole function is copied/inspired then you can reference the source here
