@@ -1,0 +1,815 @@
+\documentclass{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage{syntax}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{wrapfig}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage[right, displaymath, mathlines]{lineno}
+
+%\usepackage{courier}
+\setlength{\columnsep}{1cm}
+
+% Create a nice looking tilde
+\usepackage[hidelinks=true]{hyperref}
+\newcommand{\propertilde}{\nolinkurl{~}}
+
+% Setup style for programming excerpts
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+  basicstyle=\footnotesize\ttfamily,
+  language=C,
+  backgroundcolor=\color{backcolour},
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{codepurple},
+  basicstyle=\footnotesize\fontfamily{pcr}\selectfont,
+  breaklines=true,
+  showspaces=false,
+  showstringspaces=false,
+  stringstyle=\color{codepurple},
+  tabsize=4,
+  frame=single,
+  captionpos=b,
+  columns=fixed
+}
+\lstset{style=mystyle}
+\renewcommand{\lstlistingname}{Example} % Listing -> Example
+\newcommand{\versionNum}{24.01}
+
+\title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
+\author{The University of Queensland\\School of Information Technology and Electrical Engineering}
+\date{January 2024}
+\fancypagestyle{plain}{
+	\fancyhead{}
+	\fancyfoot{}
+	\fancyfoot[L]{\small{\copyright{~2024 The University of Queensland}}}
+	\fancyfoot[R]{\thepage}
+	\renewcommand{\headrulewidth}{0.5pt}
+	\renewcommand{\footrulewidth}{0.5pt}
+}
+\fancypagestyle{fancy}{
+	\fancyhead{}
+	\fancyfoot{}
+	\fancyhead[R]{CSSE2310 Style Guide Version \versionNum}
+	\fancyfoot[L]{\small{\copyright{~2023 The University of Queensland}}}
+	\fancyfoot[R]{\thepage}
+	\renewcommand{\headrulewidth}{0.5pt}
+	\renewcommand{\footrulewidth}{0.5pt}
+}
+\pagestyle{fancy}
+\lfoot{\small{\copyright{~2023 The University of Queensland}}}
+
+
+\begin{document}
+
+\maketitle
+%\vspace{-1.2cm}
+%\begin{center}
+%\textcolor{red}{Changes since version 2.4.0 (August 2023) are highlighted in red}
+%\end{center}
+\thispagestyle{plain}
+\linenumbers
+
+Programs written for CSSE2310/7231 assignments must follow the style guidelines outlined in this document. The formatting requirements are based on the \texttt{WebKit} style as implemented by \texttt{clang-format}. There are also
+additional requirements beyond this, e.g. naming conventions and function and line length constraints. 
+
+The WebKit code style guidelines can be found at \url{https://webkit.org/code-style-guidelines/} but it should be
+noted that requirements not enforced by \texttt{clang-format} and not described as a requirement in this document
+are not required to be implemented.
+
+Where the style guide is open to interpretation, the choices you make regarding your personal style 
+must be consistent throughout your project.
+
+This style guide applies only to C source files, i.e. \texttt{.c} and \texttt{.h} files. It does not apply to other files
+that must be created for CSSE2310/7231, e.g. \texttt{Makefile}s. 
+
+\section{Indentation}
+\subsection{Tabs vs spaces}
+Use spaces not tab characters to implement indentation. C source files must not contain tab characters. (This includes
+inside string constants -- use the escape sequence \texttt{\textbackslash t} instead.)
+
+\subsection{Indent size}
+Indentation must occur in multiples of four spaces. You must indent once each time a statement is nested inside the
+body of another statement. 
+
+\subsection{Continuation lines}
+Continuation lines (i.e. where a statement doesn't fit on one line) must be indented four spaces 
+beyond the first line of the statement. (In other words, if a statement spills on to a third line, the indentation 
+level of the third line will be the same as the second line -- i.e. four spaces beyond that of the first line of 
+the statement.)
+
+\subsection{Continuation lines for boolean expressions}
+Boolean expressions that span multiple lines, must (a) have their operators on the left side of the line, and (b) align
+operators at the same level in the expression, and (c) further indent nested expressions if required (i.e. those at a lower
+level in the expression). 
+
+\subsection{Continuation lines for function calls and braced initialiser lists}
+If an initialisation list or the arguments to a function call don't fit on one line, but would completely fit on the next line (indented by four spaces) then they shall all be placed on the next line. If they will not all fit on the next line then they
+must start on the original line and then continue to the next line.
+
+\subsection{Switch statements}
+\texttt{case} labels must line up with the enclosing \texttt{switch} statement. The statements associated with a \texttt{case}
+label must be on a newline and indented by four spaces beyond the start of the \texttt{case} label.
+
+\subsection{Indentation examples}
+\lstset{numbers=left, numberstyle=\ttfamily, caption={Correct indentation for if statement and loop}, label={lst:indentation-examples}}
+
+\nolinenumbers
+\begin{lstlisting}[mathescape=true]
+if (day == 31) { // the following statements are indented by four spaces
+    monthTotal = 0;
+    for (week = 0; week < 4; ++week) { // the following statement is indented by four spaces
+        monthTotal += receipts[week];
+    }
+}
+\end{lstlisting}
+
+\lstset{caption={Correct indentation: chained if-else}, label={lst:indentation-if-else}}
+\begin{lstlisting}
+if (month >= 1 && month <= 3) {
+    quarter = 1;
+} else if (month >= 4 && month <= 6) {
+    quarter = 2;
+} else if (month >= 7 && month <= 9) {
+    quarter = 3;
+} else {
+    quarter = 4;
+}
+\end{lstlisting}
+
+\lstset{caption={Correct indentation: switch statement}, label={lst:indentation-switch}}
+\begin{lstlisting}
+switch (month) {
+case 2:
+    daysInMonth = 28;
+    break;
+case 4:
+case 6:
+case 9:
+case 11:
+    daysInMonth = 30;
+    break;
+default:
+    daysInMonth = 31;
+    break;
+}
+\end{lstlisting}
+
+
+\linenumbers
+
+
+
+
+\section{Naming Conventions}
+\subsection{Variable names}
+\label{sec:naming-variable}
+Variable names and the names of struct/union members will begin with a lowercase letter and names with multiple words 
+will use initial capitals for subsequent words and no underscores -- sometimes called camel case\footnote{This variant of camel case 
+in which the first letter is lower case is sometimes called lower camel case or dromedary case.}. 
+Names that are chosen should be meaningful. Hungarian notation\footnote{Hungarian notation is where characters at the start of 
+the name indicate the type of the variable. Examples include \texttt{int iCount;} \texttt{char* pFileName;} and
+\texttt{double dbPi}.}
+ is NOT to be used.
+It is permissible to use names like \texttt{i} or \texttt{j} for integer loop counters.
+
+Example variable names: \texttt{book}, \texttt{newCount}, \texttt{setWordLength}, \texttt{dictionaryLength}, 
+\texttt{wordList}, \texttt{cursor}, \texttt{fileHandle}
+
+Unacceptable variable names (use of Hungarian notation): \texttt{int iCount; int* ptrNum; double dAverage;}
+
+It is permissible to use variable names like \texttt{str} to indicate a generic string if, for instance, a function does take a generic
+string parameter. (This is permissible even though the name indicates the type.) However, if the string variable always has a particular meaning in the context of your program/function then a more appropriate variable name should
+be used, e.g. \texttt{name} or \texttt{fileName}.
+\subsection{File names}
+\label{sec:naming-files}
+C source file names will begin with a lowercase letter and names with multiple words 
+will use initial capitals for subsequent words and no underscores. 
+Names that are chosen should be meaningful. Source files must be named with the suffix \texttt{.c} or \texttt{.h} (lower case).
+
+Example filenames: \texttt{hello.c}, \texttt{stringRoutines.c}, \texttt{shared.h}
+
+\subsection{Defined constants and macros}
+\label{sec:naming-constants}
+Preprocessor constants and macros, i.e. those defined using \texttt{\#define}, must be named 
+using all uppercase letters, with underscores (\_) used to separate multiple words.
+NOTE: Variables declared with the \texttt{const} keyword are to use variable naming, as 
+per~\ref{sec:naming-variable}.
+
+Examples: \texttt{MAX\_BIT}, \texttt{DEFAULT\_SPEED}
+
+\subsection{Function names}
+Function names should all be lowercase and use underscores to separate multiple words.
+
+Example function names: \texttt{main()}, \texttt{reset\_secret\_string()}
+
+Note that function pointers are variables and should use variable naming, as per~\ref{sec:naming-variable}.
+
+Example: \texttt{int (*sortingFunction)(void*, void*) = alpha_sort;}\newline
+where \texttt{sortingFunction} is the name of a variable and \texttt{alpha_sort} is the name of a function.
+
+Uppercase letters and numbers may be used in function names where that usage is conventional (e.g. use of a standard 
+abbreviation) and the function name begins with a lowercase letter.
+
+Example function names: \texttt{calculate\_GPA()}, \texttt{check_W3C_compliance()}
+
+\subsection{Type names}
+\label{sec:type-names}
+Type names (i.e. from typedefs), structure and union names should begin with capital letters 
+and use initial capitals for subsequent words and no underscores. Members within structs and unions should
+follow the variable naming convention as per section~\ref{sec:naming-variable}.
+
+Example typedef/structure/union names: \texttt{Contact}, \texttt{FileData}, \texttt{struct Node}
+
+\nolinenumbers
+\begin{multicols}{2}
+\lstset{caption={Struct naming and declaration}, label={lst:naming-struct}}
+\begin{lstlisting}
+/* A player within the game */
+struct Player {
+    char *name;
+    int score;
+    struct Player *next;
+};
+\end{lstlisting}
+\vfill
+\columnbreak
+
+\lstset{caption={Typedef struct naming and declaration}, label={lst:naming-typedef-struct}}
+\begin{lstlisting}
+/* Point (coordinate) */
+typedef struct {
+    int x;
+    int y;
+} Point;
+\end{lstlisting}
+\end{multicols}
+\linenumbers
+
+\subsection{Enumerated Types}
+Enumerated types must be named in the same way as any other type (see~\ref{sec:type-names}).
+Members of an enumerated type must follow the same naming as constants (see~\ref{sec:naming-constants}).
+
+\nolinenumbers
+\begin{multicols}{2}
+\lstset{caption={Enumerated type naming and horizontal layout}, label={lst:enum-horizontal}}
+\begin{lstlisting}
+/* Card suits */
+enum CardSuits {
+    CLUBS, DIAMONDS, HEARTS, SPADES
+};
+\end{lstlisting}
+\vfill
+\columnbreak
+
+\lstset{caption={Enumerated type naming and vertical layout, with explicit value selection}, label={lst:enum-vertical}}
+\begin{lstlisting}
+// Program exit codes
+enum ExitCodes {
+    EXIT_SUCCESS = 0,
+    EXIT_ARGS = 1,
+    EXIT_FAILURE = 2
+};
+\end{lstlisting}
+\end{multicols}
+\linenumbers
+
+\section{Comments}
+Comments should be generously added to describe the intent of the code.
+They are expected in code which is tricky, lengthy or where functionality is not immediately obvious.
+It is reasonable to assume that the reader has a decent knowledge of the C programming language, 
+so it is not necessary to comment every line within a function.
+
+Comments must be present and meaningful for each of the following:
+\begin{itemize}
+\itemsep 0em
+    \item Global variables\footnote{See the note about global variables in section~\ref{sec:overall}}
+    \item Function declarations or definitions
+    \item Enum definitions
+    \item Struct definitions
+\end{itemize}
+
+Comments can use either \texttt{/* ... */} or \texttt{//} notation.
+
+Comments must not be used to comment out unused code. Use conditional compilation to prevent a block of
+code being compiled, e.g. \texttt{\#if 0 ... \#endif}, or remove the code completely. Any use of conditional compilation in
+this way must be accompanied by a comment that explains the reason for its use.
+
+\subsection{Function comments}
+Function comments should describe parameters, return values\textcolor{red}{, any global variables\footnote{\textcolor{red}{See the note about global variables in section~\ref{sec:overall}}} modified by the function} and any error conditions. (``Error conditions'' means
+the conditions under which the return value indicates an error and/or the conditions under which the 
+function does not return, i.e. the program exits.)
+Function comments do not need to include the \textit{types} of parameters (these are apparent from the function prototype/definition), 
+nor should they repeat the function prototype. If an adequate comment is given for a function 
+declaration (prototype), it need not be repeated for the associated function definition, even if these are in 
+different files. If a declaration (prototype) and
+definition are in the same file then either may be commented -- but your approach should be consistent, i.e. either comment
+all prototypes or all definitions -- not half-half. If the declaration and definition are in different files
+(e.g. the declaration is in a \texttt{.h} file and the definition is in a \texttt{.c} file) then there must be a comment
+associated with the declaration in the \texttt{.h} file. There is no need to have a comment with the definition, 
+but if you do, it must be consistent with the comment associated with the declaration.
+No comment is needed for the \texttt{main()} function.
+
+The presence of a function comment \textbf{does not remove the need for comments within a function}. It is likely that only a very short
+function would have no comments within the body of the function. Any function of reasonable length will almost certainly need
+comments within the function to describe the intent of the code.
+
+The following is the recommended comment format to ensure that your function comment meets the requirements above.
+\lstset{caption={Recommended function comment template}, label={lst:function-comment}}
+
+\nolinenumbers
+\begin{lstlisting}[mathescape=true]
+/* function_name()
+ * ---------------
+ * Description of what the function does in terms of the parameters goes here...
+ *
+ * arg1: description of what this argument contains (and, if applicable, 
+ *           any assumptions about the value, e.g. not null, string length not 0, etc.)
+ * argument2: ... (repeat for all arguments)
+ *
+ * Returns: description of what is returned
+ * $\textcolor{red}{\texttt{Global variables modified: (if applicable) list of global variable names modified by this function}}$
+ * Errors: (if applicable) description of errors that might occur and what happens if they do, e.g.
+ *     the return value will be invalid, or the program exits (i.e. function does not return). 
+ * REF: (if applicable) if this whole function is copied/inspired then you can reference the source here
+ */
+int function_name(char* arg1, int argument2) { ...
+\end{lstlisting}
+\linenumbers
+
+See examples~\ref{lst:code-reference-fn}, ~\ref{lst:code-reference-ai}, ~\ref{lst:code-reference-ai2}, ~\ref{lst:braces-function} and~\ref{lst:vertical-whitespace} below for examples of function 
+comments.
+
+Comments do not need to follow this format exactly -- this is a suggested template. The key thing is that each function comment 
+must describe the behaviour of the function in terms of the parameters, must describe what is returned (may be obvious as 
+part of the behaviour description), and must describe any error conditions and what happens when those errors occur (e.g.
+certain value returned or program exits or ...).
+
+\subsection{Code references}
+If you are required (by the assignment specification) 
+to include a code reference (for example -- but not limited to -- you are using code from a man page, or using non-public code you have 
+written previously, or you have been inspired by or learned about something some third party source), then a reference comment must be provided
+\textbf{adjacent} to the code itself (i.e. not in a header file or in a comment at the top of the file). If the reference applies to a whole
+function then you may include the reference in the function comment, provided the function comment is with the definition, not the declaration\footnote{See ``Function comments'' above for the required location of function comments}. All reference lines 
+in a comment (i.e. the first and continuation lines) must contain the text ``\texttt{REF:}'' (in uppercase, 
+without the quotes) to indicate that the line contains reference information. This pattern will be searched for in your code, so it is important that match this exactly. If you are referencing a website then you must provide the full URL, not a shortened URL (e.g. not \texttt{bitly} or \texttt{tinyURL} links). 
+It is permissible for the URL to be broken into multiple lines so as to not exceed the line length restriction.
+
+See examples of references below:
+
+\nolinenumbers
+\lstset{caption={Example code reference -- code you have previously written}, label={lst:code-reference-prev}}
+\begin{lstlisting}
+// REF: The following block of code is taken from code submitted by me for the
+// REF: CSSE2010 AVR programming assignment in semester two, 2022. 
+\end{lstlisting}
+
+\lstset{caption={Example code reference -- code you have been inspired by}, label={lst:code-reference-inspired}}
+\begin{lstlisting}
+// REF: The following code is inspired by the code at 
+// REF: https://stackoverflow.com/questions/14685406
+\end{lstlisting}
+
+ 
+\lstset{caption={Example code reference -- in a function comment}, label={lst:code-reference-fn}}
+\begin{lstlisting}
+/* string_comparator()
+ * -------------------
+ * qsort() comparator function that compares two strings.
+ *
+ * str1, str2: pointers to strings (char*) that we're comparing. 
+ *
+ * Returns: an integer less then, equal to, or greater than zero if the string pointed to by 
+ *    str1 is less than, equal to or greater than the string pointed to by str2
+ * REF: This function is taken from the qsort(3) man page. The name of the function 
+ * REF: and spacing have been modified to comply with the style guide.
+ */
+static int string_comparator(const void *str1, const void *str2)
+{
+    // Compare the strings. Note that we must cast the void* pointers
+    // to pointers to strings, and then dereference them
+    return strcmp(*(char* const*)str1, *(char* const*)str2);
+}
+\end{lstlisting}
+
+\lstset{caption={Example code reference -- in a function comment -- for AI generated code}, label={lst:code-reference-ai}}
+\begin{lstlisting}
+/* absolute_value()
+ * ----------------
+ * Function returns the absolute value of its argument (x).
+ *
+ * REF: This function was generated by ChatGPT.
+ * REF: The function name was then modified to comply with the style guide.
+ */
+int absolute_value(int x) {
+    if (x < 0) {
+        return -x;
+    } else {
+        return x;
+    }
+}
+\end{lstlisting}
+
+\lstset{caption={Example code reference -- in a function comment -- for AI generated code (2)}, label={lst:code-reference-ai2}}
+\begin{lstlisting}
+/* abs()
+ * -----
+ * Function returns the absolute value of a number (n).
+ *
+ * REF: This function and most of the description above was generated by Github CoPilot.
+ * REF: The indentation was then modified to comply with the style guide.
+ */
+int abs(int n) {
+    if (n < 0) {
+        return -n;
+    }
+    return n;
+}
+\end{lstlisting}
+
+\linenumbers
+
+Note that the examples above show how to reference code from various sources. Just because code is referenced
+does not necessarily mean that you can use it. See your assignment specification for details of the code that can
+be used in that particular assignment. \textbf{For code generated by, or modified with input from, AI tools, you must
+document your interaction with the tool as described in the \textit{Documentation required for the use of AI tools} document.}
+
+\section{Braces}
+Use braces \texttt{\{ \}} around statements in the body of if, else, for, while, do, etc statements.
+The C language does not require braces when the body contains only one statement, but you must 
+surround it with braces anyway.
+This helps avoid errors while changing your code.
+An open brace appears at the end of the line after an if statement/loop statement/etc (with exactly 
+one space before the brace).
+The closing brace should be lined up underneath the start of the function/loop statement/etc.
+Braces for structure/union/enum declarations and array initialisations do not need to follow this layout.
+
+The opening brace for a function definition may be either at the end of the line following the 
+arguments or in the left most column of the next line.
+
+\begin{multicols}{2}
+\lstset{caption={Correct braces for a function}, label={lst:braces-function}}
+\nolinenumbers
+\begin{lstlisting}
+/* sum()
+ * ---------------
+ * Calculates the sum of integers from 1 to n.
+ *
+ * n: the maximum integer to be summed
+ *
+ * Returns: the integer sum of integers 1 to n,
+ *     or 0 if n is 0 or less
+ * Errors: will return an erroneous value if n 
+ *     is large enough to cause the sum to
+ *     overflow
+ */
+int sum(int n) { // This brace can be at the
+                 // start of the next line
+    int i, s = 0;
+
+    for (i = 1; i <= n; i++) { // This brace must 
+                               // be here
+        s += i;
+    }
+
+    return s;
+}
+\end{lstlisting}
+
+
+\lstset{caption={Correct braces: for loop}, label={lst:braces-for}}
+\begin{lstlisting}
+for (...; ...; ...) {
+    ...
+}
+\end{lstlisting}
+
+\lstset{caption={Correct braces: while loop}, label={lst:braces-while}}
+\begin{lstlisting}
+while (...) {
+    ...
+}
+\end{lstlisting}
+\vfill
+\columnbreak
+\lstset{caption={Correct braces: do while loop}, label={lst:braces-do-while}}
+\begin{lstlisting}
+do {
+    ...
+} while (...);
+\end{lstlisting}
+
+\lstset{caption={Correct braces: if statement}, label={lst:braces-if}}
+\begin{lstlisting}
+if (...) {
+    ...
+}
+\end{lstlisting}
+
+
+\lstset{caption={Correct braces: if-else}, label={lst:braces-if-else}}
+\begin{lstlisting}
+if (...) {
+    ...
+} else if (...) {
+    ...
+} else {
+    ...
+}
+\end{lstlisting}
+
+\lstset{caption={Correct braces: switch statement}, label={lst:braces-switch}}
+\begin{lstlisting}
+switch (...) {
+    case ...:
+        ...
+        break;
+    default:
+        ...
+}
+\end{lstlisting}
+\end{multicols}
+\linenumbers
+
+\section{Whitespace}
+Meaningful parts of code are grouped together by using the whitespace as a separator.
+Whitespace is composed of horizontal whitespace (i.e. space and tab characters) and vertical whitespace (i.e. blank lines).
+
+\subsection{Vertical whitespace}
+Organize your source code into meaningful parts.
+You must use single blank lines to separate functions from each other.
+Blank lines are also used to separate groups of statements from each other to make the major steps of an algorithm distinguishable.
+
+\lstset{caption={Acceptable vertical whitespace between functions}, label={lst:vertical-whitespace}}
+\nolinenumbers
+\begin{lstlisting}
+/* multiply()
+ * ---------------
+ * Multiplies two integers.
+ *
+ * x, y: the numbers to be multiplied
+ *
+ * Returns: the product of x and y
+ * Errors: The return value will not be meaningful if the product can't be represented in an 
+ *     integer, i.e. overflows the bits available.
+ */
+int multiply(int x, int y) {
+    return x * y;
+}
+
+/* divide()
+ * ---------------
+ * Divides one integer by another. (The remainder is discarded.)
+ *
+ * x: the dividend
+ * y: the divisor - assumed not to be zero
+ *
+ * Returns: x divided by y 
+ * Errors: Behaviour is undefined if y is zero
+ */
+int divide(int x, int y) {
+    return x / y;
+}
+\end{lstlisting}
+\linenumbers
+
+\subsection{Horizontal whitespace}
+Use horizontal whitespace to organize each line of code into meaningful parts.
+It is bad style to not use spaces within a line.
+A single space must be added after each comma, as well as each semicolon that is not on the end of a line.
+A single space should also be added either side of all assignment and binary operators (\texttt{=~+=~/~-~*~+}~etc).
+There must be no spaces added around unary operators (\texttt{\&~*~+~-~\propertilde~!~++~--}) and struct operators (\texttt{point->x}, \texttt{player.name}). There must be a single space present before an open parenthesis in C control statements, e.g., a space between these keywords and the following parenthesis: \texttt{for}, \texttt{while}, 
+\texttt{if}, \texttt{switch}. There must be no spaces before an open parenthesis in function calls, declarations and 
+definitions. There must be no spaces prior to square brackets in array derefencing. There must be no spaces 
+prior to semicolons at the end of a line, but a semicolon can be on a line by itself if required. 
+
+When declaring a pointer there must be a single space on one side of the \texttt{*}. It can be either side
+but you must be consistent in your approach.
+
+%\setlength{\columnsep}{20pt}
+
+\nolinenumbers
+\begin{multicols}{2}
+\noindent\textbf{Acceptable horizontal whitespace}
+\lstset{caption={Acceptable horizontal whitespace: commas}, label={lst:horiz-good-comma}}
+\begin{lstlisting}
+add_up(a, b, c, d);
+int *a, b, c[10];
+\end{lstlisting}
+
+\lstset{caption={Acceptable horizontal whitespace: semi-colons}, label={lst:horiz-good-semicolon}}
+\begin{lstlisting}
+for (i = 0; i < 10; i++)
+\end{lstlisting}
+
+\lstset{caption={Acceptable horizontal whitespace: assignment and binary operators}, label={lst:horiz-good-assign}}
+\begin{lstlisting}
+a = (b + c) * d;
+\end{lstlisting}
+
+\lstset{caption={Acceptable horizontal whitespace: unary and struct operators}, label={lst:horiz-good-unary}}
+\begin{lstlisting}
+int x = -y;
+b = *c;
+width = point->y;
+\end{lstlisting}
+
+\lstset{caption={Acceptable pointer declarations}, label={lst:horiz-good-pointers}}
+\begin{lstlisting}
+char* a;
+char *b; 
+//Either style can be used, but you 
+//must be consistent in your program
+\end{lstlisting}
+\vfill
+\columnbreak
+\noindent\textbf{Unacceptable horizontal whitespace}
+\lstset{caption={Unacceptable horizontal whitespace: commas}, label={lst:horiz-bad-comma}}
+\begin{lstlisting}
+add_up(a,b,c,d);
+int * a,b,c[10];
+\end{lstlisting}
+
+\lstset{caption={Unacceptable horizontal whitespace: semi-colons}, label={lst:horiz-bad-semicolon}}
+\begin{lstlisting}
+for (i=0;i<10;i++)
+\end{lstlisting}
+
+\lstset{caption={Unacceptable horizontal whitespace: assignment and binary operators}, label={lst:horiz-bad-assign}}
+\begin{lstlisting}
+a=(b+c)*d;
+\end{lstlisting}
+
+\lstset{caption={Unacceptable horizontal whitespace: unary and struct operators}, label={lst:horiz-bad-unary}}
+\begin{lstlisting}
+int x = - y;
+b = * c;
+width = point -> y;
+\end{lstlisting}
+
+\lstset{caption={Unacceptable pointer declarations}, label={lst:horiz-bad-pointers}}
+\begin{lstlisting}
+char*a;
+char * b;
+\end{lstlisting}
+
+\end{multicols}
+\linenumbers
+
+\section{Indentation}
+Use indentation to indicate the level of nesting.
+Indentation must occur in multiples of four spaces.
+You should configure your editor so that indents are in multiples of four spaces (but tab stops must remain at 8 characters)\footnote{In other words, do not change your tab stops to 4 characters. If tab characters are 
+present in your code then they indicate an indent to the next multiple of 8. You can replace all tabs by spaces
+if you wish, but this is not required.}.
+You should indent once each time a statement is nested inside the body of another statement.
+Always indent whether or not the control structure uses braces.
+
+\lstset{caption={Correct indentation: if statement}, label={lst:indentation-if}}
+\nolinenumbers
+\begin{lstlisting}
+if (day == 31) {
+    monthTotal = 0;
+    for (week = 0; week < 4; ++week) {
+        monthTotal += receipts[week];
+    }
+}
+\end{lstlisting}
+
+
+\linenumbers
+
+If you use the gnu \texttt{indent} tool consider the following options as a \underline{starting point}:\\
+\texttt{-linux -i4 -cli4 -l79 --no-tabs}
+
+\section{Line Length}
+Lines must not exceed 79 columns in length including whitespace.
+The ``standard'' screen size is 80 columns.
+Occasionally an expression will not fit in the available space in a line; for example, a function call with many arguments, or a logical expression with many conditions.
+Such occurrences are especially likely when blocks are nested deeply or long identifiers are used.
+If a long line needs to be broken up, you need to take care that the continuation is clearly shown.
+For example, the expression could be broken after a comma in a function call (ideally never in the middle of a parameter expression), or after the last operator that fits on the line.
+The continuation line must be double indented (8 spaces) so that it is clearly identifiable.
+If more than one continuation line is required, no further indenting is required.
+\clearpage
+\lstset{caption={Correct line length and indentation}, label={lst:line-length}}
+\nolinenumbers
+\begin{lstlisting}
+someFunction(longExpression1, longExpression2, .....,
+        longExpressionN);
+
+if (expressionA || expressionB || expressionC || expressionD ||
+        expressionE || expressionF) {
+    /* code goes here - indented by 4 spaces */
+    ...
+    printf("A very long string can be broken like "
+            "this");
+
+}
+
+if (expressionA || expressionB || expressionC || expressionD ||
+        expressionE || expressionF || expressionG || expressionH ||
+        expressionI) {
+    /* code goes here - indented by 4 spaces */
+    ...
+}
+\end{lstlisting}
+\linenumbers
+
+\section{Overall}
+\label{sec:overall}
+Source code should be written to be clear and readable.
+Anything which works against your code being clear and readable may be penalised.
+For example (but not restricted to):
+\begin{itemize}
+\item Global and static variables must not be used unless there is no other way to implement the required functionality, for example, 
+they can be used with signal handlers. (Global constants, declared using \texttt{const} are permitted.)
+\item ``Magic numbers'' are to be avoided. Defined constants should be used instead of number and character literals scattered throughout code without context. 0 and 1 are almost never magic numbers.
+\end{itemize}
+\nolinenumbers
+
+\begin{minipage}{0.32\linewidth}
+\lstset{caption={Unacceptable use of magic numbers}, label={lst:magic-num-unacceptable}}
+\begin{lstlisting}
+for (int i = 1; i <= 26; i++) {
+    ...
+}
+if (name[0] == '\n') {
+    ...
+}
+if (strlen(passwd) < 8) {
+    ...
+}
+\end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.05\linewidth}
+\hspace{0.2cm}
+\end{minipage}
+\begin{minipage}{0.55\linewidth}
+
+\lstset{caption={Use of constants to avoid magic numbers}, label={lst:constants-instead-of-magic}}
+\begin{lstlisting}
+#define NUM_LETTERS_IN_ALPHABET 26
+#define NEWLINE '\n'
+const int minPasswordLength = 8;
+for (int i = 1; i <= NUM_LETTERS_IN_ALPHABET; i++) {
+    ...
+}
+if (name[0] == NEWLINE) {
+    ...
+}
+if (strlen(passwd) < minPasswordLength) {
+    ....
+}
+\end{lstlisting}
+\end{minipage}
+
+\linenumbers
+\subsection{Compilation}
+Your assignments will use the C99 standard, and must be compiled with the following flags as a minimum: \texttt{-Wall -pedantic -std=gnu99} .
+No warnings or errors should be reported.
+If warnings or errors are reported, they will be treated as style violations.
+
+Every source file in your assignment submission (including .c files and any custom .h files they \texttt{\#include}) will be checked for style.
+This applies whether or not they are linked into executables.
+
+Every .h file in your submission must make sense without reference to any other files, other than those which it references by \texttt{\#include}.
+Specifically, any declarations must be complete and all types, declarations and any definitions used in the .h file must either come from the .h file itself, or from included headers.
+
+Any components which are obfuscated, not in standard forms or need to be transformed by extra tools in order to be readable will be removed before compilation is attempted.
+
+\subsection{File encoding}
+All source files must use an ASCII-compatible encoding. 
+Files must use Unix line endings (\texttt{\textbackslash n}).
+
+\subsection{Function length}
+Functions should not exceed 50 lines in length, including any comments within the function but excluding any
+comments prior to the function.
+If a function is longer than 50 lines, then it is a good candidate for being broken into meaningful smaller functions.
+
+\subsection{Modularity}
+Principles of modularity should be observed.
+Related functions and variable definitions should be separated out into their own source files (with appropriate header files for inclusion in other modules as necessary).
+You should also use functions to prevent excessive duplication of code.
+If you find yourself writing the same or very similar code in multiple places, you should create a separate function to undertake the task.
+
+\section{Banned Language Features}
+Use of any of the following C features in your assessments is grounds for a mark of \textbf{zero} in that assessment.
+All of them work against readable and well structured programs.
+None of these are things you could do by accident.
+
+\begin{itemize}
+\item \underline{Goto}: While \texttt{goto} is a legal part of the C language, nothing in this course requires its use.
+\item \underline{Digraphs} and \underline{Trigraphs}: This course uses systems which support ASCII or unicode and so have all the required characters.
+\end{itemize}
+
+\noindent Other banned features may be listed in your assignment specification.
+\end{document}
