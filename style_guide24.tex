@@ -78,8 +78,13 @@
 \thispagestyle{plain}
 \linenumbers
 
-Programs written for CSSE2310/7231 assignments must follow the style guidelines outlined in this document. The formatting requirements are based on the \texttt{WebKit} style as implemented by \texttt{clang-format}. There are also
+% We want code examples to have line numbers on the left
+\lstset{numbers=left, numberstyle=\ttfamily}
+
+Programs written for CSSE2310/CSSE7231 assignments must follow the style guidelines outlined in this document. The formatting requirements are based on the \texttt{WebKit} style as implemented by \texttt{clang-format}. There are also
 additional requirements beyond this, e.g. naming conventions and function and line length constraints. 
+
+\textcolor{red}{Description of what is implemented automatically using \texttt{clang-format} and what is not. Also mention that not all details are here.}
 
 The WebKit code style guidelines can be found at \url{https://webkit.org/code-style-guidelines/} but it should be
 noted that requirements not enforced by \texttt{clang-format} and not described as a requirement in this document
@@ -89,7 +94,7 @@ Where the style guide is open to interpretation, the choices you make regarding 
 must be consistent throughout your project.
 
 This style guide applies only to C source files, i.e. \texttt{.c} and \texttt{.h} files. It does not apply to other files
-that must be created for CSSE2310/7231, e.g. \texttt{Makefile}s. 
+that must be created for CSSE2310/CSSE7231, e.g. \texttt{Makefile}s. 
 
 \section{Indentation}
 \subsection{Tabs vs spaces}
@@ -98,52 +103,179 @@ inside string constants -- use the escape sequence \texttt{\textbackslash t} ins
 
 \subsection{Indent size}
 Indentation must occur in multiples of four spaces. You must indent once each time a statement is nested inside the
-body of another statement. 
+body of another statement.
+
+\nolinenumbers
+\lstset{caption={Correct indentation for if statement and loop}}
+\begin{lstlisting}[mathescape=true]
+if (day == 31) { // the following statements are indented by 4 spaces
+    monthTotal = 0;
+    for (week = 0; week < 4; ++week) { // following statement indented by 4
+        monthTotal += receipts[week];
+    }
+}
+\end{lstlisting}
+\linenumbers
+
+\subsection{Comments}
+Comments on a line by themselves (i.e. not following code) must be indented the same as code.
+
+For \texttt{//} comments that start after a statement, continuation lines can either be aligned with the \texttt{//} or the code.
+
+\nolinenumbers
+\lstset{caption={Correct indentation: chained if-else -- also showing comment indentation}}
+\begin{lstlisting}
+if (month >= 1 && month <= 3) {
+    // comments on a line by themselves must have the same indenting level
+    // as code would have
+    quarter = 1;
+} else if (month >= 4 && month <= 6) {
+    quarter = 2; // multi-line comments can be aligned like this - i.e. the
+                 // comment continuation lines up with the start of the comment
+                 // in the line above
+} else if (month >= 7 && month <= 9) {
+    quarter = 3; // multi-line comments can also be aligned like this - i.e
+    // the continuation is lined up with the start of the previous statement
+} else {
+    quarter = 4;
+    /* Comments that start with /* must start at the same indenting level
+       as code would, but
+                continuation lines
+                        can use any level
+                                of indenting */
+}
+\end{lstlisting}
+\linenumbers
 
 \subsection{Continuation lines}
 Continuation lines (i.e. where a statement doesn't fit on one line) must be indented four spaces 
-beyond the first line of the statement. (In other words, if a statement spills on to a third line, the indentation 
+beyond the first line of the statement. 
+
+If a split happens at an operator (\texttt{=}, \texttt{+}, etc.) then the operator will be on the continuation line. 
+This makes it clearer that the line is a continuation line. 
+
+Note that \texttt{clang-format} will split lines so as to group expressions together, e.g. if the expression after an assignment operator will fit on the continuation line then the whole expression will be placed on that line rather than splitting in the 
+middle of the expression itself. The details of how \texttt{clang-format} will split lines are too involved to cover here.
+
+If a statement spills on to a third line, the indentation 
 level of the third line will be the same as the second line -- i.e. four spaces beyond that of the first line of 
-the statement.)
+the statement -- unless this is a nested expression as described in the next section.
+
+\nolinenumbers
+\lstset{caption={Continuation line indentation}}
+\begin{lstlisting}
+int physAddress
+    = page_table_lookup(vAddress / PAGE_SIZE) + (vAddress % PAGE_SIZE);
+int physicalAddress = page_table_lookup(virtualAddress / PAGE_SIZE)
+    + (virtualAddress % PAGE_SIZE);
+int physicalAddress
+    = page_table_lookup(virtualAddressVariableWithLongerName / PAGE_SIZE)
+    + (virtualAddress % PAGE_SIZE);
+int result1
+    = function_that_takes_two_fn_parameters(parameter_one, parameter_two);
+int result2 = function_that_takes_three_parameters(
+    parameter_one, parameter_two, param3);
+int result3 = function_that_takes_even_more_parameters(parameter_one,
+    parameter_two, parameter_three, parameter_four, parameter_five,
+    parameter_six, parameter_seven, parameter_eight);
+int result = function_one(
+    arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+int result = function_two(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9,
+    arg10, arg11, arg12, arg13, arg14);
+while (!isLoopFinished(argument1) && !isLoopFinished(argument2)
+    && !isLoopFinished(argument3)) {
+    process(value);
+}
+\end{lstlisting}
+\linenumbers
+
+\subsection{Continuation lines for nested expressions}
+
+Where expressions are nested (i.e. parentheses are used or functions are called in arguments to functions)
+then continuation lines are further indented to indicate the nesting. 
+
+\nolinenumbers
+\lstset{caption={Continuation lines for nested expressions}}
+\begin{lstlisting}
+int result = function_one(arg1, arg2, arg3,
+    function_two(arg4, arg5, arg6, arg7, arg8,
+        function_three(arg9, arg10, arg11, arg12)));
+if (conditionOne
+    && (conditionTwo || conditionThree || conditionFour || conditionFive
+        || conditionSix)) {
+    printf("true\n");
+}
+\end{lstlisting}
+\linenumbers
+
+\subsection{For loops} 
+Where continuation lines are needed for a for loop, \texttt{clang-format} indents as per the following examples. This can get a bit confusing -- it is easier to just let the tool do the formatting for you in this situation. 
+
+\nolinenumbers
+\lstset{caption={Continuation lines for for loops}}
+\begin{lstlisting}
+// For loop where parenthesised expressions fit on one line
+for (i = 0; i < count; i++) {
+    // Statements within the loop are indented by four
+    do_stuff();
+}
+// For loop where expressions do not fit on one line. The start of the next
+// expression is indented by five characters to align with the first expression.
+for (loopCount = 0; loopCount < numberOfElementsToCheck && !isStopCondition;
+     loopCount++) {
+    // Statements within the loop are still indented by four
+    process(item[loopCount]);
+}
+// If the initialisation expression (an assignment expression) overflows
+// then it is indented by 9. An overflowing test expression is not further
+// indented if it is not nested
+for (var = initial_value_of_loop_counter(argument1, argument2)
+         + adjustment_factor_to_apply();
+     var < numberOfElementsToCheck && haveNotFinishedYet()
+     && definitelyHaveNotFinishedYet();
+     var++) {
+    process();
+}
+// If the initialisation expression uses the comma operator then
+// indentation is by 4 characters.
+for (loopCountVariableWithVeryLongName = 0,
+    anotherVariableWithLongNameInitialisedHere = 2;
+     // Test expression indented by 5 to line up with initialisation expression.
+     // The subexpression is further indented by 4.
+     loopCount < numberOfElementsToCheck
+     && !(isStopConditionA || isStopConditionB || isStopConditionC
+         || isStopConditionC);
+     loopCount++) {
+    process();
+}
+\end{lstlisting}
+\linenumbers
+
+
+
+\subsection{Continuation lines for braced initialiser lists}
+
+
+\subsection{Continuation lines for nested expressions and initialisers}
+
+Where an expression or initialiser is nested (e.g. has subcomponents grouped by parentheses or braces) then further continuation lines must be indented
 
 \subsection{Continuation lines for boolean expressions}
-Boolean expressions that span multiple lines, must (a) have their operators on the left side of the line, and (b) align
+Boolean expressions that span multiple lines, must (a) have their operators (i.e. \texttt{||} or \texttt{\&\&}) on the left side of the line, and (b) align
 operators at the same level in the expression, and (c) further indent nested expressions if required (i.e. those at a lower
 level in the expression). 
+
 
 \subsection{Continuation lines for function calls and braced initialiser lists}
 If an initialisation list or the arguments to a function call don't fit on one line, but would completely fit on the next line (indented by four spaces) then they shall all be placed on the next line. If they will not all fit on the next line then they
 must start on the original line and then continue to the next line.
 
+
+
 \subsection{Switch statements}
 \texttt{case} labels must line up with the enclosing \texttt{switch} statement. The statements associated with a \texttt{case}
 label must be on a newline and indented by four spaces beyond the start of the \texttt{case} label.
 
-\subsection{Indentation examples}
-\lstset{numbers=left, numberstyle=\ttfamily, caption={Correct indentation for if statement and loop}, label={lst:indentation-examples}}
-
-\nolinenumbers
-\begin{lstlisting}[mathescape=true]
-if (day == 31) { // the following statements are indented by four spaces
-    monthTotal = 0;
-    for (week = 0; week < 4; ++week) { // the following statement is indented by four spaces
-        monthTotal += receipts[week];
-    }
-}
-\end{lstlisting}
-
-\lstset{caption={Correct indentation: chained if-else}, label={lst:indentation-if-else}}
-\begin{lstlisting}
-if (month >= 1 && month <= 3) {
-    quarter = 1;
-} else if (month >= 4 && month <= 6) {
-    quarter = 2;
-} else if (month >= 7 && month <= 9) {
-    quarter = 3;
-} else {
-    quarter = 4;
-}
-\end{lstlisting}
 
 \lstset{caption={Correct indentation: switch statement}, label={lst:indentation-switch}}
 \begin{lstlisting}
