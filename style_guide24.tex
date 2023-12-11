@@ -7,6 +7,7 @@
 \usepackage{wrapfig}
 \usepackage{multicol}
 \usepackage{fancyhdr}
+\usepackage{soul}
 \usepackage[right, displaymath, mathlines]{lineno}
 
 %\usepackage{courier}
@@ -251,30 +252,9 @@ for (loopCountVariableWithVeryLongName = 0,
 \end{lstlisting}
 \linenumbers
 
-
-
-\subsection{Continuation lines for braced initialiser lists}
-
-
-\subsection{Continuation lines for nested expressions and initialisers}
-
-Where an expression or initialiser is nested (e.g. has subcomponents grouped by parentheses or braces) then further continuation lines must be indented
-
-\subsection{Continuation lines for boolean expressions}
-Boolean expressions that span multiple lines, must (a) have their operators (i.e. \texttt{||} or \texttt{\&\&}) on the left side of the line, and (b) align
-operators at the same level in the expression, and (c) further indent nested expressions if required (i.e. those at a lower
-level in the expression). 
-
-
-\subsection{Continuation lines for function calls and braced initialiser lists}
-If an initialisation list or the arguments to a function call don't fit on one line, but would completely fit on the next line (indented by four spaces) then they shall all be placed on the next line. If they will not all fit on the next line then they
-must start on the original line and then continue to the next line.
-
-
-
 \subsection{Switch statements}
 \texttt{case} labels must line up with the enclosing \texttt{switch} statement. The statements associated with a \texttt{case}
-label must be on a newline and indented by four spaces beyond the start of the \texttt{case} label.
+label must be on a new line and indented by four spaces beyond the start of the \texttt{case} label.
 
 
 \lstset{caption={Correct indentation: switch statement}, label={lst:indentation-switch}}
@@ -298,8 +278,157 @@ default:
 
 \linenumbers
 
+\subsection{Continuation lines for braced initialiser lists}
+Initialiser lists (for arrays or structs) follow the rules above -- except where struct member names are used in an initialiser list that does not fit on one line. See the example below.
 
+\nolinenumbers
+\lstset{caption={Continuation lines for array and struct initialiser lists}}
+\begin{lstlisting}
+// Initialiser list fits on the same line as the declaration:
+double d1[10] = { 1.11111111, 2.222222, 3.333333, 4.4444444, 5.555555 };
+struct Parameters1 param1 = { .initial = NULL, .end = NULL, .runningCount = 0 };
+// Initialiser list fits by itself on a continuation line:
+double d2[10]
+    = { 1.11111111, 2.222222, 3.333333, 4.4444444, 5.555555, 6.666666 };
+struct Parameters2 param2
+    = { .initial = NULL, .end = NULL, .runningCount = 0, .total = 0 };
+// Initialiser list doesn't fit on a single line (or continuation line):
+double d3[10] = { 1.11111111, 2.222222, 3.333333, 4.4444444, 5.555555, 6.666666,
+    7.777777, 8.888888, 9.9999999 };
+struct Parameters3 param3 = { NULL, NULL, 0, NULL, 0, false, true, 0, NULL,
+    NULL, NULL, NULL, NULL, NULL, NULL };
+// Named lists are formatted differently if they don't fit on one line:
+struct Parameters4 param4 = { .initial = NULL,
+    .end = NULL,
+    .runningCount = 0,
+    .fileName = NULL,
+    .limit = 0,
+    .upper = false,
+    .lower = true,
+    .length = 0,
+    .userName = NULL };
+\end{lstlisting}
+\linenumbers
 
+\section{Spacing}
+
+\subsection{Unary operators}
+There should be no spaces between unary operators and their operands.
+
+\nolinenumbers
+\lstset{caption={Spacing around unary operators}}
+\begin{lstlisting}
+i++; // No space between i and ++
+int j = -i; // No space between - and i
+\end{lstlisting}
+\linenumbers
+
+\subsection{Binary and ternary operators}
+There should be spaces on both sides of binary or ternary operators.
+
+\nolinenumbers
+\lstset{caption={Spacing around binary and ternary operators}}
+\begin{lstlisting}
+// Note the spaces around * + && || ^ & | > ? : in these examples
+int y = m * x + c;
+bool isValid = exist(filename) && (someCondition || otherCondition);
+regValue = (a ^ b) & (c | d);
+max = (a > b) ? a : b;
+\end{lstlisting}
+\linenumbers
+
+\subsection{Control statements and functions}
+There should be a single space between a control statement (e.g. \texttt{if}, \texttt{for}, \texttt{while}, etc.) and 
+the following open parenthesis. There should not be any spaces between a function name and the following open parenthesis, nor between a parenthesis and the following content. There should be no spaces before commas or semicolons. 
+
+\nolinenumbers
+\lstset{caption={Spacing in control statements and function calls}}
+\begin{lstlisting}
+for (int i = 0; i < 10; i++) {
+    while (do_something(i, calc_value(i))) {
+        do_something_else();
+    }
+}
+\end{lstlisting}
+\linenumbers
+
+\hl{Spaces in initialisers}
+
+\section{Line Breaks}
+\subsection{Line termination character}
+Each line (including the last line in a file) should end with a newline character (\texttt{\textbackslash n} -- also known as a linefeed character, i.e. ASCII code 10). Do not use carriage returns (\texttt{\textbackslash r}, ASCII code 13).
+
+\subsection{One statement per line}
+
+Each statement should be on its own line.
+\nolinenumbers
+\lstset{caption={Line breaks between statements}}
+\begin{lstlisting}
+// Not: i++; j++
+i++;
+j++;
+// Not: if(a) b();  nor if(a) {b();}
+if (a) {
+    b();
+}
+\end{lstlisting}
+\linenumbers
+
+\subsection{Multiple assignment operators in the one statement}
+
+Do not use multiple assignment operators in the one statement -- split these up into multiple statements.
+
+\nolinenumbers
+\lstset{caption={Multiple assignments}}
+\begin{lstlisting}
+// Not: a = b = expr();
+a = expr();
+b = a;
+\end{lstlisting}
+\linenumbers
+
+\hl{Don't use the comma operator to separate statements where a semicolon can be used.}
+
+%%%%%
+\section{Braces}
+
+\subsection{Function definitions}
+The opening brace in a function definition must be placed on a line by itself.
+\nolinenumbers
+\lstset{caption={Opening brace for function definitions}}
+\begin{lstlisting}
+int fn(void)
+{
+    // statements here
+}
+\end{lstlisting}
+\linenumbers
+
+\subsection{Control statements}
+The statements associated with control statements must be enclosed in braces, even if there is only one such statement. The open brace must be at the end of the line before the enclosed statement. The close brace must appear on a line by itself (unless an \texttt{else} clause follows an \texttt{if} statement, in which case the \texttt{else} must follow the close brace).
+\nolinenumbers
+\lstset{caption={Braces for control statements}}
+\begin{lstlisting}
+// Not if(condition) do_something(); OR if(condition) { do_something(); }
+if (condition) {
+    do_something();
+}
+while (a < b) {
+    a = do_something_else();
+}
+if (a) {
+    do_this();
+} else if (b) {
+    do_that();
+} else {
+    do_other();
+}
+\end{lstlisting}
+\linenumbers
+
+\hl{Spaces around * in declarations}
+
+\hl{Spaces before // comments at EOL}
 
 \section{Naming Conventions}
 \subsection{Variable names}
@@ -312,11 +441,15 @@ the name indicate the type of the variable. Examples include \texttt{int iCount;
 \texttt{double dbPi}.}
  is NOT to be used.
 It is permissible to use names like \texttt{i} or \texttt{j} for integer loop counters.
+\nolinenumbers
+\lstset{caption={Examples of variable names}}
+\begin{lstlisting}
+int count, wordLength, cursor, fileHandle;
+char* htmlMethodName; // Note - lowercase even for an acryonym
+struct Book book; // struct Book is the type name, book is the variable name
+\end{lstlisting}
+\linenumbers
 
-Example variable names: \texttt{book}, \texttt{newCount}, \texttt{setWordLength}, \texttt{dictionaryLength}, 
-\texttt{wordList}, \texttt{cursor}, \texttt{fileHandle}
-
-Unacceptable variable names (use of Hungarian notation): \texttt{int iCount; int* ptrNum; double dAverage;}
 
 It is permissible to use variable names like \texttt{str} to indicate a generic string if, for instance, a function does take a generic
 string parameter. (This is permissible even though the name indicates the type.) However, if the string variable always has a particular meaning in the context of your program/function then a more appropriate variable name should

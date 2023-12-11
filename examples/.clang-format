@@ -1,0 +1,4 @@
+BasedOnStyle: WebKit
+ColumnLimit: 80
+LineEnding: LF
+InsertNewlineAtEOF: true
