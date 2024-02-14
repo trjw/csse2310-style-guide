@@ -239,6 +239,12 @@ Do not use multiple assignment operators in the one statement -- split these up 
 \lstinputlisting{examples/line2.c}
 \linenumbers
 
+\subsection{Separation between blocks}
+Function, struct and enum definitions must be separated from other code blocks by exactly one blank line. No separation is
+required between an immediately preceding comment and such a definition but a blank line must be present before the comment.
+
+See \hl{Example 18} below.
+
 \hl{Don't use the comma operator to separate statements where a semicolon can be used.}
 
 % Braces
