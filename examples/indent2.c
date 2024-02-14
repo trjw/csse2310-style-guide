@@ -8,7 +8,8 @@ if (month >= 1 && month <= 3) {
                  // in the line above
 } else if (month >= 7 && month <= 9) {
     quarter = 3; // multi-line comments can also be aligned like this - i.e
-    // the continuation is lined up with the start of the previous statement
+    // the continuation is lined up with the start of the previous
+    // statement
 } else {
     quarter = 4;
     /* Comments that start with /* must start at the same indenting level

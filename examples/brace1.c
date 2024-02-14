@@ -1,3 +1,4 @@
-int fn(void) {
+int fn(void)
+{
     // statements here
 }

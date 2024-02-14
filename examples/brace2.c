@@ -1,11 +1,11 @@
 // Not if(condition) do_something(); OR if(condition) { do_something(); }
-if(condition) {
+if (condition) {
     do_something();
 }
-while(a<b) {
+while (a < b) {
     a = do_something_else();
 }
-if(a) {
+if (a) {
     do_this();
 } else if (b) {
     do_that();
