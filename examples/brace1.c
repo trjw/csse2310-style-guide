@@ -1,4 +1,2 @@
 int fn(void)
-{
-    // statements here
-}
+{ // statements here }
