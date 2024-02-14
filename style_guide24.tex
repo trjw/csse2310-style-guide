@@ -100,22 +100,16 @@ that must be created for CSSE2310/CSSE7231, e.g. \texttt{Makefile}s.
 \section{Indentation}
 \subsection{Tabs vs spaces}
 Use spaces not tab characters to implement indentation. C source files must not contain tab characters. (This includes
-inside string constants -- use the escape sequence \texttt{\textbackslash t} instead.)
+inside string constants -- use the escape sequence \texttt{\textbackslash t} instead.) \hl{Last bit not checked by clang-format}
 
 \subsection{Indent size}
 Indentation must occur in multiples of four spaces. You must indent once each time a statement is nested inside the
 body of another statement.
 
+% Example indent1
 \nolinenumbers
 \lstset{caption={Correct indentation for if statement and loop}}
-\begin{lstlisting}[mathescape=true]
-if (day == 31) { // the following statements are indented by 4 spaces
-    monthTotal = 0;
-    for (week = 0; week < 4; ++week) { // following statement indented by 4
-        monthTotal += receipts[week];
-    }
-}
-\end{lstlisting}
+\lstinputlisting{examples/indent1.c}
 \linenumbers
 
 \subsection{Comments}
@@ -123,71 +117,29 @@ Comments on a line by themselves (i.e. not following code) must be indented the 
 
 For \texttt{//} comments that start after a statement, continuation lines can either be aligned with the \texttt{//} or the code.
 
+% Example indent2
 \nolinenumbers
 \lstset{caption={Correct indentation: chained if-else -- also showing comment indentation}}
-\begin{lstlisting}
-if (month >= 1 && month <= 3) {
-    // comments on a line by themselves must have the same indenting level
-    // as code would have
-    quarter = 1;
-} else if (month >= 4 && month <= 6) {
-    quarter = 2; // multi-line comments can be aligned like this - i.e. the
-                 // comment continuation lines up with the start of the comment
-                 // in the line above
-} else if (month >= 7 && month <= 9) {
-    quarter = 3; // multi-line comments can also be aligned like this - i.e
-    // the continuation is lined up with the start of the previous statement
-} else {
-    quarter = 4;
-    /* Comments that start with /* must start at the same indenting level
-       as code would, but
-                continuation lines
-                        can use any level
-                                of indenting */
-}
-\end{lstlisting}
-\linenumbers
+\lstinputlisting{examples/indent2.c}
+	\linenumbers
 
 \subsection{Continuation lines}
-Continuation lines (i.e. where a statement doesn't fit on one line) must be indented four spaces 
+Continuation lines (i.e. where a statement doesn't fit on one line) must be indented eight spaces 
 beyond the first line of the statement. 
 
 If a split happens at an operator (\texttt{=}, \texttt{+}, etc.) then the operator will be on the continuation line. 
 This makes it clearer that the line is a continuation line. 
 
-Note that \texttt{clang-format} will split lines so as to group expressions together, e.g. if the expression after an assignment operator will fit on the continuation line then the whole expression will be placed on that line rather than splitting in the 
-middle of the expression itself. The details of how \texttt{clang-format} will split lines are too involved to cover here.
+Expressions should be grouped together where possible, e.g. if the expression after an assignment operator will fit on the continuation line then the whole expression will be placed on that line rather than splitting in the 
+middle of the expression itself. Similarly
 
 If a statement spills on to a third line, the indentation 
-level of the third line will be the same as the second line -- i.e. four spaces beyond that of the first line of 
+level of the third line will be the same as the second line -- i.e. eight spaces beyond that of the first line of 
 the statement -- unless this is a nested expression as described in the next section.
 
 \nolinenumbers
 \lstset{caption={Continuation line indentation}}
-\begin{lstlisting}
-int physAddress
-    = page_table_lookup(vAddress / PAGE_SIZE) + (vAddress % PAGE_SIZE);
-int physicalAddress = page_table_lookup(virtualAddress / PAGE_SIZE)
-    + (virtualAddress % PAGE_SIZE);
-int physicalAddress
-    = page_table_lookup(virtualAddressVariableWithLongerName / PAGE_SIZE)
-    + (virtualAddress % PAGE_SIZE);
-int result1
-    = function_that_takes_two_fn_parameters(parameter_one, parameter_two);
-int result2 = function_that_takes_three_parameters(
-    parameter_one, parameter_two, param3);
-int result3 = function_that_takes_even_more_parameters(parameter_one,
-    parameter_two, parameter_three, parameter_four, parameter_five,
-    parameter_six, parameter_seven, parameter_eight);
-int result = function_one(
-    arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-int result = function_two(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9,
-    arg10, arg11, arg12, arg13, arg14);
-while (!isLoopFinished(argument1) && !isLoopFinished(argument2)
-    && !isLoopFinished(argument3)) {
-    process(value);
-}
-\end{lstlisting}
+\lstinputlisting{examples/indent3.c}
 \linenumbers
 
 \subsection{Continuation lines for nested expressions}
@@ -197,59 +149,16 @@ then continuation lines are further indented to indicate the nesting.
 
 \nolinenumbers
 \lstset{caption={Continuation lines for nested expressions}}
-\begin{lstlisting}
-int result = function_one(arg1, arg2, arg3,
-    function_two(arg4, arg5, arg6, arg7, arg8,
-        function_three(arg9, arg10, arg11, arg12)));
-if (conditionOne
-    && (conditionTwo || conditionThree || conditionFour || conditionFive
-        || conditionSix)) {
-    printf("true\n");
-}
-\end{lstlisting}
+\lstinputlisting{examples/indent4.c}
 \linenumbers
 
 \subsection{For loops} 
-Where continuation lines are needed for a for loop, \texttt{clang-format} indents as per the following examples. This can get a bit confusing -- it is easier to just let the tool do the formatting for you in this situation. 
+Where continuation lines are needed for a for loop, indents should be made as per the following examples. If this is too
+confusing to follow, you can just rely on \texttt{clang-format} to do the formatting for you. 
 
 \nolinenumbers
 \lstset{caption={Continuation lines for for loops}}
-\begin{lstlisting}
-// For loop where parenthesised expressions fit on one line
-for (i = 0; i < count; i++) {
-    // Statements within the loop are indented by four
-    do_stuff();
-}
-// For loop where expressions do not fit on one line. The start of the next
-// expression is indented by five characters to align with the first expression.
-for (loopCount = 0; loopCount < numberOfElementsToCheck && !isStopCondition;
-     loopCount++) {
-    // Statements within the loop are still indented by four
-    process(item[loopCount]);
-}
-// If the initialisation expression (an assignment expression) overflows
-// then it is indented by 9. An overflowing test expression is not further
-// indented if it is not nested
-for (var = initial_value_of_loop_counter(argument1, argument2)
-         + adjustment_factor_to_apply();
-     var < numberOfElementsToCheck && haveNotFinishedYet()
-     && definitelyHaveNotFinishedYet();
-     var++) {
-    process();
-}
-// If the initialisation expression uses the comma operator then
-// indentation is by 4 characters.
-for (loopCountVariableWithVeryLongName = 0,
-    anotherVariableWithLongNameInitialisedHere = 2;
-     // Test expression indented by 5 to line up with initialisation expression.
-     // The subexpression is further indented by 4.
-     loopCount < numberOfElementsToCheck
-     && !(isStopConditionA || isStopConditionB || isStopConditionC
-         || isStopConditionC);
-     loopCount++) {
-    process();
-}
-\end{lstlisting}
+\lstinputlisting{examples/indent5.c}
 \linenumbers
 
 \subsection{Switch statements}
@@ -258,24 +167,7 @@ label must be on a new line and indented by four spaces beyond the start of the 
 
 
 \lstset{caption={Correct indentation: switch statement}, label={lst:indentation-switch}}
-\begin{lstlisting}
-switch (month) {
-case 2:
-    daysInMonth = 28;
-    break;
-case 4:
-case 6:
-case 9:
-case 11:
-    daysInMonth = 30;
-    break;
-default:
-    daysInMonth = 31;
-    break;
-}
-\end{lstlisting}
-
-
+\lstinputlisting{examples/indent6.c}
 \linenumbers
 
 \subsection{Continuation lines for braced initialiser lists}
@@ -283,31 +175,7 @@ Initialiser lists (for arrays or structs) follow the rules above -- except where
 
 \nolinenumbers
 \lstset{caption={Continuation lines for array and struct initialiser lists}}
-\begin{lstlisting}
-// Initialiser list fits on the same line as the declaration:
-double d1[10] = { 1.11111111, 2.222222, 3.333333, 4.4444444, 5.555555 };
-struct Parameters1 param1 = { .initial = NULL, .end = NULL, .runningCount = 0 };
-// Initialiser list fits by itself on a continuation line:
-double d2[10]
-    = { 1.11111111, 2.222222, 3.333333, 4.4444444, 5.555555, 6.666666 };
-struct Parameters2 param2
-    = { .initial = NULL, .end = NULL, .runningCount = 0, .total = 0 };
-// Initialiser list doesn't fit on a single line (or continuation line):
-double d3[10] = { 1.11111111, 2.222222, 3.333333, 4.4444444, 5.555555, 6.666666,
-    7.777777, 8.888888, 9.9999999 };
-struct Parameters3 param3 = { NULL, NULL, 0, NULL, 0, false, true, 0, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL };
-// Named lists are formatted differently if they don't fit on one line:
-struct Parameters4 param4 = { .initial = NULL,
-    .end = NULL,
-    .runningCount = 0,
-    .fileName = NULL,
-    .limit = 0,
-    .upper = false,
-    .lower = true,
-    .length = 0,
-    .userName = NULL };
-\end{lstlisting}
+\lstinputlisting{examples/indent7.c}
 \linenumbers
 
 \section{Spacing}
@@ -317,10 +185,7 @@ There should be no spaces between unary operators and their operands.
 
 \nolinenumbers
 \lstset{caption={Spacing around unary operators}}
-\begin{lstlisting}
-i++; // No space between i and ++
-int j = -i; // No space between - and i
-\end{lstlisting}
+\lstinputlisting{examples/space1.c}
 \linenumbers
 
 \subsection{Binary and ternary operators}
@@ -328,13 +193,7 @@ There should be spaces on both sides of binary or ternary operators.
 
 \nolinenumbers
 \lstset{caption={Spacing around binary and ternary operators}}
-\begin{lstlisting}
-// Note the spaces around * + && || ^ & | > ? : in these examples
-int y = m * x + c;
-bool isValid = exist(filename) && (someCondition || otherCondition);
-regValue = (a ^ b) & (c | d);
-max = (a > b) ? a : b;
-\end{lstlisting}
+\lstinputlisting{examples/space2.c}
 \linenumbers
 
 \subsection{Control statements and functions}
@@ -343,18 +202,23 @@ the following open parenthesis. There should not be any spaces between a functio
 
 \nolinenumbers
 \lstset{caption={Spacing in control statements and function calls}}
-\begin{lstlisting}
-for (int i = 0; i < 10; i++) {
-    while (do_something(i, calc_value(i))) {
-        do_something_else();
-    }
-}
-\end{lstlisting}
+\lstinputlisting{examples/space3.c}
 \linenumbers
 
 \hl{Spaces in initialisers}
 
-\section{Line Breaks}
+\subsection{Pointer declarations}
+When pointers are declared, the \texttt{*} should be associated with the type, not the variable name -- unless multiple 
+pointers are being declared together.
+\nolinenumbers
+\lstset{caption={Spacing in control statements and function calls}}
+\lstinputlisting{examples/space4.c}
+\linenumbers
+
+\subsection{Spaces before comments}
+Where a comment follows code on a line then there must only be a single space between the code and the comment. See examples \hl{8 and ?} above.
+
+\section{Line Breaks and Separation Between Statements}
 \subsection{Line termination character}
 Each line (including the last line in a file) should end with a newline character (\texttt{\textbackslash n} -- also known as a linefeed character, i.e. ASCII code 10). Do not use carriage returns (\texttt{\textbackslash r}, ASCII code 13).
 
@@ -363,15 +227,7 @@ Each line (including the last line in a file) should end with a newline characte
 Each statement should be on its own line.
 \nolinenumbers
 \lstset{caption={Line breaks between statements}}
-\begin{lstlisting}
-// Not: i++; j++
-i++;
-j++;
-// Not: if(a) b();  nor if(a) {b();}
-if (a) {
-    b();
-}
-\end{lstlisting}
+\lstinputlisting{examples/line1.c}
 \linenumbers
 
 \subsection{Multiple assignment operators in the one statement}
@@ -380,55 +236,28 @@ Do not use multiple assignment operators in the one statement -- split these up 
 
 \nolinenumbers
 \lstset{caption={Multiple assignments}}
-\begin{lstlisting}
-// Not: a = b = expr();
-a = expr();
-b = a;
-\end{lstlisting}
+\lstinputlisting{examples/line2.c}
 \linenumbers
 
 \hl{Don't use the comma operator to separate statements where a semicolon can be used.}
 
-%%%%%
+% Braces
 \section{Braces}
 
 \subsection{Function definitions}
-The opening brace in a function definition must be placed on a line by itself.
+The opening brace in a function definition must be placed on a line by itself. The matching closing brace must be at
+the start of a line also.
 \nolinenumbers
 \lstset{caption={Opening brace for function definitions}}
-\begin{lstlisting}
-int fn(void)
-{
-    // statements here
-}
-\end{lstlisting}
+\lstinputlisting{examples/brace1.c}
 \linenumbers
 
 \subsection{Control statements}
 The statements associated with control statements must be enclosed in braces, even if there is only one such statement. The open brace must be at the end of the line before the enclosed statement. The close brace must appear on a line by itself (unless an \texttt{else} clause follows an \texttt{if} statement, in which case the \texttt{else} must follow the close brace).
 \nolinenumbers
 \lstset{caption={Braces for control statements}}
-\begin{lstlisting}
-// Not if(condition) do_something(); OR if(condition) { do_something(); }
-if (condition) {
-    do_something();
-}
-while (a < b) {
-    a = do_something_else();
-}
-if (a) {
-    do_this();
-} else if (b) {
-    do_that();
-} else {
-    do_other();
-}
-\end{lstlisting}
+\lstinputlisting{examples/brace2.c}
 \linenumbers
-
-\hl{Spaces around * in declarations}
-
-\hl{Spaces before // comments at EOL}
 
 \section{Naming Conventions}
 \subsection{Variable names}
@@ -443,17 +272,14 @@ the name indicate the type of the variable. Examples include \texttt{int iCount;
 It is permissible to use names like \texttt{i} or \texttt{j} for integer loop counters.
 \nolinenumbers
 \lstset{caption={Examples of variable names}}
-\begin{lstlisting}
-int count, wordLength, cursor, fileHandle;
-char* htmlMethodName; // Note - lowercase even for an acryonym
-struct Book book; // struct Book is the type name, book is the variable name
-\end{lstlisting}
+\lstinputlisting{examples/name1.c}
 \linenumbers
 
 
 It is permissible to use variable names like \texttt{str} to indicate a generic string if, for instance, a function does take a generic
 string parameter. (This is permissible even though the name indicates the type.) However, if the string variable always has a particular meaning in the context of your program/function then a more appropriate variable name should
 be used, e.g. \texttt{name} or \texttt{fileName}.
+
 \subsection{File names}
 \label{sec:naming-files}
 C source file names will begin with a lowercase letter and names with multiple words 
@@ -473,50 +299,20 @@ Examples: \texttt{MAX\_BIT}, \texttt{DEFAULT\_SPEED}
 
 \subsection{Function names}
 Function names should all be lowercase and use underscores to separate multiple words.
-
-Example function names: \texttt{main()}, \texttt{reset\_secret\_string()}
-
 Note that function pointers are variables and should use variable naming, as per~\ref{sec:naming-variable}.
-
-Example: \texttt{int (*sortingFunction)(void*, void*) = alpha_sort;}\newline
-where \texttt{sortingFunction} is the name of a variable and \texttt{alpha_sort} is the name of a function.
-
-Uppercase letters and numbers may be used in function names where that usage is conventional (e.g. use of a standard 
-abbreviation) and the function name begins with a lowercase letter.
-
-Example function names: \texttt{calculate\_GPA()}, \texttt{check_W3C_compliance()}
+\nolinenumbers
+\lstset{caption={Examples of function names and a function pointer}}
+\lstinputlisting{examples/name2.c}
+\linenumbers
 
 \subsection{Type names}
 \label{sec:type-names}
-Type names (i.e. from typedefs), structure and union names should begin with capital letters 
+Type names (i.e. from typedefs), struct and union names should begin with capital letters 
 and use initial capitals for subsequent words and no underscores. Members within structs and unions should
 follow the variable naming convention as per section~\ref{sec:naming-variable}.
-
-Example typedef/structure/union names: \texttt{Contact}, \texttt{FileData}, \texttt{struct Node}
-
 \nolinenumbers
-\begin{multicols}{2}
-\lstset{caption={Struct naming and declaration}, label={lst:naming-struct}}
-\begin{lstlisting}
-/* A player within the game */
-struct Player {
-    char *name;
-    int score;
-    struct Player *next;
-};
-\end{lstlisting}
-\vfill
-\columnbreak
-
-\lstset{caption={Typedef struct naming and declaration}, label={lst:naming-typedef-struct}}
-\begin{lstlisting}
-/* Point (coordinate) */
-typedef struct {
-    int x;
-    int y;
-} Point;
-\end{lstlisting}
-\end{multicols}
+\lstset{caption={Examples of type declarations}}
+\lstinputlisting{examples/name3.c}
 \linenumbers
 
 \subsection{Enumerated Types}
@@ -524,28 +320,11 @@ Enumerated types must be named in the same way as any other type (see~\ref{sec:t
 Members of an enumerated type must follow the same naming as constants (see~\ref{sec:naming-constants}).
 
 \nolinenumbers
-\begin{multicols}{2}
-\lstset{caption={Enumerated type naming and horizontal layout}, label={lst:enum-horizontal}}
-\begin{lstlisting}
-/* Card suits */
-enum CardSuits {
-    CLUBS, DIAMONDS, HEARTS, SPADES
-};
-\end{lstlisting}
-\vfill
-\columnbreak
-
-\lstset{caption={Enumerated type naming and vertical layout, with explicit value selection}, label={lst:enum-vertical}}
-\begin{lstlisting}
-// Program exit codes
-enum ExitCodes {
-    EXIT_SUCCESS = 0,
-    EXIT_ARGS = 1,
-    EXIT_FAILURE = 2
-};
-\end{lstlisting}
-\end{multicols}
+\lstset{caption={Examples of \texttt{enum} declarations}}
+\lstinputlisting{examples/name4.c}
 \linenumbers
+
+
 
 \section{Comments}
 Comments should be generously added to describe the intent of the code.
