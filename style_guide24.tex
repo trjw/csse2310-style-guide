@@ -9,12 +9,16 @@
 \usepackage{fancyhdr}
 \usepackage{soul}
 \usepackage[right, displaymath, mathlines]{lineno}
+\usepackage{graphicx}
+\usepackage{hyperref}
 
 %\usepackage{courier}
 \setlength{\columnsep}{1cm}
 
+% Start section counting at 0
+\setcounter{section}{-1}
+
 % Create a nice looking tilde
-\usepackage[hidelinks=true]{hyperref}
 \newcommand{\propertilde}{\nolinkurl{~}}
 
 % Setup style for programming excerpts
@@ -44,6 +48,7 @@
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
 \newcommand{\versionNum}{24.01}
+\newcommand{\icon}[1]{\raisebox{-3pt}{\includegraphics[height=12pt]{icons/#1.png}}}
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
 \author{The University of Queensland\\School of Information Technology and Electrical Engineering}
@@ -97,22 +102,34 @@ must be consistent throughout your project.
 This style guide applies only to C source files, i.e. \texttt{.c} and \texttt{.h} files. It does not apply to other files
 that must be created for CSSE2310/CSSE7231, e.g. \texttt{Makefile}s. 
 
+% Notation
+\section{Notation}
+The following icons are used to indicate which tools (or not) can be used to check for compliance with the style guide.
+
+\noindent\icon{CLANG-FORMAT} -- indicates that \texttt{clang-format} (with the appropriate arguments) can be used to check for \ul{and correct} compliance with this style requirement (e.g. fixing indentation and spacing).
+
+\noindent\icon{CLANG-TIDY} -- indicates that \texttt{clang-tidy} (with the appropriate arguments) can be used to check for compliance with this style requirement. Any corrections must be applied manually (e.g. renaming variables to be consistent with the naming requirements).
+
+\noindent\icon{MANUAL-CHECK} -- indicates that this style requirement must be checked and fixed manually (e.g. making sure a function comment contains the required information).
+
+% Indentation
 \section{Indentation}
+\label{sec:indentation}
 \subsection{Tabs vs spaces}
 Use spaces not tab characters to implement indentation. C source files must not contain tab characters. (This includes
 inside string constants -- use the escape sequence \texttt{\textbackslash t} instead.) \hl{Last bit not checked by clang-format}
 
-\subsection{Indent size}
+\subsection{Indent size \protect\hfill\icon{CLANG-FORMAT}}
 Indentation must occur in multiples of four spaces. You must indent once each time a statement is nested inside the
 body of another statement.
 
 % Example indent1
 \nolinenumbers
 \lstset{caption={Correct indentation for if statement and loop}}
-\lstinputlisting{examples/indent1.c}
+\lstinputlisting[label=lst:indent1]{examples/indent1.c}
 \linenumbers
 
-\subsection{Comments}
+\subsection{Comments \protect\hfill\icon{CLANG-FORMAT}}
 Comments on a line by themselves (i.e. not following code) must be indented the same as code.
 
 For \texttt{//} comments that start after a statement, continuation lines can either be aligned with the \texttt{//} or the code.
@@ -120,10 +137,10 @@ For \texttt{//} comments that start after a statement, continuation lines can ei
 % Example indent2
 \nolinenumbers
 \lstset{caption={Correct indentation: chained if-else -- also showing comment indentation}}
-\lstinputlisting{examples/indent2.c}
+\lstinputlisting[label=lst:indent2]{examples/indent2.c}
 	\linenumbers
 
-\subsection{Continuation lines}
+\subsection{Continuation lines \protect\hfill\icon{CLANG-FORMAT}}
 Continuation lines (i.e. where a statement doesn't fit on one line) must be indented eight spaces 
 beyond the first line of the statement. 
 
@@ -139,134 +156,169 @@ the statement -- unless this is a nested expression as described in the next sec
 
 \nolinenumbers
 \lstset{caption={Continuation line indentation}}
-\lstinputlisting{examples/indent3.c}
+\lstinputlisting[label=lst:indent3]{examples/indent3.c}
 \linenumbers
 
-\subsection{Continuation lines for nested expressions}
+\subsection{Continuation lines for nested expressions \protect\hfill\icon{CLANG-FORMAT}}
 
 Where expressions are nested (i.e. parentheses are used or functions are called in arguments to functions)
 then continuation lines are further indented to indicate the nesting. 
 
 \nolinenumbers
 \lstset{caption={Continuation lines for nested expressions}}
-\lstinputlisting{examples/indent4.c}
+\lstinputlisting[label=lst:indent4]{examples/indent4.c}
 \linenumbers
 
-\subsection{For loops} 
-Where continuation lines are needed for a for loop, indents should be made as per the following examples. If this is too
+\subsection{\texttt{for} loops \protect\hfill\icon{CLANG-FORMAT}} 
+Where continuation lines are needed for a \texttt{for} loop, indents should be made as per the following examples. If this is too
 confusing to follow, you can just rely on \texttt{clang-format} to do the formatting for you. 
 
 \nolinenumbers
-\lstset{caption={Continuation lines for for loops}}
-\lstinputlisting{examples/indent5.c}
+\lstset{caption={Continuation lines for \texttt{for} loops}}
+\lstinputlisting[label=lst:indent5]{examples/indent5.c}
 \linenumbers
 
-\subsection{Switch statements}
+\subsection{\texttt{switch} statements \protect\hfill\icon{CLANG-FORMAT}}
 \texttt{case} labels must line up with the enclosing \texttt{switch} statement. The statements associated with a \texttt{case}
 label must be on a new line and indented by four spaces beyond the start of the \texttt{case} label.
 
-
-\lstset{caption={Correct indentation: switch statement}, label={lst:indentation-switch}}
-\lstinputlisting{examples/indent6.c}
+\nolinenumbers
+\lstset{caption={Correct indentation for \texttt{switch} statement}, label={lst:indentation-switch}}
+\lstinputlisting[label=lst:indent6]{examples/indent6.c}
 \linenumbers
 
-\subsection{Continuation lines for braced initialiser lists}
+\subsection{Continuation lines for braced initialiser lists \protect\hfill\icon{CLANG-FORMAT}}
 Initialiser lists (for arrays or structs) follow the rules above -- except where struct member names are used in an initialiser list that does not fit on one line. See the example below.
 
 \nolinenumbers
 \lstset{caption={Continuation lines for array and struct initialiser lists}}
-\lstinputlisting{examples/indent7.c}
+\lstinputlisting[label=lst:indent7]{examples/indent7.c}
 \linenumbers
 
-\section{Spacing}
+\subsection{Continuation lines for string constants \protect\hfill\icon{CLANG-FORMAT}}
+Where a string constant does not fit on one line then it may be split over multiple lines. C will concatenate adjacent string
+constants into a single string constant so \texttt{"ab" "cd"} is the same as \texttt{"abcd"}. Continuation lines for a string
+constant must align the commencing double quote characters.
 
-\subsection{Unary operators}
+\nolinenumbers
+\lstset{caption={Continuation lines for string constants}}
+\lstinputlisting[label=lst:indent8]{examples/indent8.c}
+\linenumbers
+
+\section{Horizontal Spacing}
+
+\subsection{Unary operators \protect\hfill\icon{CLANG-FORMAT}}
 There should be no spaces between unary operators and their operands.
 
 \nolinenumbers
 \lstset{caption={Spacing around unary operators}}
-\lstinputlisting{examples/space1.c}
+\lstinputlisting[label=lst:space1]{examples/space1.c}
 \linenumbers
 
-\subsection{Binary and ternary operators}
+\subsection{Binary and ternary operators \protect\hfill\icon{CLANG-FORMAT}}
 There should be spaces on both sides of binary or ternary operators.
 
 \nolinenumbers
 \lstset{caption={Spacing around binary and ternary operators}}
-\lstinputlisting{examples/space2.c}
+\lstinputlisting[label=lst:space2]{examples/space2.c}
 \linenumbers
 
-\subsection{Control statements and functions}
-There should be a single space between a control statement (e.g. \texttt{if}, \texttt{for}, \texttt{while}, etc.) and 
-the following open parenthesis. There should not be any spaces between a function name and the following open parenthesis, nor between a parenthesis and the following content. There should be no spaces before commas or semicolons. 
+\subsection{Control statements and functions \protect\hfill\icon{CLANG-FORMAT}}
+There must be a single space between a control statement (e.g. \texttt{if}, \texttt{for}, \texttt{while}, etc.) and 
+the following open parenthesis. There must not be any spaces between a function name and the following open parenthesis. 
+There must not be any spaces between a parenthesis and the following content. There must be no spaces before commas or semicolons but there should be space after each comma or semicolon that is not at the end of a line. 
 
 \nolinenumbers
-\lstset{caption={Spacing in control statements and function calls}}
-\lstinputlisting{examples/space3.c}
+\lstset{caption={Spacing in control statements and function calls.}}
+\lstinputlisting[label=lst:space3]{examples/space3.c}
 \linenumbers
 
 \hl{Spaces in initialisers}
 
-\subsection{Pointer declarations}
+\subsection{Spaces at the ends of lines \protect\hfill\icon{CLANG-FORMAT}}
+
+There should be no whitespace prior to semicolons at the end of a line, but a semicolon can be on a line by itself if required -- indented appropriately. There should be no whitespace at the end of a line (i.e. following a semicolon or other non-whitespace 
+character at the end of the line).
+
+\subsection{Pointer declarations \protect\hfill\icon{CLANG-FORMAT}}
 When pointers are declared, the \texttt{*} should be associated with the type, not the variable name -- unless multiple 
 pointers are being declared together.
+
 \nolinenumbers
-\lstset{caption={Spacing in control statements and function calls}}
-\lstinputlisting{examples/space4.c}
+\lstset{caption={Spacing in pointer declarations}}
+\lstinputlisting[label=lst:space4]{examples/space4.c}
 \linenumbers
 
-\subsection{Spaces before comments}
-Where a comment follows code on a line then there must only be a single space between the code and the comment. See examples \hl{8 and ?} above.
+\subsection{Array derefencing \protect\hfill\icon{CLANG-FORMAT}}
 
-\section{Line Breaks and Separation Between Statements}
-\subsection{Line termination character}
-Each line (including the last line in a file) should end with a newline character (\texttt{\textbackslash n} -- also known as a linefeed character, i.e. ASCII code 10). Do not use carriage returns (\texttt{\textbackslash r}, ASCII code 13).
+There must be no spaces prior to square brackets when dereferencing arrays.
 
-\subsection{One statement per line}
+\nolinenumbers
+\lstset{caption={No spaces before square brackets}}
+\lstinputlisting[label=lst:space4]{examples/space5.c}
+\linenumbers
 
-Each statement should be on its own line.
+
+\subsection{Spaces before comments \protect\hfill\icon{CLANG-FORMAT}}
+Where a comment follows code on a line then there must only be a single space between the code and the comment. See examples \ref{lst:indent1}, \ref{lst:indent2} and \ref{lst:space1} above.
+
+\section{Vertical Spacing -- Separation Between Statements}
+\subsection{Line termination character \protect\hfill\icon{CLANG-FORMAT}}
+Each line (including the last line in a source file) should end with a newline character (\texttt{\textbackslash n} -- also known as a linefeed character, i.e. ASCII code 10). Do not use carriage returns (\texttt{\textbackslash r}, ASCII code 13).
+
+\subsection{One statement per line \protect\hfill\icon{CLANG-FORMAT}}
+
+Each statement must be on its own line.
+
 \nolinenumbers
 \lstset{caption={Line breaks between statements}}
-\lstinputlisting{examples/line1.c}
+\lstinputlisting[label=lst:line1]{examples/line1.c}
 \linenumbers
 
-\subsection{Multiple assignment operators in the one statement}
+\subsection{Multiple assignment operators in the one statement \protect\hfill\icon{MANUAL-CHECK}}
 
 Do not use multiple assignment operators in the one statement -- split these up into multiple statements.
 
 \nolinenumbers
 \lstset{caption={Multiple assignments}}
-\lstinputlisting{examples/line2.c}
+\lstinputlisting[label=lst:line2]{examples/line2.c}
 \linenumbers
 
-\subsection{Separation between blocks}
+\subsection{Separation between blocks \protect\hfill\icon{CLANG-FORMAT}}
 Function, struct and enum definitions must be separated from other code blocks by exactly one blank line. No separation is
 required between an immediately preceding comment and such a definition but a blank line must be present before the comment.
 
-See \hl{Example 18} below.
+See Example~\ref{lst:name3} below.
 
 \hl{Don't use the comma operator to separate statements where a semicolon can be used.}
 
 % Braces
 \section{Braces}
 
-\subsection{Function definitions}
+\subsection{Function definitions \protect\hfill\icon{CLANG-FORMAT}}
 The opening brace in a function definition must be placed on a line by itself. The matching closing brace must be at
 the start of a line also.
+
 \nolinenumbers
-\lstset{caption={Opening brace for function definitions}}
-\lstinputlisting{examples/brace1.c}
+\lstset{caption={Braces for function definitions}}
+\lstinputlisting[label=lst:brace1]{examples/brace1.c}
 \linenumbers
 
-\subsection{Control statements}
-The statements associated with control statements must be enclosed in braces, even if there is only one such statement. The open brace must be at the end of the line before the enclosed statement. The close brace must appear on a line by itself (unless an \texttt{else} clause follows an \texttt{if} statement, in which case the \texttt{else} must follow the close brace).
+\subsection{Control statements \protect\hfill\icon{CLANG-FORMAT}}
+The statements associated with control statements (\texttt{if}, \texttt{else}, \texttt{for}, \texttt{while}, \texttt{do}, \texttt{switch}, etc.) 
+must be enclosed in braces, even if there is only one such statement. The C language does not require braces when the body 
+contains only one statement, but you must  surround it with braces anyway.
+This helps avoid errors while changing your code. The open brace must be at the end of the line before the 
+enclosed statement. The close brace must appear on a line by itself (unless an \texttt{else} clause follows an \texttt{if} statement, in 
+which case the \texttt{else} must follow the close brace). The closing brace is aligned with the start of the control statement.
+
 \nolinenumbers
-\lstset{caption={Braces for control statements}}
-\lstinputlisting{examples/brace2.c}
+\lstset{caption={Braces for control statements. See example~\ref{lst:indent5} for \texttt{for} loop examples and example~\ref{lst:indent6} for a \texttt{switch} example.}}
+\lstinputlisting[label=lst:brace1]{examples/brace2.c}
 \linenumbers
 
 \section{Naming Conventions}
-\subsection{Variable names}
+\subsection{Variable names \protect\hfill\icon{CLANG-TIDY}}
 \label{sec:naming-variable}
 Variable names and the names of struct/union members will begin with a lowercase letter and names with multiple words 
 will use initial capitals for subsequent words and no underscores -- sometimes called camel case\footnote{This variant of camel case 
@@ -276,9 +328,10 @@ the name indicate the type of the variable. Examples include \texttt{int iCount;
 \texttt{double dbPi}.}
  is NOT to be used.
 It is permissible to use names like \texttt{i} or \texttt{j} for integer loop counters.
+
 \nolinenumbers
 \lstset{caption={Examples of variable names}}
-\lstinputlisting{examples/name1.c}
+\lstinputlisting[label=lst:name1]{examples/name1.c}
 \linenumbers
 
 
@@ -286,7 +339,7 @@ It is permissible to use variable names like \texttt{str} to indicate a generic 
 string parameter. (This is permissible even though the name indicates the type.) However, if the string variable always has a particular meaning in the context of your program/function then a more appropriate variable name should
 be used, e.g. \texttt{name} or \texttt{fileName}.
 
-\subsection{File names}
+\subsection{File names \protect\hfill\icon{MANUAL-CHECK}}
 \label{sec:naming-files}
 C source file names will begin with a lowercase letter and names with multiple words 
 will use initial capitals for subsequent words and no underscores. 
@@ -294,7 +347,7 @@ Names that are chosen should be meaningful. Source files must be named with the 
 
 Example filenames: \texttt{hello.c}, \texttt{stringRoutines.c}, \texttt{shared.h}
 
-\subsection{Defined constants and macros}
+\subsection{Defined constants and macros \protect\hfill\icon{CLANG-TIDY}}
 \label{sec:naming-constants}
 Preprocessor constants and macros, i.e. those defined using \texttt{\#define}, must be named 
 using all uppercase letters, with underscores (\_) used to separate multiple words.
@@ -303,36 +356,38 @@ per~\ref{sec:naming-variable}.
 
 Examples: \texttt{MAX\_BIT}, \texttt{DEFAULT\_SPEED}
 
-\subsection{Function names}
+\subsection{Function names \protect\hfill\icon{CLANG-TIDY}}
 Function names should all be lowercase and use underscores to separate multiple words.
 Note that function pointers are variables and should use variable naming, as per~\ref{sec:naming-variable}.
+
 \nolinenumbers
 \lstset{caption={Examples of function names and a function pointer}}
-\lstinputlisting{examples/name2.c}
+\lstinputlisting[label=lst:name2]{examples/name2.c}
 \linenumbers
 
-\subsection{Type names}
+\subsection{Type names \protect\hfill\icon{CLANG-TIDY}}
 \label{sec:type-names}
 Type names (i.e. from typedefs), struct and union names should begin with capital letters 
 and use initial capitals for subsequent words and no underscores. Members within structs and unions should
 follow the variable naming convention as per section~\ref{sec:naming-variable}.
+
 \nolinenumbers
 \lstset{caption={Examples of type declarations}}
-\lstinputlisting{examples/name3.c}
+\lstinputlisting[label=lst:name3]{examples/name3.c}
 \linenumbers
 
-\subsection{Enumerated Types}
+\subsection{Enumerated Types \protect\hfill\icon{CLANG-TIDY}}
 Enumerated types must be named in the same way as any other type (see~\ref{sec:type-names}).
 Members of an enumerated type must follow the same naming as constants (see~\ref{sec:naming-constants}).
 
 \nolinenumbers
 \lstset{caption={Examples of \texttt{enum} declarations}}
-\lstinputlisting{examples/name4.c}
+\lstinputlisting[label=lst:name4]{examples/name4.c}
 \linenumbers
 
 
 
-\section{Comments}
+\section{Comments \protect\hfill\icon{MANUAL-CHECK}}
 Comments should be generously added to describe the intent of the code.
 They are expected in code which is tricky, lengthy or where functionality is not immediately obvious.
 It is reasonable to assume that the reader has a decent knowledge of the C programming language, 
@@ -492,11 +547,113 @@ does not necessarily mean that you can use it. See your assignment specification
 be used in that particular assignment. \textbf{For code generated by, or modified with input from, AI tools, you must
 document your interaction with the tool as described in the \textit{Documentation required for the use of AI tools} document.}
 
+\section{Readability}
+
+\subsection{Line Length \protect\hfill\icon{CLANG-FORMAT}}
+Lines must not exceed 80 columns in length including whitespace.
+This is based on a historical ``standard'' screen size of 80 columns, but is still used today to aid readability and printing.
+If a statement/expression does not fit on on line then it must be split over multiple lines with continuation lines indented
+as described in section~\ref{sec:indentation} -- \nameref{sec:indentation}.
+
+\subsection{Function Length \protect\hfill\icon{CLANG-TIDY}}
+
+Functions should not exceed 50 lines in length, including any comments within the function but excluding any
+comments prior to the function.
+If a function is longer than 50 lines, then it is a good candidate for being broken into meaningful smaller functions.
+
+\subsection{Magic Numbers \protect\hfill\icon{CLANG-TIDY}}
+
+``Magic numbers'' are to be avoided. Defined constants should be used instead of number and character literals scattered throughout code without context. 0 and 1 are almost never magic numbers.
+
+
+\subsection{Duplicate Includes \protect\hfill\icon{CLANG-TIDY}}
+
+Do not \texttt{\#include} any include file more than once in a source file.
+
+% else after return
+\subsection{\texttt{else} after \texttt{return}, \texttt{continue}, etc. \protect\hfill\icon{CLANG-TIDY}}
+
+Do not use an \texttt{else} or \texttt{else if} clause if the previous \texttt{if} branch(es) result in the control flow being interrupted
+(e.g. through the use of \texttt{return}, \texttt{continue}, \texttt{break}, etc.
+
+\nolinenumbers
+\begin{multicols}{2}
+\lstset{caption={\texttt{else} after \texttt{return} etc. - don't do this}}
+\lstinputlisting[label=lst:elseAfterReturn1]{examples/else-after-return1.c}
+\columnbreak
+\lstset{caption={\texttt{else} after \texttt{return} etc. - do it this way}}
+\lstinputlisting[label=lst:elseAfterReturn1]{examples/else-after-return2.c}
+\end{multicols}
+\linenumbers
+
+% Inconsistent function parameter names
+\subsection{Function parameter names \protect\hfill\icon{CLANG-TIDY}}
+
+Parameter names must be present in function declarations and the names must match those used 
+in the function definition. 
+
+An unused function parameter may have its name commented out in the function 
+definition but the name must be present in the declaration. (You should review the code to determine if the 
+function parameter should be present in the first place.)
+
+\nolinenumbers
+\lstset{caption={Function parameter names}}
+\lstinputlisting[label=lst:functionParameterNames]{examples/function-parameter-names.c}
+\linenumbers
+
+% Use of const for pointer function parameters
+\subsection{Use of \texttt{const} for pointer function parameters \protect\hfill\icon{CLANG-TIDY}}
+
+If the use of \texttt{const} with a function parameter of a pointer type will make a function interface safer then it should be used. 
+
+\nolinenumbers
+\lstset{caption={Where \texttt{const} should be used}}
+\lstinputlisting[label=lst:constFunctionParameters]{examples/const-function-parameters.c}
+\linenumbers
+
+% 
+
+\section{Other Issues }
+
+\subsection{Bug prone code \protect\hfill\icon{CLANG-TIDY}}
+The \texttt{clang-tidy} options used in the \hl{2310checker} tool also check for various bug prone coding approaches. These are 
+not described in detail here but it is your responsibility to fix these issues if they are flagged by \texttt{clang-tidy}.
+
+Specifically, the following \texttt{clang-tidy} checks are used. You can see more details about these at \\
+\href{https://clang.llvm.org/extra/clang-tidy/checks/list.html}{https://clang.llvm.org/extra/clang-tidy/checks/list.html}
+\texttt{
+\begin{itemize}
+\setlength{\itemsep}{-1pt}
+\item     bugprone-inc-dec-in-conditions
+\item bugprone-macro-parentheses
+\item bugprone-macro-repeated-side-effects
+\item bugprone-misplaced-operator-in-strlen-in-alloc
+\item bugprone-misplaced-pointer-arithmetic-in-alloc
+\item bugprone-misplaced-widening-cast
+\item bugprone-multi-level-implicit-pointer-conversion
+\item bugprone-non-zero-enum-to-bool-conversion
+\item bugprone-not-null-terminated-result
+\item bugprone-posix-return
+\item bugprone-redundant-branch-condition
+\item bugprone-signal-handler
+\item bugprone-sizeof-expression
+\item bugprone-string-literal-with-embedded-nul
+\item bugprone-suspicious-enum-usage
+\item bugprone-suspicious-include
+\item bugprone-suspicious-memset-usage
+\item bugprone-suspicious-semicolon
+\item bugprone-switch-missing-default-case
+\item bugprone-terminating-continue
+\item bugprone-unsafe-functions
+\item bugprone-unused-return-value
+\item misc-confusable-identifiers
+\item misc-redundant-expression
+\end{itemize}
+}
+
 \section{Braces}
 Use braces \texttt{\{ \}} around statements in the body of if, else, for, while, do, etc statements.
-The C language does not require braces when the body contains only one statement, but you must 
-surround it with braces anyway.
-This helps avoid errors while changing your code.
+
 An open brace appears at the end of the line after an if statement/loop statement/etc (with exactly 
 one space before the brace).
 The closing brace should be lined up underneath the start of the function/loop statement/etc.
@@ -841,9 +998,7 @@ All source files must use an ASCII-compatible encoding.
 Files must use Unix line endings (\texttt{\textbackslash n}).
 
 \subsection{Function length}
-Functions should not exceed 50 lines in length, including any comments within the function but excluding any
-comments prior to the function.
-If a function is longer than 50 lines, then it is a good candidate for being broken into meaningful smaller functions.
+
 
 \subsection{Modularity}
 Principles of modularity should be observed.
