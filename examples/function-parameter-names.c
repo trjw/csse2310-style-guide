@@ -10,3 +10,7 @@ void fn2(int a, char* s, double d); // declaration
 void fn2(int a, char* s, double /* d */) { // definition, d not used in function
     // code here
 }
+
+int main(int /* argc */, char* argv[]) { // argv used but not argc
+    // code here
+}
