@@ -1,4 +1,5 @@
-void foo(int value) {
+void foo(int value)
+{
     int local = 0;
     for (int i = 0; i < 42; i++) {
         if (value == 1) {
