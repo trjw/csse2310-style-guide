@@ -186,7 +186,7 @@ then continuation lines are further indented to indicate the nesting.
 \lstset{caption={Continuation lines for nested expressions}}
 \lstinputlisting[label=lst:indent4]{examples/indent4.c}
 \linenumbers
-
+\pagebreak
 \subsection{\texttt{for} loops\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 Where continuation lines are needed for a \texttt{for} loop, indents should be made as per the following examples. If this is too
 confusing to follow, you can just rely on \texttt{clang-format} to do the formatting for you. 
@@ -250,8 +250,6 @@ There must not be any spaces between a parenthesis and the following content. Th
 \lstset{caption={Spacing in control statements and function calls.}}
 \lstinputlisting[label=lst:space3]{examples/space3.c}
 \linenumbers
-
-\hl{Spaces in initialisers}
 
 \subsection{Spaces at the ends of lines\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 
@@ -329,6 +327,7 @@ necessary. It should never be used just to reduce the number of lines in a funct
 % Braces
 \section{Braces}
 
+\vspace{-0.1cm}
 \subsection{Function definitions\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 The opening brace in a function definition must be placed on a line by itself. The matching closing brace must be at
 the start of a line also.
@@ -338,6 +337,7 @@ the start of a line also.
 \lstinputlisting[label=lst:brace1]{examples/brace1.c}
 \linenumbers
 
+\vspace{-0.3cm}
 \subsection{Control statements\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 The statements associated with control statements (\texttt{if}, \texttt{else}, \texttt{for}, \texttt{while}, \texttt{do}, \texttt{switch}, etc.) 
 must be enclosed in braces, even if there is only one such statement. The C language does not require braces when the body 
@@ -351,7 +351,12 @@ which case the \texttt{else} must follow the close brace). The closing brace is 
 \lstinputlisting[label=lst:brace2]{examples/brace2.c}
 \linenumbers
 
-\section{Naming Conventions}
+\vspace{-0.4cm}
+\section{Naming Conventions\texorpdfstring{\protect\hfill\icon{MANUAL-CHECK}}{}}
+
+Note that all names are expected to be meaningful. This is not checked by \texttt{clang-tidy}.
+
+\vspace{-0.2cm}
 \subsection{Variable names\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 \label{sec:naming-variable}
 Variable names and the names of struct/union members will begin with a lowercase letter and names with multiple words 
@@ -406,6 +411,7 @@ follow the variable naming convention as per section~\ref{sec:naming-variable}.
 \subsection{Enumerated Types\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 Enumerated types must be named in the same way as any other type (see~\ref{sec:type-names}).
 Members of an enumerated type must follow the same naming as constants (see~\ref{sec:naming-constants}).
+\pagebreak
 
 \nolinenumbers
 \lstset{caption={Examples of \texttt{enum} declarations}}
@@ -559,7 +565,7 @@ You can use the \texttt{--globalOK} flag to \texttt{2310stylecheck.sh} to remove
 
 \subsection{Duplicate Includes\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 
-Do not \texttt{\#include} any include file more than once in a source file.
+Do not \texttt{\#include} any header file more than once in a source file.
 
 % else after return
 \subsection{\texttt{else} after \texttt{return}, \texttt{continue}, etc.\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
@@ -569,10 +575,10 @@ Do not use an \texttt{else} or \texttt{else if} clause if the previous \texttt{i
 
 \nolinenumbers
 \begin{multicols}{2}
-\lstset{caption={\texttt{else} after \texttt{return} etc. - don't do this}}
+\lstset{caption={\texttt{else} after \texttt{return} etc. -- don't do this}}
 \lstinputlisting[label=lst:elseAfterReturn1]{examples/else-after-return1.c}
 \columnbreak
-\lstset{caption={\texttt{else} after \texttt{return} etc. - do it this way}}
+\lstset{caption={\texttt{else} after \texttt{return} etc. -- do it this way}}
 \lstinputlisting[label=lst:elseAfterReturn2]{examples/else-after-return2.c}
 \end{multicols}
 \linenumbers
@@ -593,6 +599,7 @@ function parameter should be present in the first place.)
 \linenumbers
 
 % Use of const for pointer function parameters
+\pagebreak
 \subsection{Use of \texttt{const} for pointer function parameters\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 
 If the use of \texttt{const} with a function parameter of a pointer type will make a function interface safer then it should be used. 
