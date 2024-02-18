@@ -1,3 +1,4 @@
+// Do it this way
 void foo(int value)
 {
     int local = 0;
