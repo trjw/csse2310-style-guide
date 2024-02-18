@@ -12,8 +12,8 @@ if (month >= 1 && month <= 3) {
     // statement
 } else {
     quarter = 4;
-    /* Comments that start with /* must start at the same indenting level
-       as code would, but
+    /* The starting position for Comments that start with /* is the same as
+       for comments that start with //, but
                 continuation lines
                         can use any level
                                 of indenting */
