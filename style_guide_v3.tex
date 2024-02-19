@@ -47,7 +47,7 @@
 }
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
-\newcommand{\versionNum}{3.01}
+\newcommand{\versionNum}{3.02}
 \newcommand{\icon}[1]{\raisebox{-3pt}{\includegraphics[height=12pt]{icons/#1.png}}}
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
@@ -556,7 +556,7 @@ You can use the \texttt{--globalOK} flag to \texttt{2310stylecheck.sh} to remove
 
 \subsection{Magic Numbers\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 
-``Magic numbers'' are to be avoided. Defined constants should be used instead of number and character literals scattered throughout code without context. 0 and 1 are almost never magic numbers.
+``Magic numbers'' are to be avoided. Defined constants should be used instead of numbers scattered throughout code without context. These can be \texttt{\#define} constants or global constants declared using \texttt{const}. The latter is preferred because this gives you more type safety, but this is not a formal requirement. 0, 1 and 2 are almost never magic numbers.
 
 \nolinenumbers
 \lstset{caption={Use of constants to avoid magic numbers}}
@@ -651,7 +651,8 @@ Specifically, the following \texttt{clang-tidy} checks are used. You can see mor
 }
 
 \subsection{Compilation \texorpdfstring{\protect\hfill\icon{MANUAL-CHECK}}{}}
-Your assignments will use the C99 standard, and must be compiled with the following flags as a minimum: \texttt{-Wall -pedantic -std=gnu99} .
+Your assignments will use the C99 standard, and must be compiled with the following flags as a minimum:\\
+\texttt{-Wall -Wextra -pedantic -std=gnu99} .
 No warnings or errors should be reported.
 If warnings or errors are reported, they will be treated as style violations.
 
