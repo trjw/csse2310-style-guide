@@ -47,7 +47,7 @@
 }
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
-\newcommand{\versionNum}{3.02}
+\newcommand{\versionNum}{3.03}
 \newcommand{\icon}[1]{\raisebox{-3pt}{\includegraphics[height=12pt]{icons/#1.png}}}
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
@@ -111,9 +111,9 @@ The following icons are used to indicate which tools (or not) can be used to che
 \subsection{Tools}
 The tool \texttt{2310reformat.sh} is available on \texttt{moss.labs.eait.uq.edu.au} to correct those elements of style able to be checked and corrected
 by \texttt{clang-format}, i.e. those items indicated by the \icon{CLANG-FORMAT} icon below. This script will run
-\texttt{clang-format} with the appropriate arguments and reformat the files in-place (if necessary) -- i.e. your source files may be modified. Don't run this tool if you don't want this to happen. You can specify particular source
-files on the command line, or, if none are specified, then the tool tries to reformat all of the .c and .h files in the current
-directory.
+\texttt{clang-format} with the appropriate arguments and reformat the files in-place (if necessary) -- i.e. your source files may be modified. Don't run this tool if you don't want this to happen. You must specify the source
+files that you want reformatted on the command line. You can run \texttt{2310reformat.sh *.h *.c} to reformat all of 
+your source files in the current directory.
 
 The tool \texttt{2310stylecheck.sh} is available on \texttt{moss} to check those elements of style able to be checked with
 \texttt{clang-format} and \texttt{clang-tidy} (with the appropriate arguments), i.e. those items indicated by the \icon{CLANG-FORMAT} and \icon{CLANG-TIDY} icons below. Details of the lines on which issues are found are reported to standard output. 
@@ -684,4 +684,12 @@ None of these are things you could do by accident.
 \end{itemize}
 
 \noindent Other banned features may be listed in your assignment specification.
+
+\section{Updates to this Document}
+\begin{itemize}
+\item v3.01 -- original version for semester one 2024
+\item v3.02 -- updated magic number example and text
+\item v3.03 -- updated description of behaviour of \texttt{2310reformat.sh}
+\end{itemize}
+
 \end{document}
