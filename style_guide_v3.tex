@@ -47,12 +47,12 @@
 }
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
-\newcommand{\versionNum}{3.03}
+\newcommand{\versionNum}{3.04}
 \newcommand{\icon}[1]{\raisebox{-3pt}{\includegraphics[height=12pt]{icons/#1.png}}}
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
 \author{The University of Queensland\\School of Information Technology and Electrical Engineering}
-\date{February 2024}
+\date{22 February 2024}
 \fancypagestyle{plain}{
 	\fancyhead{}
 	\fancyfoot{}
@@ -109,6 +109,7 @@ The following icons are used to indicate which tools (or not) can be used to che
 \noindent\icon{MANUAL-CHECK} -- indicates that this style requirement must be checked and fixed manually (e.g. making sure a function comment contains the required information).
 
 \subsection{Tools}
+\label{sec:tools}
 The tool \texttt{2310reformat.sh} is available on \texttt{moss.labs.eait.uq.edu.au} to correct those elements of style able to be checked and corrected
 by \texttt{clang-format}, i.e. those items indicated by the \icon{CLANG-FORMAT} icon below. This script will run
 \texttt{clang-format} with the appropriate arguments and reformat the files in-place (if necessary) -- i.e. your source files may be modified. Don't run this tool if you don't want this to happen. You must specify the source
@@ -555,6 +556,7 @@ no warning is given for non-global \texttt{static} variables -- these must be ch
 You can use the \texttt{--globalOK} flag to \texttt{2310stylecheck.sh} to remove warnings about global variables. 
 
 \subsection{Magic Numbers\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
+\label{sec:magic-numbers}
 
 ``Magic numbers'' are to be avoided. Defined constants should be used instead of numbers scattered throughout code without context. These can be \texttt{\#define} constants or global constants declared using \texttt{const}. The latter is preferred because this gives you more type safety, but this is not a formal requirement. 0, 1 and 2 are almost never magic numbers.
 
@@ -585,13 +587,15 @@ Do not use an \texttt{else} or \texttt{else if} clause if the previous \texttt{i
 
 % Inconsistent function parameter names
 \subsection{Function parameter names\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
-
+\label{sec:function-parameter-names}
 Parameter names must be present in function declarations and the names must match those used 
 in the function definition. 
 
-An unused function parameter may have its name commented out in the function 
-definition but the name must be present in the declaration. (You should review the code to determine if the 
-function parameter should be present in the first place.)
+C requires that parameters be named in function definitions. In the rare circumstance that a function parameter
+is unused then the \texttt{unused} attribute may be applied as shown in the examples below. You should review the
+code to determine if the function parameter should be present in the first place, but in some cases you have no choice, 
+e.g. with \texttt{main()} if one of \texttt{argc} or \texttt{argv} is used but not the other. (If neither is used then you can omit the
+parameters to main.)
 
 \nolinenumbers
 \lstset{caption={Function parameter names}}
@@ -688,8 +692,9 @@ None of these are things you could do by accident.
 \section{Updates to this Document}
 \begin{itemize}
 \item v3.01 -- original version for semester one 2024
-\item v3.02 -- updated magic number example and text
-\item v3.03 -- updated description of behaviour of \texttt{2310reformat.sh}
+\item v3.02 -- updated magic number example and text (section \ref{sec:magic-numbers})
+\item v3.03 -- updated description of behaviour of \texttt{2310reformat.sh} (section \ref{sec:tools})
+\item v3.04 -- updated section \ref{sec:function-parameter-names} to permit the use of \texttt{__attribute__((unused))} for unnamed function parameters
 \end{itemize}
 
 \end{document}
