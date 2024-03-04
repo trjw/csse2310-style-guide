@@ -47,12 +47,12 @@
 }
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
-\newcommand{\versionNum}{3.04}
+\newcommand{\versionNum}{3.05}
 \newcommand{\icon}[1]{\raisebox{-3pt}{\includegraphics[height=12pt]{icons/#1.png}}}
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
 \author{The University of Queensland\\School of Information Technology and Electrical Engineering}
-\date{22 February 2024}
+\date{4 March 2024}
 \fancypagestyle{plain}{
 	\fancyhead{}
 	\fancyfoot{}
@@ -360,7 +360,7 @@ Note that all names are expected to be meaningful. This is not checked by \textt
 \vspace{-0.2cm}
 \subsection{Variable names\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 \label{sec:naming-variable}
-Variable names and the names of struct/union members will begin with a lowercase letter and names with multiple words 
+Variable names, function parameter names, and the names of struct/union members will begin with a lowercase letter and names with multiple words 
 will use initial capitals for subsequent words and no underscores -- sometimes called camel case\footnote{This variant of camel case 
 in which the first letter is lower case is sometimes called lower camel case or dromedary case.}. 
 Names that are chosen should be meaningful. Hungarian notation\footnote{Hungarian notation is where characters at the start of 
@@ -691,10 +691,11 @@ None of these are things you could do by accident.
 
 \section{Updates to this Document}
 \begin{itemize}
-\item v3.01 -- original version for semester one 2024
-\item v3.02 -- updated magic number example and text (section \ref{sec:magic-numbers})
-\item v3.03 -- updated description of behaviour of \texttt{2310reformat.sh} (section \ref{sec:tools})
-\item v3.04 -- updated section \ref{sec:function-parameter-names} to permit the use of \texttt{__attribute__((unused))} for unnamed function parameters
+\item v3.01 -- original version for semester one 2024.
+\item v3.02 -- updated magic number example and text (section \ref{sec:magic-numbers}).
+\item v3.03 -- updated description of behaviour of \texttt{2310reformat.sh} (section \ref{sec:tools}).
+\item v3.04 -- updated section \ref{sec:function-parameter-names} to permit the use of \texttt{__attribute__((unused))} for unnamed function parameters.
+\item v3.05 -- updated section \ref{sec:naming-variable} to clarify that the names of function parameters should follow the variable naming convention. Updated example \ref{lst:indent8} to make the pointers \texttt{const}.
 \end{itemize}
 
 \end{document}
