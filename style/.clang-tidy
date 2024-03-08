@@ -1,0 +1,69 @@
+# clang-tidy configuration for CSSE2310.
+# By Peter Sutton February 2024
+# Original is maintained in the csse2310-style-guide repository
+#
+ExtraArgsBefore: ['-I/local/courses/csse2310/include']
+FormatStyle:	file:/local/courses/csse2310/resources/.clang-format
+Checks: '-*,
+    core-*,
+    cppcoreguidelines-avoid-non-const-global-variables,
+    cppcoreguidelines-avoid-goto,
+    readability-braces-around-statements,
+    readability-duplicate-include,
+    readability-else-after-return,
+    readability-function-size,
+    readability-identifier-naming,
+    readability-inconsistent-declaration-parameter-name,
+    readability-magic-numbers,
+    readability-misleading-indentation,
+    readability-misplaced-array-index
+    readability-named-parameter,
+    readability-non-const-parameter,
+    bugprone-inc-dec-in-conditions,
+    bugprone-macro-parentheses,
+    bugprone-macro-repeated-side-effects,
+    bugprone-misplaced-operator-in-strlen-in-alloc,
+    bugprone-misplaced-pointer-arithmetic-in-alloc,
+    bugprone-misplaced-widening-cast,
+    bugprone-multi-level-implicit-pointer-conversion,
+    bugprone-non-zero-enum-to-bool-conversion,
+    bugprone-not-null-terminated-result,
+    bugprone-posix-return,
+    bugprone-redundant-branch-condition,
+    bugprone-signal-handler,
+    bugprone-sizeof-expression,
+    bugprone-string-literal-with-embedded-nul,
+    bugprone-suspicious-enum-usage,
+    bugprone-suspicious-include,
+    bugprone-suspicious-memset-usage,
+    bugprone-suspicious-semicolon,
+    bugprone-switch-missing-default-case,
+    bugprone-terminating-continue,
+    bugprone-unsafe-functions,
+    bugprone-unused-return-value,
+    misc-confusable-identifiers,
+    misc-redundant-expression,
+    misc-unused-parameters,
+    fuschia-statically-constructed-objects
+    '
+CheckOptions:
+    readability-identifier-naming.VariableCase: 'camelBack'
+    readability-identifier-naming.ParameterCase: 'camelBack'
+    readability-identifier-naming.MemberCase: 'camelBack'
+    readability-identifier-naming.StructCase: 'CamelCase'
+    readability-identifier-naming.UnionCase: 'CamelCase'
+    readability-identifier-naming.EnumCase: 'CamelCase'
+    readability-identifier-naming.TypedefCase: 'CamelCase'
+    readability-identifier-naming.FunctionCase: 'lower_case'
+    readability-identifier-naming.MacroDefinitionCase: 'UPPER_CASE'
+    readability-identifier-naming.EnumConstantCase: 'UPPER_CASE'
+    readability-function-size.LineThreshold: '50'
+    readability-inconsistent-declaration-parameter-name:Strict: 'true'
+    readability-magic-numbers.IgnoredIntegerValues: '1;2'
+    bugprone-misplaced-widening-cast:CheckImplicitCasts: 'true'
+    bugprone-not-null-terminated-result:WantToUseSafeFunctions: 'false'
+    bugprone-sizeof-expression:WarnOnSizeOfIntegerExpression: 'true'
+    bugprone-suspicious-enum-usage:StrictMode: '1'
+    bugprone-unsafe-functions:ReportMoreUnsafeFunctions: 'true'
+
+
