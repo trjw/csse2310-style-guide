@@ -11,7 +11,9 @@ if [ ! "$1" ] ; then
     exit 1
 fi
 
-/local/courses/csse2310/bin/csse2310logusage
+if [ -x /local/courses/csse2310/bin/csse2310logusage ] ; then
+    /local/courses/csse2310/bin/csse2310logusage
+fi
 
 # Iterate over all the arguments. If readable then reformat
 while [ -r "$1" ] ; do

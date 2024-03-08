@@ -5,7 +5,9 @@
 # filenames are given then all .c and .h files in the current directory are
 # checked.
 
-/local/courses/csse2310/bin/csse2310logusage
+if [ -x /local/courses/csse2310/bin/csse2310logusage ] ; then
+    /local/courses/csse2310/bin/csse2310logusage
+fi
 
 configdir=/local/courses/csse2310/resources
 shopt -s nullglob
