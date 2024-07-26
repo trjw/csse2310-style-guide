@@ -47,12 +47,12 @@
 }
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
-\newcommand{\versionNum}{3.05}
+\newcommand{\versionNum}{3.06}
 \newcommand{\icon}[1]{\raisebox{-3pt}{\includegraphics[height=12pt]{icons/#1.png}}}
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
 \author{The University of Queensland\\School of Information Technology and Electrical Engineering}
-\date{4 March 2024}
+\date{25 July 2024}
 \fancypagestyle{plain}{
 	\fancyhead{}
 	\fancyfoot{}
@@ -536,7 +536,7 @@ document your interaction with the tool as described in the \textit{Documentatio
 \subsection{Line Length\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 Lines must not exceed 80 columns in length including whitespace.
 This is based on a historical ``standard'' screen size of 80 columns, but is still used today to aid readability and printing.
-If a statement/expression does not fit on on line then it must be split over multiple lines with continuation lines indented
+If a statement/expression does not fit on one line then it must be split over multiple lines with continuation lines indented
 as described in section~\ref{sec:indentation} -- \nameref{sec:indentation}.
 
 \subsection{Function Length\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
@@ -691,11 +691,7 @@ None of these are things you could do by accident.
 
 \section{Updates to this Document}
 \begin{itemize}
-\item v3.01 -- original version for semester one 2024.
-\item v3.02 -- updated magic number example and text (section \ref{sec:magic-numbers}).
-\item v3.03 -- updated description of behaviour of \texttt{2310reformat.sh} (section \ref{sec:tools}).
-\item v3.04 -- updated section \ref{sec:function-parameter-names} to permit the use of \texttt{__attribute__((unused))} for unnamed function parameters.
-\item v3.05 -- updated section \ref{sec:naming-variable} to clarify that the names of function parameters should follow the variable naming convention. Updated example \ref{lst:indent8} to make the pointers \texttt{const}.
+\item v3.06 -- original version for semester two 2024.
 \end{itemize}
 
 \end{document}
