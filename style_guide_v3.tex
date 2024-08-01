@@ -52,7 +52,7 @@
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
 \author{The University of Queensland\\School of Information Technology and Electrical Engineering}
-\date{25 July 2024}
+\date{1 August 2024}
 \fancypagestyle{plain}{
 	\fancyhead{}
 	\fancyfoot{}
@@ -558,7 +558,7 @@ You can use the \texttt{--globalOK} flag to \texttt{2310stylecheck.sh} to remove
 \subsection{Magic Numbers\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 \label{sec:magic-numbers}
 
-``Magic numbers'' are to be avoided. Defined constants should be used instead of numbers scattered throughout code without context. These can be \texttt{\#define} constants or global constants declared using \texttt{const}. The latter is preferred because this gives you more type safety, but this is not a formal requirement. 0, 1 and 2 are almost never magic numbers.
+``Magic numbers'' are to be avoided. Defined constants should be used instead of numbers scattered throughout code without context. These can be \texttt{\#define} constants or global constants declared using \texttt{const}. The latter is preferred because this gives you more type safety, but this is not a formal requirement. 0, 1 and 2 are almost never magic numbers. Floating point constants 0.0, 10.0 and 100.0 are also almost never magic numbers. 
 
 \nolinenumbers
 \lstset{caption={Use of constants to avoid magic numbers}}
