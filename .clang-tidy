@@ -60,6 +60,7 @@ CheckOptions:
     readability-function-size.LineThreshold: '50'
     readability-inconsistent-declaration-parameter-name:Strict: 'true'
     readability-magic-numbers.IgnoredIntegerValues: '1;2'
+    readability-magic-numbers.IgnoredFloatingPointValues: '1.0;10.0;100.0'
     bugprone-misplaced-widening-cast:CheckImplicitCasts: 'true'
     bugprone-not-null-terminated-result:WantToUseSafeFunctions: 'false'
     bugprone-sizeof-expression:WarnOnSizeOfIntegerExpression: 'true'
