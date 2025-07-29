@@ -43,13 +43,13 @@
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
 
-\title{CSSE2310/CSSE7231\\Documentation required for the use of AI tools\\Version 1.2}
+\title{CSSE2310/CSSE7231\\Documentation required for the use of AI tools\\Version 1.3}
 \author{The University of Queensland\\School of Information Technology and Electrical Engineering}
-\date{August 2024}
+\date{July 2025}
 \fancypagestyle{plain}{
 	\fancyhead{}
 	\fancyfoot{}
-	\fancyfoot[L]{\small{\copyright{~2024 The University of Queensland}}}
+	\fancyfoot[L]{\small{\copyright{~2025 The University of Queensland}}}
 	\fancyfoot[R]{\thepage}
 	\renewcommand{\headrulewidth}{0.5pt}
 	\renewcommand{\footrulewidth}{0.5pt}
@@ -58,13 +58,13 @@
 	\fancyhead{}
 	\fancyfoot{}
 	\fancyhead[R]{CSSE2310/CSSE7231 -- Documentation required for the use of AI tools}
-	\fancyfoot[L]{\small{\copyright{~2024 The University of Queensland}}}
+	\fancyfoot[L]{\small{\copyright{~2025 The University of Queensland}}}
 	\fancyfoot[R]{\thepage}
 	\renewcommand{\headrulewidth}{0.5pt}
 	\renewcommand{\footrulewidth}{0.5pt}
 }
 \pagestyle{fancy}
-\lfoot{\small{\copyright{~2024 The University of Queensland}}}
+\lfoot{\small{\copyright{~2025 The University of Queensland}}}
 
 
 \begin{document}
@@ -129,7 +129,7 @@ If you have learned about a library function through interactions with such a to
 
 There are no line length restrictions in the \texttt{toolHistory.txt} file,
 but the file should be formatted in such a way that it is easy to read. 
-Do not just summarise your interactions -- we want to see the full details of your prompts and the responses from the AI tool.
+\textbf{Do not just summarise your interactions -- we want to see the full details of your prompts and the responses from the AI tool.} It is not sufficient to include URLs to your interactions -- you must include all interactions in your \texttt{toolHistory.txt} file.
 
 \section{Tools That Capture Interactions}
 
@@ -144,7 +144,7 @@ For example:
 \lstset{language=,numbers=left,caption={ChatGPT code generation conversation example}}
 \begin{lstlisting}
 --------------------------------------
-Wednesday 22 February 2023 2:48pm - interaction wtih ChatGPT
+Wednesday 22 February 2023 2:48pm - interaction with ChatGPT
 --------------------------------------
 p.sutton@uq.edu.au
 Write a C function that calculates the largest of the absolute values of two integer arguments.
@@ -197,6 +197,63 @@ scss
 Copy code
 int result = max_abs(-10, 5);
 This will set the result variable to the absolute value of -10, since it has a larger absolute value than 5.
+\end{lstlisting}
+\linenumbers
+
+\noindent Some tools may not allow you to easily copy and paste all of your interactions with the tool (e.g. Google Search AI Overview). In this case, you must document all of your prompts and the ouputs of the tool.
+
+For example:
+
+\nolinenumbers
+\lstset{language=,numbers=left,caption={Google Search AI Overview code generation example}}
+\begin{lstlisting}
+	--------------------------------------
+	Wednesday 22 February 2025 2:48pm - interaction with Google Search AI Overview
+	--------------------------------------
+	Search string: "printf c example code"
+	
+	Google Search AI Overview:
+	The printf() function in C is used to print formatted output to the console. It requires the inclusion of the <stdio.h> header file.
+	Here are some examples of printf() usage: Printing a simple string.
+	C
+	
+	#include <stdio.h>
+	
+	int main() {
+		printf("Hello, C Programming!\n");
+		return 0;
+	}
+	This will print "Hello, C Programming!" followed by a newline character. Printing variables with format specifiers.
+	C
+	
+	#include <stdio.h>
+	
+	int main() {
+		int age = 30;
+		double gpa = 3.85;
+		char initial = 'J';
+		char name[] = "John Doe";
+		
+		printf("Name: %s\n", name);
+		printf("Age: %d years old\n", age);
+		printf("GPA: %.2f\n", gpa); // .2f formats to two decimal places
+		printf("Initial: %c\n", initial);
+		return 0;
+	}
+	This example demonstrates the use of various format specifiers: %s for strings, %d for integers, %f for floating-point numbers (with optional precision like %.2f), and %c for single characters.
+	Using escape sequences.
+	C
+	
+	#include <stdio.h>
+	
+	int main() {
+		printf("This is line 1.\n"); // Newline
+		printf("This text has a\ttab.\n"); // Tab
+		printf("This prints a backslash: \\ \n"); // Backslash
+		printf("This prints a double quote: \" \n"); // Double quote
+		return 0;
+	}
+	Escape sequences like \n (newline), \t (tab), \\ (backslash), and \" (double quote) are used for special formatting within the string.
 \end{lstlisting}
 \linenumbers
 
