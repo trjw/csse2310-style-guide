@@ -2,6 +2,7 @@
 #include "clang-tidy/ClangTidyModuleRegistry.h"
 
 #include "StaticLocalCheck.h"
+#include "DoubleAssignmentCheck.h"
 #include "LLVMHeaderGuardCheck.h"
 
 using namespace clang;
@@ -12,6 +13,7 @@ class CSSE2310Module : public ClangTidyModule {
     void addCheckFactories(ClangTidyCheckFactories& Factories) override
     {
         Factories.registerCheck<StaticLocalCheck>("csse2310-static-local");
+        Factories.registerCheck<DoubleAssignmentCheck>("csse2310-double-assignment");
         Factories.registerCheck<LLVMHeaderGuardCheck>("csse2310-header-guard");
     }
 };
