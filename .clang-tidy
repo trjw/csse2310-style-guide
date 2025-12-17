@@ -6,6 +6,7 @@ ExtraArgsBefore: ['-I/local/courses/csse2310/include']
 FormatStyle:	file:/local/courses/csse2310/resources/.clang-format
 Checks: '-*,
     core-*,
+    csse2310-*,
     cppcoreguidelines-avoid-non-const-global-variables,
     cppcoreguidelines-avoid-goto,
     readability-braces-around-statements,
