@@ -1,8 +1,10 @@
 CXX=c++
-CXXFLAGS= -std=gnu++17 -fPIC
+CXXFLAGS= -std=gnu++17 -fPIC -g
 LIB=libClangTidy2310.so
-OBJS=StaticLocalCheck.o FileExtensionsUtils.o HeaderGuard.o CSSE2310Checks.o \
-     LLVMHeaderGuardCheck.o DoubleAssignmentCheck.o
+OBJS=StaticLocalCheck.o FileExtensionsUtils.o HeaderGuard.o \
+     LLVMHeaderGuardCheck.o DoubleAssignmentCheck.o FileCommentCheck.o \
+     FileCommentCompleteCheck.o \
+     CSSE2310Checks.o
 COURSEDIR=/local/courses/csse2310
 
 $(LIB): $(OBJS)
@@ -13,3 +15,5 @@ install: $(LIB)
 
 clean:
 	rm -f *.o *.so
+
+CSSE2310Checks.o: *.h

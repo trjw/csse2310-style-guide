@@ -4,6 +4,8 @@
 #include "StaticLocalCheck.h"
 #include "DoubleAssignmentCheck.h"
 #include "LLVMHeaderGuardCheck.h"
+#include "FileCommentCheck.h"
+#include "FileCommentCompleteCheck.h"
 
 using namespace clang;
 using namespace clang::tidy;
@@ -15,6 +17,8 @@ class CSSE2310Module : public ClangTidyModule {
         Factories.registerCheck<StaticLocalCheck>("csse2310-static-local");
         Factories.registerCheck<DoubleAssignmentCheck>("csse2310-double-assignment");
         Factories.registerCheck<LLVMHeaderGuardCheck>("csse2310-header-guard");
+        Factories.registerCheck<FileCommentCheck>("csse2310-file-comment");
+        Factories.registerCheck<FileCommentCompleteCheck>("csse2310-file-comment-complete");
     }
 };
 
