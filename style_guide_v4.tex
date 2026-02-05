@@ -65,13 +65,13 @@
 	\fancyhead{}
 	\fancyfoot{}
 	\fancyhead[R]{CSSE2310/CSSE7231 Style Guide Version \versionNum}
-	\fancyfoot[L]{\small{\copyright{~2025 The University of Queensland}}}
+	\fancyfoot[L]{\small{\copyright{~2026 The University of Queensland}}}
 	\fancyfoot[R]{\thepage}
 	\renewcommand{\headrulewidth}{0.5pt}
 	\renewcommand{\footrulewidth}{0.5pt}
 }
 \pagestyle{fancy}
-\lfoot{\small{\copyright{~2025 The University of Queensland}}}
+\lfoot{\small{\copyright{~2026 The University of Queensland}}}
 
 
 \begin{document}
@@ -305,6 +305,7 @@ Each statement must be on its own line.
 \lstinputlisting[label=lst:line1]{examples/line1.c}
 \linenumbers
 
+% Multiple assignment operators
 \subsection{Multiple assignment operators in the one statement \texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 
 Do not use multiple assignment operators in the one statement -- split these up into multiple statements.
@@ -314,13 +315,23 @@ Do not use multiple assignment operators in the one statement -- split these up 
 \lstinputlisting[label=lst:line2]{examples/line2.c}
 \linenumbers
 
-\subsection{Use of the comma operator\texorpdfstring{\protect\hfill\icon{MANUAL-CHECK}}{}}
+% Multiple variable declarations
+\subsection{Variable declarations with non-constant initialisers \texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
+Variables declarations with non-constant initialisers must be on lines by themselves. (Non-constant initialisers involve function calls or other variables. Constant initialisers are those known at compile time.)
+
+\nolinenumbers
+\lstset{caption={Variable declarations}}
+\lstinputlisting[label=lst:vardecls]{examples/vardecls.c}
+\linenumbers
+
+% Comma operator
+\subsection{Use of the comma operator\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 Do not use the comma operator to separate expressions where a semicolon can be used. This means the 
 comma operator should be restricted to \texttt{for} loop initialisers, loop test expressions, etc. if its use is  
 necessary. It should never be used just to reduce the number of lines in a function.
 
 \nolinenumbers
-\lstset{caption={Multiple assignments}}
+\lstset{caption={Comma operator}}
 \lstinputlisting[label=lst:comma]{examples/comma.c}
 \linenumbers
 
@@ -412,7 +423,7 @@ follow the variable naming convention as per section~\ref{sec:naming-variable}.
 \subsection{Enumerated Types\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 Enumerated types must be named in the same way as any other type (see~\ref{sec:type-names}).
 Members of an enumerated type must follow the same naming as constants (see~\ref{sec:naming-constants}).
-\pagebreak
+
 
 \nolinenumbers
 \lstset{caption={Examples of \texttt{enum} declarations}}
@@ -601,7 +612,6 @@ parameters to main.)
 \linenumbers
 
 % Use of const for pointer function parameters
-\pagebreak
 \subsection{Use of \texttt{const} for pointer function parameters\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 
 If the use of \texttt{const} with a function parameter of a pointer type will make a function interface safer then it should be used. 
