@@ -6,6 +6,8 @@
 #include "LLVMHeaderGuardCheck.h"
 #include "FileCommentCheck.h"
 #include "FileCommentCompleteCheck.h"
+#include "InappropriateCommaOperatorCheck.h"
+#include "NonConstVariableDeclarationCheck.h"
 
 using namespace clang;
 using namespace clang::tidy;
@@ -19,6 +21,8 @@ class CSSE2310Module : public ClangTidyModule {
         Factories.registerCheck<LLVMHeaderGuardCheck>("csse2310-header-guard");
         Factories.registerCheck<FileCommentCheck>("csse2310-file-comment");
         Factories.registerCheck<FileCommentCompleteCheck>("csse2310-file-comment-complete");
+        Factories.registerCheck<InappropriateCommaOperatorCheck>("csse2310-inappropriate-comma-operator");
+        Factories.registerCheck<NonConstVariableDeclarationCheck>("csse2310-non-const-variable-declaration");
     }
 };
 
