@@ -44,7 +44,7 @@ void FileCommentCompleteCheck::registerMatchers(ast_matchers::MatchFinder* Finde
 }
 
 void FileCommentCompleteCheck::parseAndCheckFileComment(
-        ASTContext& Context, StringRef CommentText, SourceLocation Loc)
+        ASTContext& Context, StringRef CommentText, SourceRange CommentRange)
 {
     llvm::StringSet<> CommandsFound;
     llvm::SmallVector<llvm::StringRef, 16> Lines;
@@ -52,7 +52,7 @@ void FileCommentCompleteCheck::parseAndCheckFileComment(
 
     for (StringRef Line : Lines) {
         Line = Line.ltrim(" \t/*");
-        if (Line.starts_with("@")) {
+        if (Line.starts_with("@") || Line.starts_with("\\")) {
             StringRef Cmd = Line.drop_front(1).split(' ').first;
             CommandsFound.insert(Cmd);
         }
@@ -61,9 +61,10 @@ void FileCommentCompleteCheck::parseAndCheckFileComment(
     // Check required commands
     for (StringRef Cmd : parseRequiredCommands(RequiredCommands)) {
         if (!CommandsFound.contains(Cmd)) {
-            diag(Loc, "Doxygen comment at the start of file must contain @%0",
+            diag(CommentRange.getBegin(), 
+                    "Doxygen comment at the start of file must contain @%0",
                     DiagnosticIDs::Warning)
-                    << Cmd;
+                    << Cmd << CharSourceRange::getCharRange(CommentRange);
         }
     }
 }
@@ -83,22 +84,49 @@ void FileCommentCompleteCheck::check(
     SourceLocation StartOfFile = SM.getLocForStartOfFile(SM.getMainFileID());
     StringRef Start = Buffer.substr(Pos);
 
-    // Look for /**, ///, or //! at the top
-    if (Start.starts_with("/**") || Start.starts_with("///")
-            || Start.starts_with("//!")) {
-        size_t EndPos = Start.find("*/");
+    // Look for /**, ///, or //! at the top - and find the end of the comment
+    size_t EndPos = 0;
+    if (Start.starts_with("/**") || Start.starts_with("/*!")) {
+        // Block comment
+        EndPos = Start.find("*/");
         if (EndPos != StringRef::npos) {
-            EndPos += 2; // Include */
+            EndPos += 2; // include */
         } else {
-            EndPos = Start.find("\n"); // single-line style
+            return; // malformed block comment
+        }
+    } else if (Start.starts_with("///") || Start.starts_with("//!")) {
+        // Line comment(s)
+
+        while (true) {
+            // find end of current line
+            size_t LineEnd = Start.find('\n', EndPos);
+            if (LineEnd == StringRef::npos)
+                LineEnd = Start.size();
+
+            EndPos = LineEnd + 1;
+
+            if (EndPos >= Start.size()) {
+                // Can't go any further
+                break;
+            }
+            StringRef NextLine = Start.substr(EndPos);
+
+            if(!(NextLine.starts_with("///") || NextLine.starts_with("//!"))) {
+                break;
+            }
         }
 
-        StringRef CommentText = Start.substr(0, EndPos);
-        SourceLocation Loc = SM.getLocForStartOfFile(SM.getMainFileID())
-                                     .getLocWithOffset(Pos);
+        // EndPos now spans the full /// comment block
+    } else {
+        // else no Doxygen comment at top of file - do nothing
+        // (We have a separate check for the presence of a file comment)
+        return;
+    }
 
-        parseAndCheckFileComment(Context, CommentText, Loc);
-    } 
-    // else no Doxygen comment at top of file - do nothing
-    // (We have a separate check for the presence of a file comment)
+    StringRef CommentText = Start.substr(0, EndPos);
+    SourceLocation Loc = SM.getLocForStartOfFile(SM.getMainFileID())
+                                 .getLocWithOffset(Pos);
+    // -1 present to not include the newline
+    SourceLocation EndLoc = Loc.getLocWithOffset(EndPos - 1);
+    parseAndCheckFileComment(Context, CommentText, SourceRange(Loc, EndLoc));
 }

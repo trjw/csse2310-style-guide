@@ -52,45 +52,44 @@ void FileCommentCheck::registerMatchers(ast_matchers::MatchFinder* Finder)
 }
 
 bool FileCommentCheck::parseAndCheckFileComment(
-        ASTContext& Context, StringRef CommentText, SourceLocation Loc)
+        ASTContext& Context, StringRef CommentText, SourceLocation Loc, StringRef FileBaseName)
 {
     llvm::StringSet<> CommandsFound;
     llvm::SmallVector<llvm::StringRef, 16> Lines;
     CommentText.split(Lines, '\n', -1, false);
 
+    // Code below would parse multiple lines, but we've modified the check
+    // to only check the first line - the @file command must be present here
+    StringRef Rest;
     for (StringRef Line : Lines) {
         Line = Line.ltrim(" \t/*");
         if (Line.starts_with("@") || Line.starts_with("\\")) {
             StringRef Cmd = Line.drop_front(1).split(' ').first;
             CommandsFound.insert(Cmd);
+            // Get the next word after the command
+            Rest = Line.drop_front(1 + Cmd.size()).ltrim(" \t").rtrim(" \t*/");
         }
     }
 
-    // @file (or whatever the RequiredCommand is must exist
-    return CommandsFound.contains(RequiredCommand);
-}
-#if 0
-    if (!CommandsFound.contains(RequiredCommand)) {
-        auto D = diag(Loc,
-                         "Doxygen comment at the start of file must contain "
-                         "@%0",
-                         DiagnosticIDs::Error)
-                << RequiredCommand;
-        if (!InsertTemplate.empty()) {
-            // We use an array of fix it hints to ensure one gets printed
-            std::vector<FixItHint> FixIts;
-            FixIts.push_back(FixItHint::CreateInsertion(Loc, InsertTemplate));
-            D << FixIts;
+    // @file (or whatever the RequiredCommand is) must exist
+    if (CommandsFound.contains(RequiredCommand)) {
+        // Make sure that Rest is the filename (in FileBaseName)
+        if (Rest == FileBaseName) {
+            return true; // All good
         }
     }
+    return false;
 }
-#endif
 
 void FileCommentCheck::check(
         const ast_matchers::MatchFinder::MatchResult& Result)
 {
     ASTContext& Context = *Result.Context;
     const SourceManager& SM = Context.getSourceManager();
+    SourceLocation StartOfFile = SM.getLocForStartOfFile(SM.getMainFileID());
+    // Get the name of the file
+    StringRef Filename = SM.getFilename(StartOfFile);
+    StringRef FileBaseName = llvm::sys::path::filename(Filename);
 
     StringRef Buffer = SM.getBufferData(SM.getMainFileID());
     size_t Pos = Buffer.find_first_not_of(" \t\r\n");
@@ -101,31 +100,30 @@ void FileCommentCheck::check(
     StringRef Start = Buffer.substr(Pos);
     bool found = false;
 
-    // Look for /**, ///, or //! at the top
-    if (Start.starts_with("/**") || Start.starts_with("///")
-            || Start.starts_with("//!")) {
-        size_t EndPos = Start.find("*/");
-        if (EndPos != StringRef::npos) {
-            EndPos += 2; // Include */
-        } else {
-            EndPos = Start.find("\n"); // single-line style
-        }
+    // Look for /**, /*!, ///, or //! at the top
+    if (Start.starts_with("/**") || Start.starts_with("/*!") 
+            || Start.starts_with("///") || Start.starts_with("//!")) {
+        size_t EndPos = Start.find("\n"); // Find the end of the line
 
         StringRef CommentText = Start.substr(0, EndPos);
         SourceLocation Loc = SM.getLocForStartOfFile(SM.getMainFileID())
                                      .getLocWithOffset(Pos);
 
-        found = parseAndCheckFileComment(Context, CommentText, Loc);
+        found = parseAndCheckFileComment(Context, CommentText, Loc, FileBaseName);
     } 
     if (!found) {
         // No file comment → insert template
-        SourceLocation StartOfFile = SM.getLocForStartOfFile(SM.getMainFileID());
         auto D = diag(StartOfFile,
                          "File must begin with a Doxygen comment containing "
-                         "@%0",
+                         "@%0 and the name the file on the first line",
                          DiagnosticIDs::Error)
                 << RequiredCommand;
         if (!InsertTemplate.empty()) {
+            // Replace <filename> in the template with the file base name
+            size_t FilenamePos = InsertTemplate.find("<filename>");
+            if (FilenamePos != std::string::npos) {
+                InsertTemplate.replace(FilenamePos, 10, FileBaseName.str());
+            }
             D << FixItHint::CreateInsertion( StartOfFile, InsertTemplate);
         }
     }

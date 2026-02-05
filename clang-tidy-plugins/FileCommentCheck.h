@@ -24,8 +24,8 @@ class FileCommentCheck : public ClangTidyCheck {
     std::string InsertTemplate;
 
     // Helpers
-    bool parseAndCheckFileComment(
-            ASTContext& Context, StringRef CommentText, SourceLocation Loc);
+    bool parseAndCheckFileComment(ASTContext& Context, StringRef CommentText,
+            SourceLocation Loc, StringRef FileBaseName);
 };
 
 } // namespace csse2310

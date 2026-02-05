@@ -24,7 +24,7 @@ private:
 
   // Helpers
   void parseAndCheckFileComment(ASTContext &Context, StringRef CommentText,
-          SourceLocation Loc);
+          SourceRange CommentRange);
 };
 
 } // namespace csse2310
