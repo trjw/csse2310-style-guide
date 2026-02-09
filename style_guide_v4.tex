@@ -88,8 +88,8 @@
 \lstset{numbers=left, numberstyle=\ttfamily}
 
 Programs written for CSSE2310/CSSE7231 assignments must follow the style guidelines outlined in this document. The formatting requirements are loosely based on the \href{https://webkit.org/code-style-guidelines/}{\texttt{WebKit}} style as implemented by \texttt{clang-format}. There are also
-additional requirements beyond this, e.g. naming conventions and function and line length constraints. The tool
-\texttt{clang-tidy} can be used to check many of these requirements. Scripts are available to do this (see below).
+additional requirements beyond this, e.g. naming conventions, comments and function and line length constraints. The tools
+\texttt{clang-tidy} and \texttt{doxygen} can be used to check many of these requirements. Scripts are available to do this (see below).
 
 Where the style guide is open to interpretation, the choices you make regarding your personal style 
 must be consistent throughout your project.
@@ -106,7 +106,9 @@ The following icons are used to indicate which tools (or not) can be used to che
 
 \noindent\icon{CLANG-TIDY} -- indicates that \texttt{clang-tidy} (with the appropriate arguments) can be used to check for compliance with this style requirement. Any corrections must be applied manually (e.g. renaming variables to be consistent with the naming requirements).
 
-\noindent\icon{MANUAL-CHECK} -- indicates that this style requirement must be checked and fixed manually (e.g. \hl{making sure a function comment contains the required information}).
+\noindent\icon{DOXYGEN} -- indicates that \texttt{doxygen} (with the appropriate arguments) can be use to check for compliance with this style (commenting) requirement. Any corrections must be applied manually (e.g. by adding an appropriate documentation comment).
+
+\noindent\icon{MANUAL-CHECK} -- indicates that this style requirement must be checked and fixed manually (e.g. making sure a function name is meaningful).
 
 \subsection{Tools}
 \label{sec:tools}
@@ -117,7 +119,7 @@ files that you want reformatted on the command line. You can run \texttt{2310ref
 your source files in the current directory.
 
 The tool \texttt{2310stylecheck.sh} is available on \texttt{moss} to check those elements of style able to be checked with
-\texttt{clang-format} and \texttt{clang-tidy} (with the appropriate arguments), i.e. those items indicated by the \icon{CLANG-FORMAT} and \icon{CLANG-TIDY} icons below. Details of the lines on which issues are found are reported to standard output. 
+\texttt{clang-format}, \texttt{clang-tidy} and \texttt{doxygen} (with the appropriate arguments), i.e. those items indicated by the \icon{CLANG-FORMAT}, \icon{CLANG-TIDY} and \icon{DOXYGEN} icons below. Details of the lines on which issues are found are reported to standard output. 
 
 Unfortunately, the messages output by \texttt{clang-format} are not particularly useful -- they'll say ``\texttt{warning:~code should be clang-formatted}'' for each line that needs to be fixed -- so it is probably easiest to run \texttt{2310reformat.sh} to fix these issues prior to running
 \texttt{2310stylecheck.sh}.
@@ -152,6 +154,8 @@ body of another statement.
 Comments on a line by themselves (i.e. not following code) must be indented the same as code.
 
 For \texttt{//} comments that start after a statement, continuation lines can either be aligned with the \texttt{//} or the code.
+
+More details about required comments and the required contents of comments can be found in section \ref{sec:comments} on page \pageref{sec:comments}.
 
 % Example indent2
 \nolinenumbers
@@ -225,6 +229,9 @@ constant must align with the commencing double quote characters (i.e. no indenti
 \linenumbers
 
 \section{Horizontal Spacing}
+
+\subsection{Line ending\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
+Source files must use Linux style line endings, i.e. lines must end with with a linefeed (newline) character only. Carriage return characters must not be present. 
 
 \subsection{Unary operators\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 There should be no spaces between unary operators and their operands.
@@ -440,6 +447,7 @@ Example filenames: \texttt{hello.c}, \texttt{stringRoutines.c}, \texttt{shared.h
 
 
 \section{Comments\texorpdfstring{\protect\hfill\icon{MANUAL-CHECK}}{}}
+\label{sec:comments}
 Comments should be generously added to describe the intent of the code.
 They are expected in code which is tricky, lengthy or where functionality is not immediately obvious.
 It is reasonable to assume that the reader has a decent knowledge of the C programming language, 
@@ -448,10 +456,10 @@ so it is not necessary to comment every line within a function.
 Comments must be present and meaningful for each of the following:
 \begin{itemize}
 \itemsep -2pt
-    \item Global variables\footnote{See the note about global variables in section~\ref{sec:global}}
-    \item Function declarations or definitions
-    \item Enum definitions
-    \item Struct definitions
+    \item At the start of source files
+    \item Non-constant global variables (assuming global variables are permitted in your assignment -- see section~\ref{sec:global})
+    \item Function declarations or definitions (see below for which)
+    \item Type definitions -- including \texttt{enum}, \texttt{struct}, \texttt{union} and \texttt{typedef} definitions
 \end{itemize}
 
 Comments can use either \texttt{/* ... */} or \texttt{//} notation.
@@ -460,7 +468,53 @@ Comments must not be used to comment out unused code. Use conditional compilatio
 code being compiled, e.g. \texttt{\#if 0 ... \#endif}, or remove the code completely. Any use of conditional compilation in
 this way must be accompanied by a comment that explains the reason for its use.
 
+Required comments use doxygen format and are described below. Doxygen is an automatic documentation generator --  see \url{https://doxygen.nl/}. You are not required to generate documentation files from your code in CSSE2310/CSSE7231 but use of this format allows automated checking for required comments. 
+
+Doxygen comments must  use one of the four formats shown in Examples \ref{lst:doxygen1} to \ref{lst:doxygen4} below. For the first two formats, intermediate \texttt{*}s are optional. Within a doxygen comment, various \textit{\ul{commands}} will be expected -- these can begin with either \texttt{@} or \texttt{\textbackslash}, e.g. \texttt{@param} or \texttt{\textbackslash param}. We will use the \texttt{@} version in the examples below.
+\nolinenumbers
+\begin{multicols}{4}
+\lstset{caption={Doxygen Format 1}}
+\lstinputlisting[label=lst:doxygen1]{examples/doxygen1.c}
+\columnbreak
+\lstset{caption={Doxygen Format 2}}
+\lstinputlisting[label=lst:doxygen2]{examples/doxygen2.c}
+\columnbreak
+\lstset{caption={Doxygen Format 3}}
+\lstinputlisting[label=lst:doxygen3]{examples/doxygen3.c}
+\columnbreak
+\lstset{caption={Doxygen Format 4}}
+\lstinputlisting[label=lst:doxygen4]{examples/doxygen4.c}
+\end{multicols}
+\linenumbers
+
+
+\subsection{File comments -- including AI summary\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
+
+Every \texttt{.c} and \texttt{.h} file must begin with a doxygen comment containing the \texttt{@file} command as the first command in the comment. This must list the name of the file (excluding any directory part). This is required for doxygen to be able to check other comments in the file.
+The initial comment in a file must also contain an \texttt{@author} command listing the name of the author and one or more \texttt{@ai} commands which indicate how AI was used in the development of the file.
+
+As many \texttt{@ai} commands as apply from the following list must be included -- each on a separate line in the initial file comment. No other text should be present on these lines. 
+
+\begin{itemize}
+\itemsep -2pt
+\item \texttt{@ai Not Used} -- indicates that AI was not used in any way in the development of this file. No other \texttt{@ai} commands must be present.
+\item \texttt{@ai Wrote Code} -- indicates that an AI tool wrote some or all of the compilable code in this file.
+\item \texttt{@ai Wrote Comments} -- indicates that an AI tool was used to write some or all of the comment text (possibly including doxygen comments) in this file.
+\item \texttt{@ai Inspiration} -- indicates that you took inspiration from an AI tool (e.g. discovered the existence of a library function). (This attribute is assumed and need not be specified if the \texttt{@ai Wrote Code} command is present.)
+\item \texttt{@ai Debugging} -- indicates that an AI tool was used to help in the debugging of the code in this file.
+\end{itemize}
+
+The presence of an \texttt{@ai} command other than \texttt{@ai Not Used} means that \texttt{ai} commands are expected in other doxygen comments also -- see \hl{below}.
+
+An example file comment is shown below:
+
+\nolinenumbers
+\lstset{caption={Example file comment -- for a file named \texttt{program.c}}}
+\lstinputlisting[label=lst:filecomment]{examples/filecomment.c}
+\linenumbers
+
 \subsection{Function comments\texorpdfstring{\protect\hfill\icon{MANUAL-CHECK}}{}}
+
 Function comments should describe parameters, return values, any global variables modified by the function and any error conditions. (``Error conditions'' means
 the conditions under which the return value indicates an error and/or the conditions under which the 
 function does not return, i.e. the program exits.)
