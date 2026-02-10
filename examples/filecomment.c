@@ -6,4 +6,6 @@
  * @ai Wrote Code
  * @ai Wrote Comments
  * @ai Debugging
+ *
+ * Additional text can be present in the comment if desired, but is not required.
  */
