@@ -108,6 +108,8 @@ The following icons are used to indicate which tools (or not) can be used to che
 
 \noindent\icon{DOXYGEN} -- indicates that \texttt{doxygen} (with the appropriate arguments) can be use to check for compliance with this style (commenting) requirement. Any corrections must be applied manually (e.g. by adding an appropriate documentation comment).
 
+\noindent\icon{STYLE-CHECK} -- indicates that \texttt{2310stylecheck.sh} will check compliance with this style requirement. Any corrections must be applied manually. Note that \texttt{2310stylecheck.sh} will also run \texttt{clang-format}, \texttt{clang-tidy} and \texttt{doxygen}.
+
 \noindent\icon{MANUAL-CHECK} -- indicates that this style requirement must be checked and fixed manually (e.g. making sure a function name is meaningful).
 
 \subsection{Tools}
@@ -119,7 +121,7 @@ files that you want reformatted on the command line. You can run \texttt{2310ref
 your source files in the current directory.
 
 The tool \texttt{2310stylecheck.sh} is available on \texttt{moss} to check those elements of style able to be checked with
-\texttt{clang-format}, \texttt{clang-tidy} and \texttt{doxygen} (with the appropriate arguments), i.e. those items indicated by the \icon{CLANG-FORMAT}, \icon{CLANG-TIDY} and \icon{DOXYGEN} icons below. Details of the lines on which issues are found are reported to standard output. 
+\texttt{clang-format}, \texttt{clang-tidy} and \texttt{doxygen} (with the appropriate arguments) -- along with a few other requirements. In other words, it checks those items indicated by the \icon{CLANG-FORMAT}, \icon{CLANG-TIDY}, \icon{DOXYGEN} and \icon{STYLE-CHECK} icons below. Details of the lines on which issues are found are reported to standard output. 
 
 Unfortunately, the messages output by \texttt{clang-format} are not particularly useful -- they'll say ``\texttt{warning:~code should be clang-formatted}'' for each line that needs to be fixed -- so it is probably easiest to run \texttt{2310reformat.sh} to fix these issues prior to running
 \texttt{2310stylecheck.sh}.
@@ -130,6 +132,26 @@ directory.
 
 This script will be used to check compliance with the style guide during assignment marking. Any issues flagged 
 will cost you marks so it is in your interest to fix them.
+
+%Standalone compilation
+\section{Compilation}
+\label{sec:compilation}
+\subsection{Standalone compilation\texorpdfstring{\protect\hfill\icon{STYLE-CHECK}}{}}
+\label{sec:standalone-compilation}
+
+Every \texttt{.c} and \texttt{.h} source file must compile on its own. If a file does not compile (i.e. errors are produced) then other style aspects can not be checked by \texttt{2310stylecheck.sh}. 
+
+\subsection{Compilation warnings\texorpdfstring{\protect\hfill\icon{STYLE-CHECK}}{}}
+\label{sec:compilation-warnings}
+
+All source files (both \texttt{.c} and \texttt{.h} files) are expected to individually compile without warnings when compiled with the \texttt{-Wall -Wextra -pedantic -std=gnu99} compiler arguments. 
+
+To check the requirements for both sections \ref{sec:standalone-compilation} and \ref{sec:compilation-warnings}, \texttt{2310stylecheck.sh} will attempt to compile each source file individually with the 
+following command:
+
+\texttt{gcc -Wall -Wextra -pedantic -std=gnu99 -I/local/courses/csse2310/include -c -o /dev/null \textit{file}}
+
+\noindent where \texttt{\textit{file}} is replaced by the name of the \texttt{.c} or \texttt{.h} file. 
 
 % Indentation
 \section{Indentation}
@@ -191,7 +213,7 @@ then continuation lines are further indented to indicate the nesting.
 \lstset{caption={Continuation lines for nested expressions}}
 \lstinputlisting[label=lst:indent4]{examples/indent4.c}
 \linenumbers
-\pagebreak
+
 \subsection{\texttt{for} loops\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 Where continuation lines are needed for a \texttt{for} loop, indents should be made as per the following examples. If this is too
 confusing to follow, you can just rely on \texttt{clang-format} to do the formatting for you. 
@@ -373,7 +395,7 @@ which case the \texttt{else} must follow the close brace). The closing brace is 
 \vspace{-0.4cm}
 \section{Naming Conventions\texorpdfstring{\protect\hfill\icon{MANUAL-CHECK}}{}}
 
-Note that all names are expected to be meaningful. This is not checked by \texttt{clang-tidy}.
+Note that all names are expected to be meaningful. This is not checked by \texttt{2310stylecheck.sh}.
 
 \vspace{-0.2cm}
 \subsection{Variable names\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
@@ -381,10 +403,7 @@ Note that all names are expected to be meaningful. This is not checked by \textt
 Variable names, function parameter names, and the names of struct/union members will begin with a lowercase letter and names with multiple words 
 will use initial capitals for subsequent words and no underscores -- sometimes called camel case\footnote{This variant of camel case 
 in which the first letter is lower case is sometimes called lower camel case or dromedary case.}. 
-Names that are chosen should be meaningful. Hungarian notation\footnote{Hungarian notation is where characters at the start of 
-the name indicate the type of the variable. Examples include \texttt{int iCount;} \texttt{char* pFileName;} and
-\texttt{double dbPi}.}
- is NOT to be used.
+Names that are chosen should be meaningful. 
 It is permissible to use names like \texttt{i} or \texttt{j} for integer loop counters.
 
 \nolinenumbers
@@ -418,7 +437,7 @@ Note that function pointers are variables and should use variable naming, as per
 \vspace{-0.2cm}
 \subsection{Type names\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 \label{sec:type-names}
-Type names (i.e. from typedefs), struct and union names should begin with capital letters 
+Type names (i.e. from typedefs), struct, enum and union names should begin with capital letters 
 and use initial capitals for subsequent words and no underscores. Members within structs and unions should
 follow the variable naming convention as per section~\ref{sec:naming-variable}.
 
