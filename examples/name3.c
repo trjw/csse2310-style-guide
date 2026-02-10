@@ -21,6 +21,6 @@ typedef struct {
 
 /** Rectangle - typedef'd structs can be named but don't have to be */
 typedef struct Rectangle {
-    Point upperLeft;
-    Point lowerRight;
+    Point upperLeft; ///< Coordinate of the top left corner
+    Point lowerRight; ///< Coordinate of the bottom right corner
 } Rectangle;

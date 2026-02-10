@@ -1,3 +1,3 @@
-// Not a = b = expr();
+// Not b = a = expr();
 a = expr();
 b = a;

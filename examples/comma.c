@@ -1,6 +1,6 @@
 void fn(int a, int b)
 {
-    int sum, diff;
+    int sum, diff; // Commas are permitted in variable declarations - this is not the comma operator
 
     // Don't use a comma where you can use a semicolon and multiple lines:
     // Not this: sum = a + b, diff = a - b;
