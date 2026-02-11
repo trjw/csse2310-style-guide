@@ -103,7 +103,7 @@ that must be created for CSSE2310/CSSE7231, e.g. \texttt{Makefile}s.
 % Notation
 \section{Icons and Tools}
 \subsection{Icons used in this document}
-The following icons are used to indicate which tools (or not) can be used to check for compliance with the style guide.
+The following icons are used to indicate which tools can be used to check for compliance with the style guide.
 
 \noindent\icon{CLANG-FORMAT} -- indicates that \texttt{clang-format} (with the appropriate arguments) can be used to check for \ul{and correct} compliance with this style requirement (e.g. fixing indentation and spacing).
 
@@ -111,7 +111,7 @@ The following icons are used to indicate which tools (or not) can be used to che
 
 \noindent\icon{DOXYGEN} -- indicates that \texttt{doxygen} (with the appropriate arguments) can be used to check for compliance with this style (commenting) requirement. Any corrections must be applied manually (e.g. by adding an appropriate documentation comment).
 
-\noindent\icon{STYLE-CHECK} -- indicates that \texttt{2310stylecheck.sh} will check compliance with this style requirement. Any corrections must be applied manually. Note that \texttt{2310stylecheck.sh} will also run \texttt{clang-format}, \texttt{clang-tidy} and \texttt{doxygen}.
+\noindent\icon{STYLE-CHECK} -- indicates that \texttt{2310stylecheck.sh} (described below) will check compliance with this style requirement. Any corrections must be applied manually. Note that \texttt{2310stylecheck.sh} will also run \texttt{clang-format}, \texttt{clang-tidy} and \texttt{doxygen}.
 
 \noindent\icon{MANUAL-CHECK} -- indicates that this style requirement must be checked and fixed manually (e.g. making sure a function name is meaningful).
 
@@ -127,7 +127,7 @@ The tool \texttt{2310stylecheck.sh} is available on \texttt{moss} to check those
 \texttt{clang-format}, \texttt{clang-tidy} and \texttt{doxygen} (with the appropriate arguments) -- along with a few other requirements. In other words, it checks those items indicated by the \icon{CLANG-FORMAT}, \icon{CLANG-TIDY}, \icon{DOXYGEN} and \icon{STYLE-CHECK} icons below. Details of the lines on which issues are found are reported to standard output. 
 
 Unfortunately, the messages output by \texttt{clang-format} are not particularly useful -- they'll say ``\texttt{warning:~code should be clang-formatted}'' for each line that needs to be fixed -- so it is probably easiest to run \texttt{2310reformat.sh} to fix these issues prior to running
-\texttt{2310stylecheck.sh}.
+\texttt{2310stylecheck.sh}\footnote{If you're using the CSSE2310/CSSE7231 supplied \texttt{.vimrc} file then you can also use Ctrl-K in \texttt{vim} to reformat your current file.}.
 
 You can specify particular source
 files on the command line to \texttt{2310stylecheck.sh}, or, if none are specified, then the tool tries to check all of the .c and .h files in the current
@@ -136,28 +136,28 @@ directory.
 This script will be used to check compliance with the style guide during assignment marking. Any issues flagged 
 will cost you marks so it is in your interest to fix them.
 
-%Standalone compilation
+% Compilation
+\vspace{-0.5em}
 \section{Compilation}
 \label{sec:compilation}
 
-Your C programs must use the C99 standard for maximum code portability between POSIX systems. Some GNU extensions are allowed. Your programs must be compiled with the following flags as a minimum:
+Your C programs must use the C99 standard for maximum code portability between POSIX-compatible systems. (POSIX does not yet support all C11 extensions to the C standard library.) Some GNU extensions are allowed, i.e. those enabled by the \texttt{-std=gnu99} option to \texttt{gcc}.  Your programs must be compiled with the following flags as a minimum:
 
-\texttt{-Wall -Wextra -pedantic -std=gnu99} .
+\texttt{-Wall -Wextra -pedantic -std=gnu99}
 
 Every \texttt{.c} and \texttt{.h} source file in your assignment submission will be checked for compilability and style.
 This applies whether or not those files are linked into executables.
 
-
-
-
+%Standalone compilation
 \subsection{Standalone compilation\texorpdfstring{\protect\hfill\icon{STYLE-CHECK}}{}}
 \label{sec:standalone-compilation}
 
-Every \texttt{.c} and \texttt{.h} source file must compile \ul{on its own}. If a file does not compile (i.e. errors are produced) then other style aspects cannot be checked by \texttt{2310stylecheck.sh}. 
+Every \texttt{.c} and \texttt{.h} source file must compile \ul{on its own} using \texttt{gcc}. If a file does not compile (i.e. errors are produced) then other style aspects cannot be checked by \texttt{2310stylecheck.sh}. 
 
 Note that this means every \texttt{.h} file in your submission must make sense without reference to any other files, other than those that it references by \texttt{\#include}.
 Specifically, any declarations must be complete and all types, declarations and any definitions used in the \texttt{.h} file must either come from the \texttt{.h} file itself, or from included headers.
 
+% Compilation warnings
 \subsection{Compilation warnings\texorpdfstring{\protect\hfill\icon{STYLE-CHECK}}{}}
 \label{sec:compilation-warnings}
 
@@ -173,6 +173,7 @@ following command:
 Any errors detected will prevent further style checking.
 
 % Indentation
+\vspace{-0.5em}
 \section{Indentation}
 \label{sec:indentation}
 \subsection{Tabs vs spaces\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
@@ -182,8 +183,7 @@ It is recommended (but not enforced) that tab characters are not used inside str
 use the escape sequence \texttt{\textbackslash t} instead if a tab character is required.
 
 \subsection{Indent size\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
-Indentation must occur in multiples of four spaces. You must indent once each time a statement is nested inside the
-body of another statement.
+Indentation must occur in multiples of four spaces. You must indent once each time a statement is nested inside the body of another statement. See \autoref{lst:indent1}.
 
 % Example indent1
 \nolinenumbers
@@ -191,19 +191,7 @@ body of another statement.
 \lstinputlisting[label=lst:indent1]{examples/indent1.c}
 \linenumbers
 
-\subsection{Comments\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
-Comments on a line by themselves (i.e. not following code) must be indented the same as code.
-
-For \texttt{//} comments that start after a statement, continuation lines can either be aligned with the \texttt{//} or the code.
-
-More details about required comments and the required contents of comments can be found in section \ref{sec:comments} on page \pageref{sec:comments}.
-
-% Example indent2
-\nolinenumbers
-\lstset{caption={Correct indentation: chained if-else -- also showing comment indentation}}
-\lstinputlisting[label=lst:indent2]{examples/indent2.c}
-	\linenumbers
-
+% Continuation lines
 \subsection{Continuation lines\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 Continuation lines (i.e. where a statement doesn't fit on one line) must be indented eight spaces 
 beyond the first line of the statement. 
@@ -218,6 +206,8 @@ If a statement spills on to a third line, the indentation
 level of the third (and any subsequent) line will be the same as the second line -- i.e. eight spaces beyond that of the first line of 
 the statement -- unless this is a nested expression as described in the next section.
 
+See \autoref{lst:indent3} for examples of continuation lines.
+
 \nolinenumbers
 \lstset{caption={Continuation line indentation}}
 \lstinputlisting[label=lst:indent3]{examples/indent3.c}
@@ -226,16 +216,31 @@ the statement -- unless this is a nested expression as described in the next sec
 \subsection{Continuation lines for nested expressions\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 
 Where expressions are nested (i.e. parentheses are used or functions are called in arguments to functions)
-then continuation lines are further indented to indicate the nesting. 
+then continuation lines are further indented to indicate the nesting. See \autoref{lst:indent4}.
 
 \nolinenumbers
 \lstset{caption={Continuation lines for nested expressions}}
 \lstinputlisting[label=lst:indent4]{examples/indent4.c}
 \linenumbers
 
+% Comment indentation
+\subsection{Comment indentation\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
+Comments on a line by themselves (i.e. not following code) must be indented the same as code.
+For \texttt{//} comments that start after a statement, continuation lines can either be aligned with the \texttt{//} or the code. See \autoref{lst:indent2} for examples.
+
+More details about required comments and the required contents of comments can be found in section \ref{sec:comments} on page \pageref{sec:comments}.
+
+% Example indent2
+\nolinenumbers
+\lstset{caption={Correct indentation: chained if-else -- also showing comment indentation}}
+\lstinputlisting[label=lst:indent2]{examples/indent2.c}
+	\linenumbers
+
+% For llops
+\vspace{-0.5em}
 \subsection{\texttt{for} loops\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
-Where continuation lines are needed for a \texttt{for} loop, indents should be made as per the following examples. If this is too
-confusing to follow, you can just rely on \texttt{clang-format} to do the formatting for you. 
+Where continuation lines are needed for a \texttt{for} loop, indents should be made as per the following examples (\autoref{lst:indent5}). If this is too
+confusing to follow, you can just rely on \texttt{clang-format} to do the formatting for you.
 
 \nolinenumbers
 \lstset{caption={Continuation lines for \texttt{for} loops}}
@@ -245,6 +250,7 @@ confusing to follow, you can just rely on \texttt{clang-format} to do the format
 \subsection{\texttt{switch} statements\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 \texttt{case} labels must line up with the enclosing \texttt{switch} statement. The statements associated with a \texttt{case}
 label must be on a new line and indented by four spaces beyond the start of the \texttt{case} label.
+See \autoref{lst:indent6}.
 
 \nolinenumbers
 \lstset{caption={Correct indentation for \texttt{switch} statement}, label={lst:indentation-switch}}
@@ -252,7 +258,7 @@ label must be on a new line and indented by four spaces beyond the start of the 
 \linenumbers
 
 \subsection{Continuation lines for braced initialiser lists\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
-Initialiser lists (for arrays or structs) follow the rules above -- except where struct member names are used in an initialiser list that does not fit on one line. See the example below.
+Initialiser lists (for arrays or structs) follow the rules above -- except where struct member names are used in an initialiser list that does not fit on one line. See \autoref{lst:indent7}.
 
 \nolinenumbers
 \lstset{caption={Continuation lines for array and struct initialiser lists}}
@@ -262,7 +268,7 @@ Initialiser lists (for arrays or structs) follow the rules above -- except where
 \subsection{Continuation lines for string constants\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 Where a string constant does not fit on one line then it may be split over multiple lines. C will concatenate adjacent string
 constants into a single string constant so \texttt{"ab" "cd"} is the same as \texttt{"abcd"}. Continuation lines for a string
-constant must align with the commencing double quote characters (i.e. no indenting by 8).
+constant must align with the commencing double quote characters (i.e. no indenting by 8). See \autoref{lst:indent8}.
 
 \nolinenumbers
 \lstset{caption={Continuation lines for string constants}}
@@ -271,11 +277,8 @@ constant must align with the commencing double quote characters (i.e. no indenti
 
 \section{Horizontal Spacing}
 
-\subsection{Line ending\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
-Source files must use Linux style line endings, i.e. lines must end with with a linefeed (newline) character only. Carriage return characters must not be present. 
-
 \subsection{Unary operators\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
-There should be no spaces between unary operators and their operands.
+There should be no spaces between unary operators and their operands. See \autoref{lst:space1}.
 
 \nolinenumbers
 \lstset{caption={Spacing around unary operators}}
@@ -283,7 +286,7 @@ There should be no spaces between unary operators and their operands.
 \linenumbers
 
 \subsection{Binary and ternary operators\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
-There should be spaces on both sides of binary or ternary operators.
+There should be spaces on both sides of binary or ternary operators. See \autoref{lst:space2}.
 
 \nolinenumbers
 \lstset{caption={Spacing around binary and ternary operators}}
@@ -293,7 +296,7 @@ There should be spaces on both sides of binary or ternary operators.
 \subsection{Control statements and functions\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 There must be a single space between a control statement (e.g. \texttt{if}, \texttt{for}, \texttt{while}, etc.) and 
 the following open parenthesis. There must not be any spaces between a function name and the following open parenthesis. 
-There must not be any spaces between a parenthesis and the following content. There must be no spaces before commas or semicolons but there should be space after each comma or semicolon that is not at the end of a line. 
+There must not be any spaces between a parenthesis and the following content. There must be no spaces before commas or semicolons but there should be space after each comma or semicolon that is not at the end of a line. See \autoref{lst:space3}.
 
 \nolinenumbers
 \lstset{caption={Spacing in control statements and function calls.}}
@@ -307,7 +310,7 @@ character at the end of the line).
 
 \subsection{Pointer declarations\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 When pointers are declared, the \texttt{*} should be associated with the type, not the variable name -- unless multiple 
-pointers are being declared together.
+pointers are being declared together. See \autoref{lst:space4}.
 
 \nolinenumbers
 \lstset{caption={Spacing in pointer declarations}}
@@ -316,7 +319,7 @@ pointers are being declared together.
 
 \subsection{Array derefencing\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 
-There must be no spaces prior to square brackets when dereferencing arrays.
+There must be no spaces prior to square brackets when dereferencing arrays. See \autoref{lst:space5}.
 
 \nolinenumbers
 \lstset{caption={No spaces before square brackets}}
@@ -325,7 +328,7 @@ There must be no spaces prior to square brackets when dereferencing arrays.
 
 
 \subsection{Spaces before comments\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
-Where a comment follows code on a line then there must only be a single space between the code and the comment. See examples \ref{lst:indent1}, \ref{lst:indent2} and \ref{lst:space1} above.
+Where a comment follows code on a line then there must only be a single space between the code and the comment. See Examples \ref{lst:indent1}, \ref{lst:indent2} and \ref{lst:space1} above.
 
 % Vertical Spacing
 \section{Vertical Spacing}
@@ -337,7 +340,7 @@ Each line (including the last line in a source file) should end with a newline c
 Function, struct and enum definitions must be separated from other code blocks by exactly one blank line. No separation is
 required between an immediately preceding comment and such a definition but a blank line must be present before the comment.
 
-See Example~\ref{lst:name3} below.
+See \autoref{lst:name3} below.
 
 Blank lines should also be used to separate groups of statements from each other to make the major steps of an algorithm distinguishable. This requirement is not checked by \texttt{clang-format}.
 
@@ -346,7 +349,7 @@ Blank lines should also be used to separate groups of statements from each other
 
 \subsection{One statement per line\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 
-Each statement must be on its own line.
+Each statement must be on its own line. See \autoref{lst:line1}.
 
 \nolinenumbers
 \lstset{caption={Line breaks between statements}}
@@ -356,7 +359,7 @@ Each statement must be on its own line.
 % Multiple assignment operators
 \subsection{Multiple assignment operators in the one statement \texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 
-Do not use multiple assignment operators in the one statement -- split these up into multiple statements.
+Do not use multiple assignment operators in the one statement -- split these up into multiple statements. See \autoref{lst:line2}.
 
 \nolinenumbers
 \lstset{caption={Multiple assignments}}
@@ -366,6 +369,7 @@ Do not use multiple assignment operators in the one statement -- split these up 
 % Multiple variable declarations
 \subsection{Variable declarations with non-constant initialisers \texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 Variables declarations with non-constant initialisers must be on lines by themselves. (Non-constant initialisers involve function calls or other variables. Constant initialisers are those known at compile time.)
+See \autoref{lst:vardecls}.
 
 \nolinenumbers
 \lstset{caption={Variable declarations}}
@@ -376,7 +380,7 @@ Variables declarations with non-constant initialisers must be on lines by themse
 \subsection{Use of the comma operator\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 Do not use the comma operator to separate expressions where a semicolon can be used. This means the 
 comma operator should be restricted to \texttt{for} loop initialisers, loop test expressions, etc. if its use is  
-necessary. It should never be used just to reduce the number of lines in a function.
+necessary. It should never be used just to reduce the number of lines in a function. See \autoref{lst:comma}.
 
 \nolinenumbers
 \lstset{caption={Comma operator}}
@@ -390,7 +394,7 @@ necessary. It should never be used just to reduce the number of lines in a funct
 \vspace{-0.1cm}
 \subsection{Function definitions\texorpdfstring{\protect\hfill\icon{CLANG-FORMAT}}{}}
 The opening brace in a function definition must be placed on a line by itself. The matching closing brace must be at
-the start of a line also.
+the start of a line also. See \autoref{lst:brace1}.
 
 \nolinenumbers
 \lstset{caption={Braces for function definitions}}
@@ -405,9 +409,10 @@ contains only one statement, but you must  surround it with braces anyway.
 This helps avoid errors while changing your code. The open brace must be at the end of the line before the 
 enclosed statement. The close brace must appear on a line by itself (unless an \texttt{else} clause follows an \texttt{if} statement, in 
 which case the \texttt{else} must follow the close brace). The closing brace is aligned with the start of the control statement.
+See \autoref{lst:brace2}.
 
 \nolinenumbers
-\lstset{caption={Braces for control statements. See example~\ref{lst:indent5} for \texttt{for} loop examples and example~\ref{lst:indent6} for a \texttt{switch} example.}}
+\lstset{caption={Braces for control statements. See Examples~\ref{lst:indent5} and \ref{lst:indent6} for \texttt{for} and \texttt{switch} exmaples.}}
 \lstinputlisting[label=lst:brace2]{examples/brace2.c}
 \linenumbers
 
@@ -418,6 +423,16 @@ which case the \texttt{else} must follow the close brace). The closing brace is 
 
 Note that all names are expected to be meaningful. This is not checked by \texttt{2310stylecheck.sh}.
 
+\subsection{File names\texorpdfstring{\protect\hfill\icon{STYLE-CHECK}\icon{MANUAL-CHECK}}{}}
+\label{sec:naming-files}
+C source file names must begin with a lowercase letter and names with multiple words 
+will use initial capitals for subsequent words and no underscores. 
+Names that are chosen should be meaningful. Source files must be named with the suffix \texttt{.c} or \texttt{.h} (lower case).
+
+Example filenames: \texttt{hello.c}, \texttt{stringRoutines.c}, \texttt{shared.h}
+
+
+
 %\vspace{-0.2cm}
 \subsection{Variable names\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 \label{sec:naming-variable}
@@ -426,6 +441,7 @@ will use initial capitals for subsequent words and no underscores -- sometimes c
 in which the first letter is lower case is sometimes called lower camel case or dromedary case.}. 
 Names that are chosen should be meaningful. 
 It is permissible to use names like \texttt{i} or \texttt{j} for integer loop counters.
+See \autoref{lst:name1}.
 
 \nolinenumbers
 \lstset{caption={Examples of variable names}}
@@ -442,13 +458,14 @@ be used, e.g. \texttt{name} or \texttt{fileName}.
 Preprocessor constants and macros, i.e. those defined using \texttt{\#define}, must be named 
 using all uppercase letters, with underscores (\_) used to separate multiple words.
 NOTE: Variables declared with the \texttt{const} keyword are to use the variable naming convention, as 
-per~\ref{sec:naming-variable}.
+per section \ref{sec:naming-variable}.
 
 Examples: \texttt{MAX\_BIT}, \texttt{DEFAULT\_SPEED}
 
 \subsection{Function names\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 Function names should all be lowercase and use underscores to separate multiple words.
-Note that function pointers are variables and should use variable naming, as per~\ref{sec:naming-variable}.
+See \autoref{lst:name2}.
+Note that function pointers are variables and should use variable naming, as per section ~\ref{sec:naming-variable}.
 
 \nolinenumbers
 \lstset{caption={Examples of function names and a function pointer}}
@@ -460,7 +477,7 @@ Note that function pointers are variables and should use variable naming, as per
 \label{sec:type-names}
 Type names (i.e. from typedefs), struct, enum and union names should begin with capital letters 
 and use initial capitals for subsequent words and no underscores. Members within structs and unions should
-follow the variable naming convention as per section~\ref{sec:naming-variable}.
+follow the variable naming convention as per section~\ref{sec:naming-variable}. See \autoref{lst:name3}.
 
 \nolinenumbers
 \lstset{caption={Examples of type declarations}}
@@ -468,22 +485,14 @@ follow the variable naming convention as per section~\ref{sec:naming-variable}.
 \linenumbers
 
 \subsection{Enumerated Types\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
-Enumerated types must be named in the same way as any other type (see~\ref{sec:type-names}).
-Members of an enumerated type must follow the same naming as constants (see~\ref{sec:naming-constants}).
+Enumerated types must be named in the same way as any other type (see section~\ref{sec:type-names}).
+Members of an enumerated type must follow the same naming conventions as \texttt{\#define} constants (see section~\ref{sec:naming-constants}). See \autoref{lst:name4}.
 
 
 \nolinenumbers
 \lstset{caption={Examples of \texttt{enum} declarations}}
 \lstinputlisting[label=lst:name4]{examples/name4.c}
 \linenumbers
-
-\subsection{File names\texorpdfstring{\protect\hfill\icon{MANUAL-CHECK}}{}}
-\label{sec:naming-files}
-C source file names will begin with a lowercase letter and names with multiple words 
-will use initial capitals for subsequent words and no underscores. 
-Names that are chosen should be meaningful. Source files must be named with the suffix \texttt{.c} or \texttt{.h} (lower case).
-
-Example filenames: \texttt{hello.c}, \texttt{stringRoutines.c}, \texttt{shared.h}
 
 
 \section{Comments}
@@ -499,8 +508,8 @@ so it is not necessary to comment every line within a function.
 Comments must be present and meaningful for each of the following:
 \begin{itemize}
 \itemsep -2pt
-    \item At the start of source files
-    \item Function declarations or definitions (see \hl{below} for which)
+    \item At the start of source files (called ``file comments'')
+    \item Function declarations or definitions (called ``function comments'' -- see section \ref{sec:functioncomments} below for whether the declaration or the definition needs the comment)
     \item Type definitions -- including \texttt{enum}, \texttt{struct}, \texttt{union} and \texttt{typedef} definitions
     \item Non-constant global variables (assuming global variables are permitted in your assignment -- see section~\ref{sec:global})
 \end{itemize}
@@ -563,7 +572,7 @@ As many \texttt{@ai} commands as apply from the following list must be included 
 
 The presence of an \texttt{@ai} command other than ``\texttt{@ai Not Used}'' means that \texttt{@ai} commands are expected in other doxygen comments also -- see \hl{below}.
 
-A sample file comment is shown in Example \ref{lst:filecomment}. Other doxygen formats are permissible. 
+A sample file comment is shown in \autoref{lst:filecomment}. Other doxygen formats are permissible. 
 
 \nolinenumbers
 \lstset{caption={Example file comment -- for a file named \texttt{program.c} that was developed with AI assistance.}}
@@ -572,6 +581,7 @@ A sample file comment is shown in Example \ref{lst:filecomment}. Other doxygen f
 
 % Function comments
 \subsection{Function comments -- including references and AI summary\texorpdfstring{\protect\hfill\icon{DOXYGEN}}{}}
+\label{sec:functioncomments}
 
 Function comments must describe:
 \begin{itemize}
@@ -680,17 +690,21 @@ The presence of a function comment does not remove the need for comments within 
 function would have no comments within the body of the function. Any function of reasonable length will almost certainly need
 comments within the function to describe the intent of the code. Comments within functions are not checked by doxygen. 
 
+% Type comments
 \subsection{Type comments\texorpdfstring{\protect\hfill\icon{DOXYGEN}}{}}
 \label{sec:typecomments}
 
 Every type (\texttt{typedef}, \texttt{struct}, \texttt{union}, \texttt{enum}) must be preceded by a doxygen
-comment that describes the purpose of that type. Each member of \texttt{struct}, \texttt{union}, and \texttt{enum} types must also be commented to explain their purpose. This can be with a doxygen comment immediately prior to the that member, or a comment immediately following that member using the \texttt{<} indicator at the start of the doxygen comment. See Example \ref{lst:typecomments} below.
+comment that describes the purpose of that type. Each member of \texttt{struct} and \texttt{union} types must also be commented to explain their purpose. This can be with a doxygen comment immediately prior to the that member, or a comment immediately following that member using the \texttt{<} indicator at the start of the doxygen comment. See \autoref{lst:typecomments} below.
+
+If desired, you can instead separately list the descriptions of the members using the \texttt{@var} command as shown in \autoref{lst:name3}.
 
 \nolinenumbers
-\lstset{caption={Sample type comments.}}
+\lstset{caption={Sample type comments. Note that commenting of \texttt{enum} constants themselves is optional.}}
 \lstinputlisting[label=lst:typecomments]{examples/typecomments.c}
 \linenumbers
 
+% Global variable comments
 \subsection{Global variable comments\texorpdfstring{\protect\hfill\icon{DOXYGEN}}{}}
 \label{sec:globalvariablecomments}
 
@@ -747,10 +761,6 @@ You can use the \texttt{--globalOK} flag to \texttt{2310stylecheck.sh} to remove
 \lstinputlisting[label=lst:magic]{examples/magic.c}
 \linenumbers
 
-\subsection{Duplicate Includes\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
-
-Do not \texttt{\#include} any header file more than once in a source file.
-
 % else after return
 \subsection{\texttt{else} after \texttt{return}, \texttt{continue}, etc.\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 
@@ -766,6 +776,11 @@ Do not use an \texttt{else} or \texttt{else if} clause if the previous \texttt{i
 \lstinputlisting[label=lst:elseAfterReturn2]{examples/else-after-return2.c}
 \end{multicols}
 \linenumbers
+
+% Duplicate includes
+\subsection{Duplicate Includes\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
+
+Do not \texttt{\#include} any header file more than once in a source file.
 
 % Inconsistent function parameter names
 \subsection{Function parameter names\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
@@ -787,7 +802,7 @@ parameters to main.)
 % Use of const for pointer function parameters
 \subsection{Use of \texttt{const} for pointer function parameters\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
 
-If the use of \texttt{const} with a function parameter of a pointer type will make a function interface safer then it should be used. 
+If the use of \texttt{const} with a function parameter of a pointer type will make a function interface safer then it should be used. See \autoref{lst:constFunctionParameters}.
 
 \nolinenumbers
 \lstset{caption={Where \texttt{const} should be used}}
@@ -837,30 +852,16 @@ Specifically, the following \texttt{clang-tidy} checks are used. You can see mor
 \end{itemize}
 }
 
-\subsection{Compilation \texorpdfstring{\protect\hfill\icon{MANUAL-CHECK}}{}}
-Your assignments will use the C99 standard, and must be compiled with the following flags as a minimum:\\
-\texttt{-Wall -Wextra -pedantic -std=gnu99} .
-No warnings or errors should be reported.
-If warnings or errors are reported, they will be treated as style violations.
-
-Every source file in your assignment submission (including .c files and any custom .h files they \texttt{\#include}) will be checked for style.
-This applies whether or not they are linked into executables.
-
-Every .h file in your submission must make sense without reference to any other files, other than those which it references by \texttt{\#include}.
-Specifically, any declarations must be complete and all types, declarations and any definitions used in the .h file must either come from the .h file itself, or from included headers.
-
-Any components which are obfuscated, not in standard forms or need to be transformed by extra tools in order to be readable will be removed before compilation is attempted.
-
 \subsection{Modularity \texorpdfstring{\protect\hfill\icon{MANUAL-CHECK}}{}}
 Principles of modularity should be observed.
 Related functions and variable definitions should be separated out into their own source files (with appropriate header files for inclusion in other modules as necessary).
 You should also use functions to prevent excessive duplication of code.
 If you find yourself writing the same or very similar code in multiple places, you should create a separate function to undertake the task.
 
-String constants (e.g. error messages) must not be duplicated. Define and use a string constant instead.
+String constants (e.g. error messages) must not be duplicated. Define and use a string constant instead so that if the message needs to be changed, it only needs to be changed in once place in your code.
 
 \subsection{Header Guards \texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
-Every header (.h) file must be protected by a header guard as shown in the example below. The name of the constant defined must end with the capitalised filename where the `.' is replaced by an underscore (`_').
+Every header (.h) file must be protected by a header guard as shown in the example below (\autoref{lst:headerGuardExample}). The name of the constant defined must end with the capitalised filename where the `.' is replaced by an underscore (`_').
 \nolinenumbers
 \lstset{caption={Header guard example}}
 \lstinputlisting[label=lst:headerGuardExample]{examples/header-guard-example.h}
@@ -868,12 +869,12 @@ Every header (.h) file must be protected by a header guard as shown in the examp
 
 
 \subsection{Banned Language Features \texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
-Use of any of the following C features in your assessments is grounds for a mark of \textbf{zero} in that assessment.
+Use of any of the following C features in your code is grounds for a mark of \textbf{zero} for the whole assignment.
 All of them work against readable and well structured programs.
 None of these are things you could do by accident.
 
 \begin{itemize}
-\item \underline{Goto}: While \texttt{goto} is a legal part of the C language, nothing in this course requires its use. Use of \texttt{goto} is checked by \texttt{2310stylecheck.sh}.
+\item \underline{Goto}: While \texttt{goto} is a legal part of the C language, nothing in this course requires its use.
 \item \underline{Digraphs} and \underline{Trigraphs}: This course uses systems which support ASCII or unicode and so have all the required characters.
 \end{itemize}
 
