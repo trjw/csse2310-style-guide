@@ -1,7 +1,6 @@
 // For loop where parenthesised expressions fit on one line
 for (i = 0; i < count; i++) {
-    // Statements within the loop are indented by four
-    do_stuff();
+    do_stuff(); // Statements within the loop are indented by four
 }
 // For loop where expressions do not fit on one line. The start of the next
 // expression is indented by 8 characters

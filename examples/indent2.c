@@ -15,6 +15,5 @@ if (month >= 1 && month <= 3) {
     /* The starting position for comments that start with /* is the same as
        for comments that start with //, but
                 continuation lines
-                        can use any level
-                                of indenting */
+                        can use any level of indenting */
 }
