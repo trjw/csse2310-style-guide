@@ -6,6 +6,9 @@
  * @param program_name  The name of the program to include in the error message.
  * @param exit_code     The exit code to use when exiting the program.
  *
+ * @ai Wrote Code
+ * @aidetails ChatGPT wrote the whole function.
+ *
  * @returns never
  *****************************************************************************/
 void print_usage_and_exit(const char *program_name, int exit_code) {

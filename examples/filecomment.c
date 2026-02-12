@@ -7,6 +7,7 @@
  * @ai Wrote Code
  * @ai Wrote Comments
  * @ai Debugging
+ * @aitool ChatGPT
  *
  * Additional descriptive text can be present in the comment if desired, but 
  * is not required.
