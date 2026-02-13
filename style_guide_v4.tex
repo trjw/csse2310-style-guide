@@ -652,7 +652,7 @@ Function comments should use the following doxygen commands. Italicised text (e.
     
 \item \texttt{@error \textit{description}}
     \begin{itemize}[label={}]
-    \item If there are circumstances in which this function may exit (i.e., not return control to the caller but terminate the whole program) or return a value indicating an error, then a description must be provided of when and/or why this happens. This includes if functions called by this function may exit. If a function is intended to \ul{never} return, then this can be specified with the \texttt{@return} command (see above) -- this is not an error. 
+    \item If there are circumstances in which this function may exit (i.e., terminate the program rather than  return to the caller) or return a value indicating an error, then a description must be provided of when and/or why this happens. This includes if functions called by this function may exit. If a function is intended to \ul{never} return, then specify this with the \texttt{@return} command (see above) -- this is not an error. 
     \end{itemize}
     
 \item \texttt{@ref \textit{description}}
@@ -688,6 +688,7 @@ be followed by an \texttt{@aidetails} command -- see below.
     \end{itemize}
     
 \end{itemize}
+If you wish, you can also use other doxygen commands such as \texttt{@bug}, \texttt{@note}, \texttt{@todo}, etc.
 
 \pagebreak
 Some examples of function comments are shown below (Examples \ref{lst:functioncomment1} to \ref{lst:functioncomment3}).
