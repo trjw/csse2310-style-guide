@@ -1,6 +1,7 @@
 #include "clang-tidy/ClangTidyModule.h"
 #include "clang-tidy/ClangTidyModuleRegistry.h"
 
+#include "GotoCheck.h"
 #include "StaticLocalCheck.h"
 #include "DoubleAssignmentCheck.h"
 #include "LLVMHeaderGuardCheck.h"
@@ -16,6 +17,7 @@ using namespace clang::tidy::csse2310;
 class CSSE2310Module : public ClangTidyModule {
     void addCheckFactories(ClangTidyCheckFactories& Factories) override
     {
+        Factories.registerCheck<GotoCheck>("csse2310-goto");
         Factories.registerCheck<StaticLocalCheck>("csse2310-static-local");
         Factories.registerCheck<DoubleAssignmentCheck>("csse2310-double-assignment");
         Factories.registerCheck<LLVMHeaderGuardCheck>("csse2310-header-guard");

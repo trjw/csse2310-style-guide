@@ -1,7 +1,7 @@
 CXX=c++
 CXXFLAGS= -std=gnu++17 -fPIC -g
 LIB=libClangTidy2310.so
-OBJS=StaticLocalCheck.o FileExtensionsUtils.o HeaderGuard.o \
+OBJS=GotoCheck.o StaticLocalCheck.o FileExtensionsUtils.o HeaderGuard.o \
      LLVMHeaderGuardCheck.o DoubleAssignmentCheck.o FileCommentCheck.o \
      FileCommentCompleteCheck.o InappropriateCommaOperatorCheck.o \
      NonConstVariableDeclarationCheck.o \
