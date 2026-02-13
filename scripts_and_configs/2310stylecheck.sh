@@ -28,7 +28,6 @@ function checkfile() {
             /usr/bin/clang-tidy --quiet --load=${clanglib} \
                     --config-file=${configdir}/.clang-tidy $extraClangTidyArg \
                     "$1" -- 2>/dev/null
-            /usr/bin/doxygen
     else
 	echo "---------- Can not open '$1' - not checking">&2
     fi
