@@ -6,7 +6,7 @@
 ///     pointed to by str2
 /// @ref This function is taken from the qsort(3) man page. The name of the
 ///    function & spacing have been modified to comply with the style guide.
-static int string comparator(const void* str1, const void* str2)
+static int string_comparator(const void* str1, const void* str2)
 {
     // Compare the strings. Note that we must cast the void* pointers
     //to pointers to strings, and then dereference them

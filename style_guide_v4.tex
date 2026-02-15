@@ -373,7 +373,7 @@ Each statement must be on its own line. See \autoref{lst:line1}.
 
 % Multiple variable declarations
 \subsection{Variable declarations with non-constant initialisers \texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
-Variables declarations with non-constant initialisers must be on lines by themselves. (Non-constant initialisers involve function calls or other variables. Constant initialisers are those known at compile time.)
+Variable declarations with non-constant initialisers must be on lines by themselves. (Non-constant initialisers involve function calls or other variables. Constant initialisers are those known at compile time.)
 See \autoref{lst:vardecls}.
 
 \nolinenumbers
@@ -732,7 +732,7 @@ comments within the function to describe the intent of the code. Comments within
 \subsection{Type comments\texorpdfstring{\protect\hfill\icon{DOXYGEN}}{}}
 \label{sec:typecomments}
 
-Every type (\texttt{typedef}, \texttt{struct}, \texttt{union}, \texttt{enum}) must be preceded by a doxygen
+Every type (\texttt{typedef}, \texttt{struct}, \texttt{union}, \texttt{enum}) definition must be preceded by a doxygen
 comment that describes the purpose of that type. If the file comment (see \autoref{sec:filecomment}) has 
 a \texttt{@ai} command other than ``\texttt{@ai Not Used}'' then \ul{every} type comment must have one or more \texttt{@ai} commands -- and an \texttt{@aidetails} command if the \texttt{@ai} command is anything other than ``\texttt{@ai Not Used}''. The requirements are exactly the same as for function comments -- see line \lref{line:aistart} above.
 
@@ -754,7 +754,7 @@ Every global variable declaration must be accompanied by a doxygen comment about
 
 This commenting requirement does not apply to \texttt{const} qualified variables, i.e. global constants -- no comments are needed for these but they can be added if desired.
 
-Note that global variables may not be permitted in your assignment. 
+Note that global variables may not be permitted in your assignment -- check your assignment specification.
 
 \nolinenumbers
 \lstset{caption={Sample global variable comment.}}
@@ -908,7 +908,7 @@ Related functions and variable definitions should be separated out into their ow
 You should also use functions to prevent excessive duplication of code.
 If you find yourself writing the same or very similar code in multiple places, you should create a separate function to undertake the task.
 
-String constants (e.g. error messages) must not be duplicated. Define and use a string constant instead so that if the message needs to be changed, it only needs to be changed in once place in your code.
+String constants (e.g. error messages) must not be duplicated. Define and use a string constant instead so that if the message needs to be changed, it only needs to be changed in one place in your code.
 
 % Header Guards
 \subsection{Header Guards \texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
@@ -928,7 +928,7 @@ None of these are things you could do by accident.
 
 \begin{itemize}
 \item \underline{Goto}: While \texttt{goto} is a legal part of the C language, nothing in this course requires its use.
-\item \underline{Digraphs} and \underline{Trigraphs}: This course uses systems which support ASCII or unicode and so have all the required characters.
+\item \underline{Digraphs} and \underline{Trigraphs}: This course uses systems which support ASCII so have all the required characters.
 \end{itemize}
 
 \noindent Other banned features may be listed in your assignment specification.
