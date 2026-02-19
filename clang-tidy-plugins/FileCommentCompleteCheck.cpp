@@ -29,7 +29,7 @@ static llvm::SmallVector<StringRef, 8> parseRequiredCommands(StringRef CSV)
 
 FileCommentCompleteCheck::FileCommentCompleteCheck(StringRef Name, ClangTidyContext* Context)
     : ClangTidyCheck(Name, Context),
-      RequiredCommands(Options.get("RequiredCommands", "author,brief"))
+      RequiredCommands(Options.get("RequiredCommands", "author,ai"))
 {
 }
 
