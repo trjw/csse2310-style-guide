@@ -16,25 +16,51 @@ includeArg="-I/local/courses/csse2310/include"
 compilerArgs="-Wall -Wextra -pedantic -std=gnu99 ${includeArg}"
 compileErrorFound=0
 
+if test -t 1 ; then
+    # stdout is a tty
+    normal="$(tput sgr0)"
+    bold="$(tput bold)"
+    underline="$(tput smul)"
+    reverse="$(tput rev)"
+    red="$(tput setaf 1)"
+    green="$(tput setaf 2)"
+    blue="$(tput setaf 4)"
+    magenta="$(tput setaf 5)"
+else
+    normal=""
+    bold=""
+    underline=""
+    reverse=""
+    red=""
+    green=""
+    blue=""
+    magenta=""
+fi
+
+function colorise() {
+    sed -E 's@^(.*\.[hc]:[0-9]+(:[0-9]+)?:?) @'${bold}'\1'${normal}' @;s@ [wW]arning:@'${bold}${magenta}' warning:'${normal}'@g;s@ [eE]rror:@'${bold}${red}' error:'${normal}'@g;s@^      \|(.*)$@'${green}'      |\1'${normal}'@;s@([[:space:]]+)\^(.*)$@\1'${green}'^\2'${normal}'@;s@^(----------.*)$@'${blue}${reverse}'\1'${normal}'@'
+}
+
 function checkfile() {
     if [ -r "$1" ] ; then
         echo "---------- Checking $1 for invalid characters or inappropriate name"
         echo "$1" | grep -E -q '(^[A-Z])|_' && echo "Warning: inappropriate source filename: $1"
         LC_ALL=C grep -n -P '[^\x00-\x7F]' "$1" | sed -e 's/^/Warning: Non ASCII character(s) at /'
         echo "---------- Checking $1 compiles by itself"
-        if ! gcc $compilerArgs -c -o /dev/null "$1" 2>&1 ; then
+        if ! gcc -fno-diagnostics-color $compilerArgs -c -o /dev/null "$1" 2>&1 ; then
             echo "---------- Found compilation errors - not checking other style aspects" >&2
             compileErrorFound=1
         else
             echo "---------- Running clang-format on $1"
-            clang-format --style=file:${configdir}/.clang-format \
-                    --dry-run "$1" 2>&1
+            clang-format -fno-color-diagnostics --style=file:${configdir}/.clang-format \
+                    --dry-run "$1" 2>&1 
             echo "---------- Running clang-tidy on $1"
-            clang-tidy --quiet --load=${clanglib} \
+            clang-tidy --quiet --use-color=0 --load=${clanglib} \
                     --config-file=${configdir}/.clang-tidy $extraClangTidyArg \
-                    "$1" -- 2>/dev/null
+                    "$1" -- 2>/dev/null |
+                sed -E 's@^/[^:*]*/@@' 
             echo "---------- Checking comments in $1"
-            2310checkcomments.sh "$1"
+            2310checkcomments.sh "$1" 
             2310checkfunctioninternalcomments.sh "$1"
         fi
     else
@@ -76,7 +102,7 @@ if [ ${#files[@]} = 0 ] ; then
 fi
 
 for file in "${files[@]}" ; do
-    checkfile "$file"
+    checkfile "$file" | colorise
 done
 
 # Doxygen must always be run on all files together
@@ -111,6 +137,6 @@ if [ "$compileErrorFound" = 0 ] ; then
     doxygen "${doxyconfig}"
     # Output is now in warnings.txt - filter and sort - and change the 
     # terminology. We update the file names to just show the base name.
-    sed -e "s@^${TMP}/@@" warnings.txt | sort -t: -k1,1 -k2,2n | sed '/Member.* of class/s/of class/of struct/;/Member.* of file/s/Member //;s/ of file / in file /;s/parameters of member/parameters of function/'
+    sed -e "s@^${TMP}/@@" warnings.txt | sort -t: -k1,1 -k2,2n | sed '/Member.* of class/s/of class/of struct/;/Member.* of file/s/Member //;s/ of file / in file /;s/parameters of member/parameters of function/' | colorise
     rm -f -r ${TMP}
 fi
