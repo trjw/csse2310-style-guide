@@ -36,7 +36,8 @@ static SourceLocation getFileStart(ASTContext& Context)
 FileCommentCheck::FileCommentCheck(StringRef Name, ClangTidyContext* Context)
     : ClangTidyCheck(Name, Context),
       RequiredCommand(Options.get("RequiredCommand", "file")),
-      InsertTemplate(Options.get("InsertTemplate", "/** @file <filename> ..."))
+      InsertTemplate(Options.get("InsertTemplate",
+              "/** @file <filename1> ... OR /// @file <filename2> ..."))
 {
 }
 
@@ -51,8 +52,8 @@ void FileCommentCheck::registerMatchers(ast_matchers::MatchFinder* Finder)
     Finder->addMatcher(translationUnitDecl().bind("tu"), this);
 }
 
-bool FileCommentCheck::parseAndCheckFileComment(
-        ASTContext& Context, StringRef CommentText, SourceLocation Loc, StringRef FileBaseName)
+bool FileCommentCheck::parseAndCheckFileComment(ASTContext& Context,
+        StringRef CommentText, SourceLocation Loc, StringRef FileBaseName)
 {
     llvm::StringSet<> CommandsFound;
     llvm::SmallVector<llvm::StringRef, 16> Lines;
@@ -101,7 +102,7 @@ void FileCommentCheck::check(
     bool found = false;
 
     // Look for /**, /*!, ///, or //! at the top
-    if (Start.starts_with("/**") || Start.starts_with("/*!") 
+    if (Start.starts_with("/**") || Start.starts_with("/*!")
             || Start.starts_with("///") || Start.starts_with("//!")) {
         size_t EndPos = Start.find("\n"); // Find the end of the line
 
@@ -109,8 +110,9 @@ void FileCommentCheck::check(
         SourceLocation Loc = SM.getLocForStartOfFile(SM.getMainFileID())
                                      .getLocWithOffset(Pos);
 
-        found = parseAndCheckFileComment(Context, CommentText, Loc, FileBaseName);
-    } 
+        found = parseAndCheckFileComment(
+                Context, CommentText, Loc, FileBaseName);
+    }
     if (!found) {
         // No file comment → insert template
         auto D = diag(StartOfFile,
@@ -119,12 +121,18 @@ void FileCommentCheck::check(
                          DiagnosticIDs::Error)
                 << RequiredCommand;
         if (!InsertTemplate.empty()) {
-            // Replace <filename> in the template with the file base name
-            size_t FilenamePos = InsertTemplate.find("<filename>");
+            // Replace <filename*> in the template with the file base name
+            size_t FilenamePos = InsertTemplate.find("<filename1>");
             if (FilenamePos != std::string::npos) {
-                InsertTemplate.replace(FilenamePos, 10, FileBaseName.str());
+                InsertTemplate.replace(FilenamePos, 11, FileBaseName.str());
             }
-            D << FixItHint::CreateInsertion( StartOfFile, InsertTemplate);
+            // Replace <filename> in the template with the file base name
+            // (again)
+            FilenamePos = InsertTemplate.find("<filename2>");
+            if (FilenamePos != std::string::npos) {
+                InsertTemplate.replace(FilenamePos, 11, FileBaseName.str());
+            }
+            D << FixItHint::CreateInsertion(StartOfFile, InsertTemplate);
         }
     }
 }
