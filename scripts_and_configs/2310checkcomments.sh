@@ -37,7 +37,8 @@ while [ "$1" ] ; do
                 gsub(/^[0-9]+ /, "");
             }
             (FNR == 1) && !/^[@\\]file '${basename}'$/ {
-                printf("%s:1 Error: file comment does not begin with @file command\n", filename);
+                printf("%s:1 Note: file comment does not begin with @file command\n", filename);
+                printf("(This is not reported as an error since clang-tidy should report this.)\n");
                 error=1
                 exit
             }
@@ -73,6 +74,11 @@ while [ "$1" ] ; do
                 error=1;
             }
             END {
+                if(!ainotused && !countaicommands) {
+                    printf("%s:%d note: @ai command not found\n", filename, linenum);
+                    printf("(This is not reported as a warning since clang-tidy should report this.)\n");
+                    error=1
+                }
                 if(ainotused && countaicommands) {
                     printf("%s:%d warning: found @ai command(s) in addition to @ai Not Used\n", filename, linenum);
                     error=1
