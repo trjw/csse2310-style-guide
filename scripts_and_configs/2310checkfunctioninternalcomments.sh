@@ -1,4 +1,10 @@
 #!/bin/bash
+# Written by Peter Sutton Feb 2026
+#
+# Usage: 2310checkfunctioninternalcomments.sh filename ...
+#
+# Checks that functions of a certain length (longer than 20 lines) have
+# at least one comment inside them
 
 while [ "$1" ] ; do
     if [ ! -r "$1" ] ; then
@@ -33,12 +39,14 @@ while [ "$1" ] ; do
                 next; 
             }
             /^FunctionDecl/ { 
-                fnname=gensub(/^.*> line(:[0-9]+):.* ([a-zA-Z0-9_]+) \x27.*/, 
-                        "\\1 Function \\2()", "g");
+                fnline=gensub(/^.*> line:([0-9]+):.* ([a-zA-Z0-9_]+) \x27.*/, 
+                        "\\1", "g");
+                fnname=gensub(/^.*> line:[0-9]+:.* ([a-zA-Z0-9_]+) \x27.*/, 
+                        "\\1", "g");
                 if(lines > 20 && comment_chars == 0) {
-                    printf("Warning: %s%s has over 20 lines (%d) " \
+                    printf("%s:%s warning: function %s has over 20 lines (%d) " \
                             "but no internal comments\n", 
-                            ENVIRON["FILENAME"], fnname, lines);
+                            ENVIRON["FILENAME"], fnline, fnname, lines);
                 }
                 state = 0;
             }
@@ -47,11 +55,9 @@ while [ "$1" ] ; do
                 next;
             }
             # Look for line that starts function
-            /^ *[0-9]+ \|.*{/ {
-                if(state==2) {
-                    state = 3;
-                    lines=-1;
-                }
+            (state == 2) && /^ *[0-9]+ \|.*{/ {
+                state = 3;
+                lines=-1;
             }
             /^ *[0-9]+ \|/ {
                 if(startline == 0) {
