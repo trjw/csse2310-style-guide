@@ -911,7 +911,7 @@ String constants (e.g. error messages) must not be duplicated. Define and use a 
 
 % Header Guards
 \subsection{Header Guards \texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
-Every header (.h) file must be protected by a header guard as shown in the example below (\autoref{lst:headerGuardExample}). The name of the constant defined must end with the capitalised filename where the `.' is replaced by an underscore (`_').
+Every header (.h) file must be protected by a header guard as shown in the example below (\autoref{lst:headerGuardExample}). The name of the constant defined must end with the capitalised filename where the `.' is replaced by an underscore (`_'). The constant must be mentioned in a comment following the \texttt{\#endif}.
 
 \nolinenumbers
 \lstset{caption={Header guard example}}
@@ -926,6 +926,7 @@ All of them work against readable and well structured programs.
 None of these are things you could do by accident.
 
 \begin{itemize}
+\itemsep 2pt
 \item \underline{Goto}: While \texttt{goto} is a legal part of the C language, nothing in this course requires its use.
 \item \underline{Digraphs} and \underline{Trigraphs}: This course uses systems which support ASCII so have all the required characters.
 \end{itemize}
