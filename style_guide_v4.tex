@@ -67,7 +67,7 @@
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
 \author{The University of Queensland\\School of Electrical Engineering and Computer Science}
-\date{12 February 2026}
+\date{23 February 2026}
 \fancypagestyle{plain}{
 	\fancyhead{}
 	\fancyfoot{}
@@ -732,13 +732,13 @@ comments within the function to describe the intent of the code. It is expected 
 \subsection{Type comments\texorpdfstring{\protect\hfill\icon{STYLE-CHECK} \icon{DOXYGEN}}{}}
 \label{sec:typecomments}
 
-Every type (\texttt{typedef}, \texttt{struct}, \texttt{union}, \texttt{enum}) definition must be preceded by a doxygen
+Every type definition (\texttt{typedef}, \texttt{struct}, \texttt{union}, \texttt{enum}) must be preceded by a doxygen
 comment that describes the purpose of that type. If the file comment (see \autoref{sec:filecomment}) has 
-a \texttt{@ai} command other than ``\texttt{@ai Not Used}'' then \ul{every} type comment must have one or more \texttt{@ai} commands -- and an \texttt{@aidetails} command if the \texttt{@ai} command is anything other than ``\texttt{@ai Not Used}''. The requirements are exactly the same as for function comments -- see line \lref{line:aistart} above.
+an \texttt{@ai} command other than ``\texttt{@ai Not Used}'' then \ul{every} type comment must have one or more \texttt{@ai} commands -- and an \texttt{@aidetails} command if the \texttt{@ai} command is anything other than ``\texttt{@ai Not Used}''. The requirements are the same as for function comments -- see line \lref{line:aistart} above.
 
 Each member of \texttt{struct} and \texttt{union} types must also be commented to explain their purpose. This can be with a doxygen comment immediately prior to the that member, or a comment immediately following that member using the \texttt{<} indicator at the start of the doxygen comment. See \autoref{lst:typecomments} below.
 
-If desired, you can instead separately list the descriptions of the members using the \texttt{@var} command as shown in \autoref{lst:name3}.
+If desired, you can instead separately describe the members using the \texttt{@var} command as shown in \autoref{lst:name3}.
 
 \nolinenumbers
 \lstset{caption={Sample type comments. Commenting of \texttt{enum} constants themselves is optional. Use of \texttt{@brief} is optional -- text without this is assumed to be the brief description.}}
