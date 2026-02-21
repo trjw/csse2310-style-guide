@@ -576,7 +576,7 @@ Doxygen comments must use one of the four formats shown in Examples \ref{lst:dox
 
 
 % File Comments
-\subsection{File comments -- including AI summary\texorpdfstring{\protect\hfill\icon{CLANG-TIDY}}{}}
+\subsection{File comments -- including AI summary\texorpdfstring{\protect\hfill\icon{CLANG-TIDY} \icon{STYLE-CHECK}}{}}
 \label{sec:filecomment}
 
 Every \texttt{.c} and \texttt{.h} file must begin with a doxygen comment containing the \texttt{@file} command as the first command in the comment. This must list the name of the file (just the basename of the file, i.e., excluding any directory information). This is required for doxygen to be able to check other comments in the file. Absence of this comment is considered an error rather than a warning during style checking and will result in zero style marks.
@@ -605,7 +605,7 @@ A sample file comment is shown in \autoref{lst:filecomment}. Other doxygen forma
 \linenumbers
 
 % Function comments
-\subsection{Function comments -- including references and AI summary\texorpdfstring{\protect\hfill\icon{DOXYGEN}}{}}
+\subsection{Function comments -- including references and AI summary\texorpdfstring{\protect\hfill\icon{STYLE-CHECK} \icon{DOXYGEN}}{}}
 \label{sec:functioncomments}
 
 Function comments must describe:
@@ -729,7 +729,7 @@ comments within the function to describe the intent of the code. It is expected 
 
 % Type comments
 \vspace{-0.1cm}
-\subsection{Type comments\texorpdfstring{\protect\hfill\icon{DOXYGEN}}{}}
+\subsection{Type comments\texorpdfstring{\protect\hfill\icon{STYLE-CHECK} \icon{DOXYGEN}}{}}
 \label{sec:typecomments}
 
 Every type (\texttt{typedef}, \texttt{struct}, \texttt{union}, \texttt{enum}) definition must be preceded by a doxygen
