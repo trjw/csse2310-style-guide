@@ -15,6 +15,9 @@ shopt -s nullglob
 includeArg="-I/local/courses/csse2310/include"
 compilerArgs="-Wall -Wextra -pedantic -std=gnu99 ${includeArg}"
 compileErrorFound=0
+clangTidyErrorFound=0
+TMPOUT=/tmp/.2310styleout
+founderror=0
 
 if test -t 1 ; then
     # stdout is a tty
@@ -37,35 +40,94 @@ else
     magenta=""
 fi
 
+exec 2>&1
+
 function colorise() {
-    sed -E 's@^(.*\.[hc]:[0-9]+(:[0-9]+)?:?) @'${bold}'\1'${normal}' @;s@ [wW]arning:@'${bold}${magenta}' warning:'${normal}'@g;s@ [eE]rror:@'${bold}${red}' error:'${normal}'@g;s@^      \|(.*)$@'${green}'      |\1'${normal}'@;s@([[:space:]]+)\^(.*)$@\1'${green}'^\2'${normal}'@;s@^(----------.*)$@'${blue}${reverse}'\1'${normal}'@'
+    sed -E 's@^(.*\.[hc]:[0-9]+(:[0-9]+)?:?) @'${bold}'\1'${normal}' @;s@ [wW]arning:@'${bold}${magenta}' warning:'${normal}'@g;s@ [eE]rror:@'${bold}${red}' error:'${normal}'@g;s@^      \|(.*)$@'${green}'      |\1'${normal}'@;s@([[:space:]]+)\^(.*)$@\1'${green}'^\2'${normal}'@'
+}
+
+# Checks file /tmp/.2310styleout for warnings/errors and prints the given 
+# heading, the result (OK/Error(s)/Warning(s)) and the output
+function section() {
+    heading="$@"
+    warnings=$(grep -ci warning: ${TMPOUT})
+    errors=$(grep -ci error: ${TMPOUT})
+    contents=$(head -1 ${TMPOUT})
+    styled_heading=$(echo "$heading" | fmt -w 55 | gawk '{printf "%-55s\n", $0}' | sed -e "1s/^/${reverse} ** /;2,\$s/^/${reverse}    /;s/$/${normal}/")
+    if [[ "${contents}" == "Skipped" ]] ; then
+        result="${red}Skipped${normal}"
+        # Remove contents of temp file
+        cp /dev/null ${TMPOUT}
+    elif [[ $errors == 1 ]] ; then
+        result="${red}Error found${normal}"
+        founderror=1
+    elif [[ $errors > 1 ]] ; then
+        result="${red}${errors} errors found${normal}"
+        founderror=1
+    elif [[ $warnings == 1 ]] ; then
+        result="${magenta}Warning found${normal}"
+    elif [[ $warnings > 1 ]] ; then
+        result="${magenta}${warnings} warnings found${normal}"
+    else
+        result="${green}OK${normal}"
+    fi
+    if [[ $errors > 0 && $warnings == 1 ]] ; then
+        result+=" ${magenta}(and warning)${normal}"
+    elif [[ $errors > 0 && $warnings > 1 ]] ; then
+        result+=" ${magenta}(and ${warnings} warnings)${normal}"
+    fi
+    echo "${styled_heading}  ${bold}$result"
+    cat ${TMPOUT} | colorise
 }
 
 function checkfile() {
+    printf "${reverse}${bold}%-75s${normal}\n" "$1"
     if [ -r "$1" ] ; then
-        echo "---------- Checking $1 for invalid characters or inappropriate name"
-        echo "$1" | grep -E -q '(^[A-Z])|_' && echo "Warning: inappropriate source filename: $1"
-        LC_ALL=C grep -n -P '[^\x00-\x7F]' "$1" | sed -e 's/^/Warning: Non ASCII character(s) at /'
-        echo "---------- Checking $1 compiles by itself"
-        if ! gcc -fno-diagnostics-color $compilerArgs -c -o /dev/null "$1" 2>&1 ; then
-            echo "---------- Found compilation errors - not checking other style aspects" >&2
+
+        echo "$1" | grep -E -q '(^[A-Z])|_' && echo "Warning: inappropriate source filename: $1" > ${TMPOUT}
+        LC_ALL=C grep -n -P '[^\x00-\x7F]' "$1" | sed -e 's/^/Warning: Non ASCII character(s) at /' >> ${TMPOUT}
+        section "Checking $1 for invalid characters or inappropriate name"
+
+        gcc -fno-diagnostics-color $compilerArgs -c -o /dev/null "$1" > ${TMPOUT} 2>&1
+        result=$?
+        section "Checking $1 compiles by itself"
+        if grep -sqi error: ${TMPOUT} ; then
+            echo "${red}${bold}Found compilation error(s) - not checking other style aspects of $1${normal}" >&2
             compileErrorFound=1
+            echo Skipped > ${TMPOUT}
+            section "Running clang-format on $1"
+            echo Skipped > ${TMPOUT}
+            section "Running clang-tidy on $1"
+            echo Skipped > ${TMPOUT}
+            section "Checking comments in $1"
         else
-            echo "---------- Running clang-format on $1"
             clang-format -fno-color-diagnostics --style=file:${configdir}/.clang-format \
-                    --dry-run "$1" 2>&1 
-            echo "---------- Running clang-tidy on $1"
+                    --dry-run "$1" >${TMPOUT} 2>&1
+            section "Running clang-format on $1"
+
             clang-tidy --quiet --use-color=0 --load=${clanglib} \
                     --config-file=${configdir}/.clang-tidy $extraClangTidyArg \
                     "$1" -- 2>/dev/null |
-                sed -E 's@^/[^:*]*/@@' 
-            echo "---------- Checking comments in $1"
-            2310checkcomments.sh "$1" 
-            2310checkfunctioninternalcomments.sh "$1"
+                sed -E 's@^/[^:*]*/@@' > ${TMPOUT}
+            section "Running clang-tidy on $1"
+            if grep -sqi error: ${TMPOUT} ; then
+                clangTidyErrorFound=1
+                echo Skipped > ${TMPOUT}
+                section "Checking comments in $1"
+                echo "${red}${bold}Not running checks on comments for $1${normal}"
+                echo "${red}${bold}clang-tidy must report no errors for this to be checked${normal}"
+            else
+                2310checkcomments.sh "$1" > ${TMPOUT}
+                2310checkfunctioninternalcomments.sh "$1" >> ${TMPOUT}
+                section "Checking comments in $1"
+            fi
         fi
+        rm -f ${TMPOUT}
     else
-	echo "---------- Can not open '$1' - not checking">&2
+	echo "${red}Error: Can not open '$1' - not checking${normal}"
+        founderror=1
     fi
+    echo
 }
 
 if [ -x /local/courses/csse2310/bin/csse2310logusage ] ; then
@@ -102,41 +164,60 @@ if [ ${#files[@]} = 0 ] ; then
 fi
 
 for file in "${files[@]}" ; do
-    checkfile "$file" | colorise
+    checkfile "$file"
 done
 
 # Doxygen must always be run on all files together
-if [ "$compileErrorFound" = 0 ] ; then
+printf "${reverse}${bold}%-75s${normal}\n" "DOXYGEN CHECK"
+if [[ ${compileErrorFound} == 0 && ${clangTidyErrorFound} == 0 ]] ; then
     # TODO - should check for the presence of @file commands also - these
     # are a prereq for doxygen working
 
-    echo "---------- Running doxygen on ${files[@]}"
     # Make a temporary directory
-    TMP=/tmp/.2310doxy$$
-    mkdir -p ${TMP}
+    TMPDIR=/tmp/.2310doxy$$
+    mkdir -p ${TMPDIR}
     # Copy all the files to a temporary directory
     for i in "${files[@]}" ; do
         # Comment out function declarations and const variables - no comments
         # are expected for these
-        cp "${i}" "${TMP}/${i}"
+        cp "${i}" "${TMPDIR}/tmp.${i}"
         clang-query --use-color=0 -c 'enable output print' \
+                -extra-arg="-fcaret-diagnostics-max-lines=1000" \
                 -c 'set traversal IgnoreUnlessSpelledInSource' \
                 -c 'm varDecl(isExpansionInMainFile(), hasGlobalStorage(), isDefinition(), hasType(isConstQualified()))' \
+                -c 'm varDecl(isExpansionInMainFile(), isExternC(), unless(hasInitializer(anything())))' \
                 -c 'm functionDecl(unless(isDefinition()), isExpansionInMainFile())' \
+                -c 'm functionDecl(hasName("main"), isDefinition())' \
                 "$i" -- "${includeArg}" |
             gawk 'BEGIN {infile=0; printf("1\n");}
                 /^\/.*\/'${i}':/ {infile=1; next;}
                 /^\// {infile=0; next;}
                 /^ +[0-9]+ \|/ {if (infile==1) { print; }}' |
-            sed -E -e 's/^ +([0-9]+) +\|.*$/\1s/;2s@$@%^%// %@;$aw '"${TMP}/${i}" -e '$aq' |
-            ed -s "${TMP}/${i}" >&/dev/null
+            sed -E -e 's/^ +([0-9]+) +\|.*$/\1s/;2s@$@%^%// %@;$aw '"${TMPDIR}/tmp.${i}" -e '$aq' |
+            ed -s "${TMPDIR}/tmp.${i}" >&/dev/null
+            # Remove #define constants (other than those with parameters)
+            gawk 'BEGIN {indefine=0; continued=0;}
+                /[[:space:]]*#[[:space:]]*define[[:space:]]+[A-Za-z_0-9]+([[:space:]]|$)/ {indefine=1; printf("// %s\n", $0); }
+                indefine && continued {printf("// %s\n", $0); }
+                !indefine {print}
+                /\\$/ {continued=1;}
+                ! /\\$/ {continued=0;}
+                indefine && !continued {indefine=0;}
+            ' "${TMPDIR}/tmp.${i}" > "${TMPDIR}/${i}"
+            rm -f "${TMPDIR}/tmp.${i}"
     done
-    cd ${TMP}
+    cd ${TMPDIR}
 
     # Run doxygen to check the files
     doxygen "${doxyconfig}"
-    # Output is now in warnings.txt - filter and sort - and change the 
     # terminology. We update the file names to just show the base name.
-    sed -e "s@^${TMP}/@@" warnings.txt | sort -t: -k1,1 -k2,2n | sed '/Member.* of class/s/of class/of struct/;/Member.* of file/s/Member //;s/ of file / in file /;s/parameters of member/parameters of function/' | colorise
-    rm -f -r ${TMP}
+    sed -e "s@^${TMPDIR}/@@" warnings.txt | sort -t: -k1,1 -k2,2n | sed '/Member.* of class/s/of class/of struct/;/Member.* of file/s/Member //;s/ of file / in file /;s/parameters of member/parameters of function/' > ${TMPOUT}
+    section "Running doxygen on ${files[@]}"
+    rm -f -r ${TMPDIR} ${TMPOUT}
+else
+    echo Skipped > ${TMPOUT}
+    section "Running doxygen on ${files[@]}"
+    echo "${red}${bold}Found error(s) that prevent doxygen checks${normal}"
+    echo "${red}${bold}All files must compile and contain @file comments${normal}"
 fi
+exit $founderror
