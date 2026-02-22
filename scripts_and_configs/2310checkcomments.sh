@@ -99,7 +99,6 @@ while [ "$1" ] ; do
             }
         ' ; then
         # Now need to check the comments within the file
-        echo "Note: checking comments within file"
         2310getcomments.sh --with-line-numbers "$file" |
             FILENAME="$file" \
             gawk '
@@ -149,19 +148,19 @@ while [ "$1" ] ; do
                     # Blank line - indicates end of comment for this object
                     # End of function decl
                     if(!ainotused && !countaicommands) {
-                        printf("%s:%d %s %s: warning: @ai command not found\n",
+                        printf("%s:%d %s %s - warning: @ai command not found\n",
                                 filename, startline, type, name);
                     }
                     if(ainotused && countaicommands) {
-                        printf("%s:%d %s %s: warning: found @ai command(s) in addition to @ai Not Used\n", 
+                        printf("%s:%d %s %s - warning: found @ai command(s) in addition to @ai Not Used\n", 
                                 filename, startline, type, name);
                     }
                     if(ainotused && countaidetails) {
-                        printf("%s:%d %s %s: warning: found @aidetails command(s) in addition to @ai Not Used\n", 
+                        printf("%s:%d %s %s - warning: found @aidetails command(s) in addition to @ai Not Used\n", 
                                 filename, startline, type, name);
                     }
                     if(countaicommands > 0 && countaidetails == 0) {
-                        printf("%s:%d %s %s: warning: found @ai command(s) (besides @ai Not Used) without required @aidetails command(s)\n", 
+                        printf("%s:%d %s %s - warning: found @ai command(s) (besides @ai Not Used) without required @aidetails command(s)\n", 
                                 filename, startline, type, name);
                     }
                     next;
