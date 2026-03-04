@@ -62,7 +62,7 @@
 }
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
-\newcommand{\versionNum}{4.00}
+\newcommand{\versionNum}{4.01}
 \newcommand{\icon}[1]{\raisebox{-3pt}{\includegraphics[height=12pt]{icons/#1.png}}}
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
@@ -580,7 +580,7 @@ Doxygen comments must use one of the four formats shown in Examples \ref{lst:dox
 \subsection{File comments -- including AI summary\texorpdfstring{\protect\hfill\icon{CLANG-TIDY} \icon{STYLE-CHECK}}{}}
 \label{sec:filecomment}
 
-Every \texttt{.c} and \texttt{.h} file must begin with a doxygen comment containing the \texttt{@file} command as the first command in the comment. This must list the name of the file (just the basename of the file, i.e., excluding any directory information). This is required for doxygen to be able to check other comments in the file. Absence of this comment is considered an error rather than a warning during style checking and will result in zero style marks.
+Every \texttt{.c} and \texttt{.h} file must begin with a doxygen comment containing the \texttt{@file} command as the first command on the first line in the comment. This must list the name of the file (just the basename of the file, i.e., excluding any directory information). This is required for doxygen to be able to check other comments in the file. Absence of this comment is considered an error rather than a warning during style checking and will result in zero style marks.
 
 The initial comment in a file must also contain an \texttt{@author} command listing the name of the author and one or more \texttt{@ai} commands which indicate how AI was used in the development of the file.
 
@@ -625,7 +625,7 @@ Function comments must be placed immediately above the function declaration/defi
 If a function is declared in a header (\texttt{.h}) file and defined in a \texttt{.c} file then the function comment must appear in the header file just before the declaration.
 If a function has both a prototype (declaration) and a definition in a \texttt{.c} file then the function comment must appear just before the definition. 
 
-No comment is required for the \texttt{main()} function. 
+No comment is required for the \texttt{main()} function unless AI has been used in the file, i.e. the file level comment is something other than \texttt{@ai Not Used}.
 
 Function comments should use the following doxygen commands. Italicised text (e.g. \texttt{\textit{name}} and \texttt{\textit{description}}) must be replaced as appropriate. Textual \texttt{\textit{description}}s can span multiple lines -- they last until the next doxygen command or the next blank comment line in the function comment or the end of the comment. 
 
@@ -956,8 +956,9 @@ None of these are things you could do by accident.
 
 \section{Updates to this Document}
 Updates since the start of semester will be listed below.
-%\begin{itemize}
-%\item v3.06 -- original version for semester two 2024.
-%\end{itemize}
+\begin{itemize}
+\item v4.01 -- updated Section \ref{sec:filecomment} and \autoref{lst:filecomment} to make it clear that the \texttt{@file} comment must be on the \textul{first line} of the file comment.
+\item v4.01 -- updated Section \ref{sec:functioncomments} to clarify that a function comment is needed for \texttt{main()} if AI has been used in the file.
+\end{itemize}
 
 \end{document}

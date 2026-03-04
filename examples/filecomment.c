@@ -1,5 +1,4 @@
-/** 
- * @file program.c
+/** @file program.c
  * @author Alex Bloggs
  * @brief A simple program to demonstrate file comments - this and other
  *      commands besides @file, @author, @ai and possibly @aitool are 
