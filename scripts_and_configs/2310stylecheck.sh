@@ -16,8 +16,16 @@ includeArg="-I/local/courses/csse2310/include"
 compilerArgs="-Wall -Wextra -pedantic -std=gnu99 ${includeArg}"
 compileErrorFound=0
 clangTidyErrorFound=0
-TMPOUT=/tmp/.2310styleout
+TMPOUT=/tmp/.2310styleout.$$
+TMPDIR=/tmp/.2310doxy$$
 founderror=0
+
+function cleanup() {
+    rm -f ${TMPOUT}
+    rm -f -r ${TMPDIR}
+}
+
+trap cleanup EXIT
 
 if test -t 1 ; then
     # stdout is a tty
@@ -46,7 +54,7 @@ function colorise() {
     sed -E 's@^(.*\.[hc]:[0-9]+(:[0-9]+)?:?) @'${bold}'\1'${normal}' @;s@ [wW]arning:@'${bold}${magenta}' warning:'${normal}'@g;s@ [eE]rror:@'${bold}${red}' error:'${normal}'@g;s@^      \|(.*)$@'${green}'      |\1'${normal}'@;s@([[:space:]]+)\^(.*)$@\1'${green}'^\2'${normal}'@'
 }
 
-# Checks file /tmp/.2310styleout for warnings/errors and prints the given 
+# Checks file /tmp/.2310styleout.$$ for warnings/errors and prints the given 
 # heading, the result (OK/Error(s)/Warning(s)) and the output
 function section() {
     heading="$@"
@@ -170,11 +178,7 @@ done
 # Doxygen must always be run on all files together
 printf "${reverse}${bold}%-75s${normal}\n" "DOXYGEN CHECK"
 if [[ ${compileErrorFound} == 0 && ${clangTidyErrorFound} == 0 ]] ; then
-    # TODO - should check for the presence of @file commands also - these
-    # are a prereq for doxygen working
-
     # Make a temporary directory
-    TMPDIR=/tmp/.2310doxy$$
     mkdir -p ${TMPDIR}
     # Copy all the files to a temporary directory
     for i in "${files[@]}" ; do
@@ -213,7 +217,6 @@ if [[ ${compileErrorFound} == 0 && ${clangTidyErrorFound} == 0 ]] ; then
     # terminology. We update the file names to just show the base name.
     sed -e "s@^${TMPDIR}/@@" warnings.txt | sort -t: -k1,1 -k2,2n | sed '/Member.* of class/s/of class/of struct/;/Member.* of file/s/Member //;s/ of file / in file /;s/parameters of member/parameters of function/' > ${TMPOUT}
     section "Running doxygen on ${files[@]}"
-    rm -f -r ${TMPDIR} ${TMPOUT}
 else
     echo Skipped > ${TMPOUT}
     section "Running doxygen on ${files[@]}"
