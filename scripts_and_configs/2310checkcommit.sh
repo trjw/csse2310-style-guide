@@ -29,6 +29,10 @@ function cleanup() {
     rm -f -r /tmp/.csse2310.check.commit.*
 }
 
+if [ -x /local/courses/csse2310/bin/csse2310logusage ] ; then
+    /local/courses/csse2310/bin/csse2310logusage
+fi
+
 if ! repo_url=$(svn info --show-item url) ; then
     exit 1
 fi
@@ -66,21 +70,23 @@ svn checkout --depth files "${repo_url}" ${tmp}/repo >/dev/null || exit 1
 loc=$(cd ${tmp}/repo; gcc -fpreprocessed -dD -E -P *.[hc] 2>/dev/null | wc -l)
 
 echo "Starting files:"
-(cd $tmp/repo; ls *.[hc])
+(cd $tmp/repo; ls *.[hc] 2>/dev/null)
 echo "Lines of code in previous revision (r${headversion}): $loc"
 
 # Get the list of modified or added files (there must be some)
 svn status > $tmp/.status || exit 1
 echo "Changes in this commit:"
-cat $tmp/.status
+cat $tmp/.status | sed -e '/^?/s/$/ - not part of this commit - will not be checked/'
 while read status file ; do
     case $status in 
         A ) # File added
             cp "$file" "${tmp}/repo"
             ;;
-        M ) # File modified - already copied
+        M ) # File modified
+            cp "$file" "${tmp}/repo"
             ;;
-        R ) # File replaced - already copied?
+        R ) # File replaced
+            cp "$file" "${tmp}/repo"
             ;;
         D ) # File deleted - remove it if it is there
             rm -f "${tmp}/repo/${file}"
@@ -100,12 +106,12 @@ newloc=$(gcc -fpreprocessed -dD -E -P *.[hc] 2>/dev/null | wc -l)
 echo "Lines of code after this commit: $newloc"
 
 echo "${bold}Checking style on the following files:${normal}"
-ls
+ls 2>/dev/null
 2310stylecheck.sh
 status=$?
 linesadded=$((newloc - loc))
 if [[ $linesadded -gt 150 ]] ; then
-    echo "${red}${bold}More than 150 lines of code added in this commit${normal}" >&2
+    echo "${red}${bold}More than 150 lines of code will be added in this commit${normal}" >&2
     ((status++))
 fi
 exit $status
