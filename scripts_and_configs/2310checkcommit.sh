@@ -104,12 +104,13 @@ rm -f $tmp/.status
 cd ${tmp}/repo
 newloc=$(gcc -fpreprocessed -dD -E -P *.[hc] 2>/dev/null | wc -l)
 echo "Lines of code after this commit: $newloc"
+linesadded=$((newloc - loc))
+echo "Lines of code added in this commit: $linesadded"
 
 echo "${bold}Checking style on the following files:${normal}"
 ls 2>/dev/null
 2310stylecheck.sh
 status=$?
-linesadded=$((newloc - loc))
 if [[ $linesadded -gt 150 ]] ; then
     echo "${red}${bold}More than 150 lines of code will be added in this commit${normal}" >&2
     ((status++))
