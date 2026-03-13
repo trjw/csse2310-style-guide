@@ -19,6 +19,7 @@ clangTidyErrorFound=0
 TMPOUT=/tmp/.2310styleout.$$
 TMPDIR=/tmp/.2310doxy$$
 founderror=0
+foundwarning=0
 
 function cleanup() {
     rm -f ${TMPOUT}
@@ -74,8 +75,10 @@ function section() {
         founderror=1
     elif [[ $warnings == 1 ]] ; then
         result="${magenta}Warning found${normal}"
+        foundwarning=1
     elif [[ $warnings > 1 ]] ; then
         result="${magenta}${warnings} warnings found${normal}"
+        foundwarning=1
     else
         result="${green}OK${normal}"
     fi
@@ -200,7 +203,9 @@ if [[ ${compileErrorFound} == 0 && ${clangTidyErrorFound} == 0 ]] ; then
             sed -E -e 's/^ +([0-9]+) +\|.*$/\1s/;2s@$@%^%// %@;$aw '"${TMPDIR}/tmp.${i}" -e '$aq' |
             ed -s "${TMPDIR}/tmp.${i}" >&/dev/null
             # Remove #define constants (other than those with parameters)
+            # Remove __attribute__((unused))
             gawk 'BEGIN {indefine=0; continued=0;}
+                /__attribute__\(\(unused\)\)/ {gsub(/__attribute__\(\(unused\)\)/, "");}
                 /[[:space:]]*#[[:space:]]*define[[:space:]]+[A-Za-z_0-9]+([[:space:]]|$)/ {indefine=1; printf("// %s\n", $0); }
                 indefine && continued {printf("// %s\n", $0); }
                 !indefine {print}
@@ -223,4 +228,4 @@ else
     echo "${red}${bold}Found error(s) that prevent doxygen checks${normal}"
     echo "${red}${bold}All files must compile and contain @file comments${normal}"
 fi
-exit $founderror
+exit $(($founderror * 2 + $foundwarning))
