@@ -195,7 +195,7 @@ if [[ ${compileErrorFound} == 0 && ${clangTidyErrorFound} == 0 ]] ; then
                 -c 'm varDecl(isExpansionInMainFile(), isExternC(), unless(hasInitializer(anything())))' \
                 -c 'm functionDecl(unless(isDefinition()), isExpansionInMainFile())' \
                 -c 'm functionDecl(hasName("main"), isDefinition())' \
-                "$i" -- "${includeArg}" |
+                "$i" -- "${includeArg}" 2>/dev/null |
             gawk 'BEGIN {infile=0; printf("1\n");}
                 /^\/.*\/'${i}':/ {infile=1; next;}
                 /^\// {infile=0; next;}

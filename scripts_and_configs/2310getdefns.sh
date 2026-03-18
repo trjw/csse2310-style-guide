@@ -54,7 +54,7 @@ clang-query --use-color=0 \
         -c 'set traversal IgnoreUnlessSpelledInSource' \
         -c 'match functionDecl(isDefinition(), isExpansionInMainFile())' \
         -c 'match namedDecl(anyOf(recordDecl(isDefinition(), unless(hasName("(anonymous)"))),enumDecl(isDefinition(), unless(hasName("(anonymous)"))), typedefDecl()), isExpansionInMainFile())' \
-        "$file" -- -I/local/courses/csse2310/include |
+        "$file" -- -I/local/courses/csse2310/include 2>/dev/null |
     FILENAME="$file" \
     WITH_LINE_NUMBERS="$with_line_numbers" \
     FUNCS="$funcs" \

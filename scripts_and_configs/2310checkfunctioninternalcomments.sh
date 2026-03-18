@@ -23,7 +23,7 @@ while [ "$1" ] ; do
             -c 'enable output dump' \
             -c 'set traversal IgnoreUnlessSpelledInSource' \
             -c 'match functionDecl(isDefinition(), isExpansionInMainFile())' \
-            "$1" -- -I/local/courses/csse2310/include |
+            "$1" -- -I/local/courses/csse2310/include 2>/dev/null |
         FILENAME="$1" \
         gawk 'BEGIN {state=0;}
             /^Match #.*:$/ { 
