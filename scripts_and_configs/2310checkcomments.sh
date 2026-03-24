@@ -51,7 +51,7 @@ while [ "$1" ] ; do
                 ainotused=1;
                 skip=1;
             }
-            /^[@\\]ai (Wrote Code|Wrote Comments|Inspiration|Debugging)$/ {
+            /^[@\\]ai (Wrote Code|Wrote Comments|Inspiration|Debugging|Testing)$/ {
                 exitstatus=1;
                 countaicommands++;
                 skip=1;
@@ -123,7 +123,7 @@ while [ "$1" ] ; do
                     ainotused=1;
                     next;
                 }
-                /^[@\\]ai (Wrote Code|Wrote Comments|Inspiration|Debugging)$/ {
+                /^[@\\]ai (Wrote Code|Wrote Comments|Inspiration|Debugging|Testing)$/ {
                     countaicommands++;
                     next;
                 }
