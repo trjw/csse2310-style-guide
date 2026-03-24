@@ -1,6 +1,6 @@
 /// @brief comparison function used with qsort(3) to sort
 ///     an array of strings.
-/// @params str1,str2 - the two strings to compare
+/// @param str1,str2 - the two strings to compare
 /// @returns an integer less then, equal to, or greater than zero if the string
 ///     pointed to by str1 is less than, equal to or greater than the string
 ///     pointed to by str2
