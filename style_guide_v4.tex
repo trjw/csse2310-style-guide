@@ -62,12 +62,12 @@
 }
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
-\newcommand{\versionNum}{4.04}
+\newcommand{\versionNum}{4.05}
 \newcommand{\icon}[1]{\raisebox{-3pt}{\includegraphics[height=12pt]{icons/#1.png}}}
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
 \author{The University of Queensland\\School of Electrical Engineering and Computer Science}
-\date{25 March 2026}
+\date{26 April 2026}
 \fancypagestyle{plain}{
 	\fancyhead{}
 	\fancyfoot{}
@@ -575,7 +575,7 @@ Doxygen comments must use one of the four formats shown in Examples \ref{lst:dox
 \end{multicols}
 \linenumbers
 
-
+\linelabel{doxygenspecial}Be careful about using (i.e., it is probably better not to use) colon (\texttt{:}) and hash (\texttt{\#}) characters in doxygen comments. These characters have special meaning to doxygen.
 % File Comments
 \subsection{File comments -- including AI summary\texorpdfstring{\protect\hfill\icon{CLANG-TIDY} \icon{STYLE-CHECK}}{}}
 \label{sec:filecomment}
@@ -963,6 +963,7 @@ Updates since the start of semester will be listed below.
 \item v4.02 -- updated Section \ref{sec:functioncomments} to correct the location of required function comments -- they must always be in \texttt{.c} files with function definitions.
 \item v4.03 -- fixed typo in \autoref{lst:functioncomment2} -- \texttt{@params} fixed to \texttt{@param}
 \item v4.04 -- added \texttt{@ai Testing} as an \texttt{@ai} option (lines \lineref{aiTestingOne} and \lineref{aiTestingTwo}); clarified that the \texttt{@fn} command is not to be used in a function comment for \texttt{main()} (line \lineref{noFnInMain})
+\item v4.05 -- add note (line \lineref{doxygenspecial}) that it is better not use \texttt{:} and \texttt{\#} characters in doxygen comments as they have special meaning to doxygen.
 \end{itemize}
 
 \end{document}
