@@ -62,12 +62,12 @@
 }
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
-\newcommand{\versionNum}{4.03}
+\newcommand{\versionNum}{4.04}
 \newcommand{\icon}[1]{\raisebox{-3pt}{\includegraphics[height=12pt]{icons/#1.png}}}
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
 \author{The University of Queensland\\School of Electrical Engineering and Computer Science}
-\date{9 March 2026}
+\date{25 March 2026}
 \fancypagestyle{plain}{
 	\fancyhead{}
 	\fancyfoot{}
@@ -594,6 +594,7 @@ As many \texttt{@ai} commands as apply from the following list must be included 
 \item \texttt{@ai Wrote Comments} -- indicates that an AI tool was used to write some or all of the comment text (possibly including doxygen comments) in this file.
 \item \texttt{@ai Inspiration} -- indicates that you took inspiration from an AI tool (e.g., discovered the existence of a library function). (This attribute is assumed and need not be specified if the \texttt{@ai Wrote Code} command is present.)
 \item \texttt{@ai Debugging} -- indicates that an AI tool was used to help in the debugging of the code in this file.
+\item \texttt{@ai Testing} -- indicates that an AI tool was used to help in the testing of the code in this file.\linelabel{aiTestingOne}
 \end{itemize}
 
 The presence of an \texttt{@ai} command other than ``\texttt{@ai Not Used}'' means that one or more \texttt{@aitool} commands must also be present. It also means \texttt{@ai} commands are required in other doxygen comments also -- see sections \ref{sec:functioncomments} to \ref{sec:globalvariablecomments}. An \texttt{@aitool} command will name the tool that was used. If more than one was used, include multiple commands. A high level name is fine (e.g. ChatGPT), but you can provide details of the specific model/version if you wish (e.g. OpenAI GPT-5.2).
@@ -627,7 +628,7 @@ No comment is required for the \texttt{main()} function unless AI has been used 
 
 Function comments should use the following doxygen commands. Italicised text (e.g. \texttt{\textit{name}} and \texttt{\textit{description}}) must be replaced as appropriate. Textual \texttt{\textit{description}}s can span multiple lines -- they last until the next doxygen command or the next blank comment line in the function comment or the end of the comment. 
 
-\setlist[itemize]{itemsep=0pt, parsep=-1pt} 
+\setlist[itemize]{itemsep=0pt, parsep=-2pt} 
 \pagebreak\begin{itemize}[label={}]
 \item \texttt{@param \textit{name} \textit{description}}
     \begin{itemize}[label={}]
@@ -664,13 +665,14 @@ Function comments should use the following doxygen commands. Italicised text (e.
 \item If the \texttt{@ai} command in the file comment (see \autoref{sec:filecomment} above) is anything other than \texttt{@ai Not Used} then \ul{every} function comment in the file (or the associated header file, if the function comment for a function is there) must include at least one \texttt{@ai} command specifying how AI was used in the development of that function. The commands take the same form as for file comments. If any command(s) other than ``\texttt{@ai Not Used}'' is present, then the \texttt{@ai} command must
 be followed by an \texttt{@aidetails} command -- see below.
 
-    \begin{itemize}[label={$\bullet$}]
+    \begin{itemize}[label={$\bullet$}, parsep=-1pt]
 %    \setlength{\itemsep}{2.5pt}
     \item \texttt{@ai Not Used} -- indicates that AI was not used in any way in the development of this function. No other \texttt{@ai} commands must be present in the function comment.
     \item \texttt{@ai Wrote Code} -- indicates that an AI tool wrote some or all of the compilable code in this function.
     \item \texttt{@ai Wrote Comments} -- indicates that an AI tool was used to write some or all of the comment text for this function (which includes this function comment and/or comments within the function).
     \item \texttt{@ai Inspiration} -- indicates that you took inspiration from an AI tool (e.g. discovered the existence of a library function). (This attribute is assumed and need not be specified if the \texttt{@ai Wrote Code} command is present for that function.)
     \item \texttt{@ai Debugging} -- indicates that an AI tool was used to help debug the code in this function.
+    \item \texttt{@ai Testing} -- indicates that an AI tool was used to help in the testing of the code in this function.\linelabel{aiTestingTwo}
     \end{itemize}
 \end{itemize}
 
@@ -683,12 +685,13 @@ be followed by an \texttt{@aidetails} command -- see below.
     \begin{itemize}[label={}]
     \item If desired (for aesthetic reasons), you can (optionally) include the prototype of the function at the start of 
     the function comment with a \texttt{@fn} command. The return type and/or the names of the
-    parameters can be omitted if desired. (At least the \ul{types} of the parameters must be specified.) See \autoref{lst:functioncomment3}.
+    parameters can be omitted if desired. (At least the \ul{types} of the parameters must be specified.) See \autoref{lst:functioncomment3}. Do not use this command with the \texttt{main()} function.\linelabel{noFnInMain}
     \end{itemize}
     
 \end{itemize}
 If you wish, you can also use other doxygen commands such as \texttt{@bug}, \texttt{@note}, \texttt{@todo}, etc.
 
+\setlist[itemize]{itemsep=0pt, parsep=0pt} 
 \pagebreak
 Some examples of function comments are shown below (Examples \ref{lst:functioncomment1} to \ref{lst:functioncomment3}).
 
@@ -892,7 +895,7 @@ Specifically, the following \texttt{clang-tidy} checks are used. You can see mor
 \href{https://clang.llvm.org/extra/clang-tidy/checks/list.html}{https://clang.llvm.org/extra/clang-tidy/checks/list.html}
 \texttt{
 \begin{itemize}
-\setlength{\itemsep}{1.5pt}
+\setlength{\itemsep}{1.3pt}
 \item     bugprone-inc-dec-in-conditions
 \item bugprone-macro-parentheses
 \item bugprone-macro-repeated-side-effects
@@ -959,6 +962,7 @@ Updates since the start of semester will be listed below.
 \item v4.01 -- updated Section \ref{sec:functioncomments} to clarify that a function comment is needed for \texttt{main()} if AI has been used in the file.
 \item v4.02 -- updated Section \ref{sec:functioncomments} to correct the location of required function comments -- they must always be in \texttt{.c} files with function definitions.
 \item v4.03 -- fixed typo in \autoref{lst:functioncomment2} -- \texttt{@params} fixed to \texttt{@param}
+\item v4.04 -- added \texttt{@ai Testing} as an \texttt{@ai} option (lines \lineref{aiTestingOne} and \lineref{aiTestingTwo}); clarified that the \texttt{@fn} command is not to be used in a function comment for \texttt{main()} (line \lineref{noFnInMain})
 \end{itemize}
 
 \end{document}
