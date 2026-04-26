@@ -65,6 +65,56 @@ void FileCommentCompleteCheck::parseAndCheckFileComment(
                     "Doxygen comment at the start of file must contain @%0",
                     DiagnosticIDs::Warning)
                     << Cmd << CharSourceRange::getCharRange(CommentRange);
+        } // else if the command found is 'ai' then get the value associated
+          // with it
+        else if (Cmd == "ai") {
+            // Find the line with @ai and extract the value
+            for (StringRef Line : Lines) {
+                Line = Line.ltrim(" \t/*");
+                if ((Line.starts_with("@ai") || Line.starts_with("\\ai"))) {
+                    // If the next character after @ai is not a space or there
+                    // is no next character, then it's a malformed @ai command
+                    if (Line.size() > 3 && !isspace(Line[3])) {
+                        // Could be @aitool?
+                        continue;
+                    }
+                    StringRef Value = Line.drop_front(3).trim();
+                    // Check that the value is one of "Not Used", "Wrote Code",
+                    // "Wrote Comments", "Inspiration", "Debugging", "Testing"
+                    if (Value != "Not Used" && Value != "Wrote Code" &&
+                        Value != "Wrote Comments" && Value != "Inspiration" &&
+                        Value != "Debugging" && Value != "Testing") {
+                        diag(CommentRange.getBegin(),
+                                "@ai value must be one of: Not Used, Wrote Code, "
+                                "Wrote Comments, Inspiration, Debugging, Testing",
+                                DiagnosticIDs::Warning)
+                                << CharSourceRange::getCharRange(CommentRange);
+                    } else if (Value != "Not Used") {
+                        if(!CommandsFound.contains("aitool")) {
+                            diag(CommentRange.getBegin(),
+                                    "@aitool must be present if @ai is something other than 'Not Used'",
+                                    DiagnosticIDs::Warning)
+                                    << CharSourceRange::getCharRange(CommentRange);
+                        } else {
+                            // Make sure the value of @aitool is not empty
+                            for (StringRef Line : Lines) {
+                                Line = Line.ltrim(" \t/*");
+                                if ((Line.starts_with("@aitool") || Line.starts_with("\\aitool"))) {
+                                    StringRef ToolValue = Line.drop_front(7).trim();
+                                    if (ToolValue.empty()) {
+                                        diag(CommentRange.getBegin(),
+                                                "@aitool value must not be empty if @ai is something other than 'Not Used'",
+                                                DiagnosticIDs::Warning)
+                                                << CharSourceRange::getCharRange(CommentRange);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
         }
     }
 }
