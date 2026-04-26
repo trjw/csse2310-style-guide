@@ -58,8 +58,9 @@ while [ "$1" ] ; do
             }
             !skip && /^[@\\]ai( |$)/ {
                 # Invalid @ai command 
-                printf("%s:%d warning: invalid @ai command:\"%s\"\n", 
+                printf("%s:%d note: invalid @ai command:\"%s\"\n", 
                         filename, linenum, $0);
+                printf("(This is not reported as a warning since clang-tidy should report this.)\n");
                 error=1
                 next
             }
@@ -69,13 +70,14 @@ while [ "$1" ] ; do
                 skip=1;
             }
             !skip && /^[@\\]aitool$/ {
-                printf("%s:%d warning: invalid @aitool command:\"%s\"\n", 
+                printf("%s:%d note: invalid @aitool command:\"%s\"\n", 
                         filename, linenum, $0);
+                printf("(This is not reported as a warning since clang-tidy should report this.)\n");
                 error=1;
             }
             END {
                 if(!ainotused && !countaicommands) {
-                    printf("%s:%d note: @ai command not found\n", filename, linenum);
+                    printf("%s:%d note: valid @ai command not found\n", filename, linenum);
                     printf("(This is not reported as a warning since clang-tidy should report this.)\n");
                     error=1
                 }
