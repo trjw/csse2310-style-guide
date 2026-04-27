@@ -1,4 +1,5 @@
 #!/bin/bash
+# Usage: 2310checkcommit.sh [--globalOK]
 
 export PATH=/local/courses/csse2310/bin:/usr/bin:$PATH
 
@@ -21,6 +22,12 @@ else
     green=""
     blue=""
     magenta=""
+fi
+
+if [ "$1" = "--globalOK" ] ; then
+    globalOK="$1"
+else
+    globalOK=""
 fi
 
 trap cleanup EXIT
@@ -109,7 +116,7 @@ echo "Lines of code added in this commit: $linesadded"
 
 echo "${bold}Checking style on the following files:${normal}"
 ls 2>/dev/null
-2310stylecheck.sh
+2310stylecheck.sh ${globalOK}
 status=$?
 if [[ $linesadded -gt 150 ]] ; then
     echo "${red}${bold}More than 150 lines of code will be added in this commit${normal}" >&2
