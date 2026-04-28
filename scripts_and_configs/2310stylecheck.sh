@@ -6,6 +6,8 @@
 # Script that checks the style of the given files against the requirements
 # of the CSSE2310/CSSE7231 style guide. If no files are specified, then the
 # script checks all .c and .h files in the current directory
+#
+# If --globalOK is specified then one global bool is permitted without warning
 
 export PATH="/local/courses/csse2310/bin:/usr/bin:$PATH"
 configdir=/local/courses/csse2310/resources
@@ -20,6 +22,7 @@ TMPOUT=/tmp/.2310styleout.$$
 TMPDIR=/tmp/.2310doxy$$
 founderror=0
 foundwarning=0
+globalBoolsFound=0
 
 function cleanup() {
     rm -f ${TMPOUT}
@@ -117,9 +120,43 @@ function checkfile() {
             section "Running clang-format on $1"
 
             clang-tidy --quiet --use-color=0 --load=${clanglib} \
-                    --config-file=${configdir}/.clang-tidy $extraClangTidyArg \
+                    --config-file=${configdir}/.clang-tidy \
                     "$1" -- 2>/dev/null |
                 sed -E 's@^/[^:*]*/@@' > ${TMPOUT}
+            if [ "$globalBoolOK" = 1 ] ; then
+                gawk 'BEGIN {numbools=0; found=0; }
+                    /cppcoreguidelines-avoid-non-const-global-variables/ {found=1; line=$0; next;}
+                    (found) {
+                        found = 0;
+                        if (match($0, "\\s*extern\\s+(volatile\\s+)?bool\\s+")) {
+                            print line;
+                        } else if (match($0, "\\s*((static\\s+)|(volatile\\s+))*bool\\s+")) {
+                            numbools++;
+                            if (numbools == 1) {
+                                modline=gensub(/(^.*:) warning:.*$/, "\\1", "g", line);
+                                print modline " note: global bool found - one is permitted in this assignment"
+                            } else {
+                                print line;
+                            }
+                        } else {
+                            print line;
+                        }
+                    }
+                    {
+                        print
+                    }
+                ' < ${TMPOUT} > ${TMPOUT}.2
+                if grep -sqi "note: global bool found" ${TMPOUT}.2 ; then
+                    ((globalBoolsFound++))
+                fi
+                if [[ $globalBoolsFound -gt 1 ]] ; then
+                    # Change our note back in to a warning
+                    sed -e 's/note: global bool found - one/warning: global bool found - only one/' < ${TMPOUT}.2 > ${TMPOUT}
+                else
+                    cp ${TMPOUT}.2 ${TMPOUT}
+                fi
+                rm ${TMPOUT}.2
+            fi
             section "Running clang-tidy on $1"
             if grep -sqi error: ${TMPOUT} ; then
                 clangTidyErrorFound=1
@@ -147,14 +184,14 @@ fi
 
 
 # We'll set this if we allow global variables
-extraClangTidyArg=""
 files=()
 
 # Process the command line arguments
+globalBoolOK=0
 while [ "$#" -gt 0 ] ; do
     case "$1" in
         --globalOK) 
-            extraClangTidyArg="--checks=-cppcoreguidelines-avoid-non-const-global-variables"
+            globalBoolOK=1
             ;;
         *)
             files+=("$1")
