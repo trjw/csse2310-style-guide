@@ -62,7 +62,7 @@
 }
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Example} % Listing -> Example
-\newcommand{\versionNum}{4.05}
+\newcommand{\versionNum}{4.06}
 \newcommand{\icon}[1]{\raisebox{-3pt}{\includegraphics[height=12pt]{icons/#1.png}}}
 
 \title{CSSE2310/CSSE7231\\C Programming Style Guide\\Version \versionNum}
@@ -117,7 +117,7 @@ that must be created for CSSE2310/CSSE7231, e.g. \texttt{Makefile}s.
 \subsection{Icons used in this document}
 The following icons are used to indicate which tools can be used to check for compliance with each requirement:
 
-\noindent\icon{CLANG-FORMAT} -- indicates that \texttt{clang-format} (with the appropriate arguments) can be used to check for \ul{and correct} compliance with this style requirement (e.g. fixing indentation and spacing).
+\noindent\icon{CLANG-FORMAT} -- indicates that \texttt{clang-format} (with the appropriate arguments) can be used to check for \underline{and correct} compliance with this style requirement (e.g. fixing indentation and spacing).
 
 \noindent\icon{CLANG-TIDY} -- indicates that \texttt{clang-tidy} (with the appropriate arguments) can be used to check for compliance with this style requirement. Any corrections must be applied manually (e.g. renaming variables to be consistent with the naming requirements).
 
@@ -164,7 +164,7 @@ This applies whether or not those files are linked into executables.
 \subsection{Standalone compilation\texorpdfstring{\protect\hfill\icon{STYLE-CHECK}}{}}
 \label{sec:standalone-compilation}
 
-Every \texttt{.c} and \texttt{.h} source file must compile \ul{on its own} using \texttt{gcc}. If a file does not compile (i.e. errors are produced) then other style aspects cannot and will not be checked by \texttt{2310stylecheck.sh}. 
+Every \texttt{.c} and \texttt{.h} source file must compile \underline{on its own} using \texttt{gcc}. If a file does not compile (i.e. errors are produced) then other style aspects cannot and will not be checked by \texttt{2310stylecheck.sh}. 
 
 Note that this means every \texttt{.h} file in your submission must make sense without reference to any other files, other than those that it references by \texttt{\#include}.
 Specifically, any declarations must be complete and all types, declarations and any definitions used in the \texttt{.h} file must either come from the \texttt{.h} file itself, or from included headers.
@@ -173,7 +173,7 @@ Specifically, any declarations must be complete and all types, declarations and 
 \subsection{Compilation warnings\texorpdfstring{\protect\hfill\icon{STYLE-CHECK}}{}}
 \label{sec:compilation-warnings}
 
-Every \texttt{.c} and \texttt{.h} source file must compile on its own \ul{without warnings or errors} when compiled with the \texttt{-Wall -Wextra -pedantic -std=gnu99} compiler arguments. 
+Every \texttt{.c} and \texttt{.h} source file must compile on its own \underline{without warnings or errors} when compiled with the \texttt{-Wall -Wextra -pedantic -std=gnu99} compiler arguments. 
 
 To check the requirements for both sections \ref{sec:standalone-compilation} and \ref{sec:compilation-warnings}, \texttt{2310stylecheck.sh} will attempt to compile each source file individually with the 
 following command:
@@ -549,7 +549,7 @@ this way should be accompanied by a comment that explains the reason for its use
 
 Required comments must use \href{https://doxygen.nl/manual/index.html}{doxygen\footnote{Doxygen is an automatic documentation generator --  see \url{https://doxygen.nl/} for more details if you are interested. There is, however, sufficient information in this style guide for the purposes of meeting the minimum commenting requirements.} format} and are described below. You are not required to generate documentation files from your code in CSSE2310/CSSE7231 but use of this format allows automated checking for required comments. 
 
-Doxygen comments must use one of the four formats shown in Examples \ref{lst:doxygen1} to \ref{lst:doxygen4} below. For the first two formats, intermediate \texttt{*}s at the start of each line are optional. Within a doxygen comment, various \textit{\ul{commands}} will be expected (described in the sections below) -- these can begin with either \texttt{@} or \texttt{\textbackslash}, e.g. \texttt{@param} or \texttt{\textbackslash param}. We will use the \texttt{@} version in the examples below. If you prefer banner style comments, then you can use something like one of the formats shown in Examples \ref{lst:doxygen5} or \ref{lst:doxygen6}.
+Doxygen comments must use one of the four formats shown in Examples \ref{lst:doxygen1} to \ref{lst:doxygen4} below. For the first two formats, intermediate \texttt{*}s at the start of each line are optional. Within a doxygen comment, various \textit{\underline{commands}} will be expected (described in the sections below) -- these can begin with either \texttt{@} or \texttt{\textbackslash}, e.g. \texttt{@param} or \texttt{\textbackslash param}. We will use the \texttt{@} version in the examples below. If you prefer banner style comments, then you can use something like one of the formats shown in Examples \ref{lst:doxygen5} or \ref{lst:doxygen6}.
 
 \nolinenumbers
 \begin{multicols}{4}
@@ -613,7 +613,7 @@ A sample file comment is shown in \autoref{lst:filecomment}. Other doxygen forma
 Function comments must describe:
 \begin{itemize}
 \itemsep -1pt
-\item the meaning/contents of the parameters (arguments) to the function (there is no need to describe the \ul{types} of the parameters -- this is obvious from the function definition or declaration);
+\item the meaning/contents of the parameters (arguments) to the function (there is no need to describe the \underline{types} of the parameters -- this is obvious from the function definition or declaration);
 \item what the function returns (again, this is not a repetition of the type being returned, but a description of what the return value is or means);
 \item what the function does (for simple functions this may be incorporated in to the description of the return value);
 \item global variables modified by the function (if any); 
@@ -652,7 +652,7 @@ Function comments should use the following doxygen commands. Italicised text (e.
     
 \item \texttt{@error \textit{description}}
     \begin{itemize}[label={}]
-    \item If there are circumstances in which this function may exit (i.e., terminate the program rather than  return to the caller) or return a value indicating an error, then a description must be provided of when and/or why this happens. This includes if functions called by this function may exit. If a function is intended to \ul{never} return, then specify this with the \texttt{@return} command (see above) -- this is not an error. 
+    \item If there are circumstances in which this function may exit (i.e., terminate the program rather than  return to the caller) or return a value indicating an error, then a description must be provided of when and/or why this happens. This includes if functions called by this function may exit. If a function is intended to \underline{never} return, then specify this with the \texttt{@return} command (see above) -- this is not an error. 
     \end{itemize}
     
 \item \texttt{@ref \textit{description}}
@@ -662,7 +662,7 @@ Function comments should use the following doxygen commands. Italicised text (e.
 
 \item \texttt{@ai} commands\llabel{line:aistart}\label{aistart}
 \begin{itemize}[label={}]
-\item If the \texttt{@ai} command in the file comment (see \autoref{sec:filecomment} above) is anything other than \texttt{@ai Not Used} then \ul{every} function comment in the file (or the associated header file, if the function comment for a function is there) must include at least one \texttt{@ai} command specifying how AI was used in the development of that function. The commands take the same form as for file comments. If any command(s) other than ``\texttt{@ai Not Used}'' is present, then the \texttt{@ai} command must
+\item If the \texttt{@ai} command in the file comment (see \autoref{sec:filecomment} above) is anything other than \texttt{@ai Not Used} then \underline{every} function comment in the file (or the associated header file, if the function comment for a function is there) must include at least one \texttt{@ai} command specifying how AI was used in the development of that function. The commands take the same form as for file comments. If any command(s) other than ``\texttt{@ai Not Used}'' is present, then the \texttt{@ai} command must
 be followed by an \texttt{@aidetails} command -- see below.
 
     \begin{itemize}[label={$\bullet$}, parsep=-1pt]
@@ -685,7 +685,7 @@ be followed by an \texttt{@aidetails} command -- see below.
     \begin{itemize}[label={}]
     \item If desired (for aesthetic reasons), you can (optionally) include the prototype of the function at the start of 
     the function comment with a \texttt{@fn} command. The return type and/or the names of the
-    parameters can be omitted if desired. (At least the \ul{types} of the parameters must be specified.) See \autoref{lst:functioncomment3}. Do not use this command with the \texttt{main()} function.\linelabel{noFnInMain}
+    parameters can be omitted if desired. (At least the \underline{types} of the parameters must be specified.) See \autoref{lst:functioncomment3}. Do not use this command with the \texttt{main()} function.\linelabel{noFnInMain}
     \end{itemize}
     
 \end{itemize}
@@ -736,7 +736,7 @@ comments within the function to describe the intent of the code. It is expected 
 
 Every type definition (\texttt{typedef}, \texttt{struct}, \texttt{union}, \texttt{enum}) must be preceded by a doxygen
 comment that describes the purpose of that type. If the file comment (see \autoref{sec:filecomment}) has 
-an \texttt{@ai} command other than ``\texttt{@ai Not Used}'' then \ul{every} type comment must have one or more \texttt{@ai} commands -- and an \texttt{@aidetails} command if the \texttt{@ai} command is anything other than ``\texttt{@ai Not Used}''. The requirements are the same as for function comments -- see line \lref{line:aistart} above.
+an \texttt{@ai} command other than ``\texttt{@ai Not Used}'' then \underline{every} type comment must have one or more \texttt{@ai} commands -- and an \texttt{@aidetails} command if the \texttt{@ai} command is anything other than ``\texttt{@ai Not Used}''. The requirements are the same as for function comments -- see line \lref{line:aistart} above.
 
 Each member of \texttt{struct} and \texttt{union} types must also be commented to explain their purpose. This can be with a doxygen comment immediately prior to the that member, or a comment immediately following that member using the \texttt{<} indicator at the start of the doxygen comment. See \autoref{lst:typecomments} below.
 
@@ -964,6 +964,7 @@ Updates since the start of semester will be listed below.
 \item v4.03 -- fixed typo in \autoref{lst:functioncomment2} -- \texttt{@params} fixed to \texttt{@param}
 \item v4.04 -- added \texttt{@ai Testing} as an \texttt{@ai} option (lines \lineref{aiTestingOne} and \lineref{aiTestingTwo}); clarified that the \texttt{@fn} command is not to be used in a function comment for \texttt{main()} (line \lineref{noFnInMain})
 \item v4.05 -- add note (line \lineref{doxygenspecial}) that it is better not use \texttt{:} and \texttt{\#} characters in doxygen comments as they have special meaning to doxygen.
+\item v4.06 -- about half a dozen underlined words got removed in the v4.05 update. These have been fixed. 
 \end{itemize}
 
 \end{document}
