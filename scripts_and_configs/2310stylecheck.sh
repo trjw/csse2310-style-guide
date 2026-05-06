@@ -124,19 +124,27 @@ function checkfile() {
                     "$1" -- 2>/dev/null |
                 sed -E 's@^/[^:*]*/@@' > ${TMPOUT}
             if [ "$globalBoolOK" = 1 ] ; then
-                gawk 'BEGIN {numbools=0; found=0; }
+                gawk 'BEGIN {foundBool = 0; found=0; skip=0; }
                     /cppcoreguidelines-avoid-non-const-global-variables/ {found=1; line=$0; next;}
+                    skip {
+                        skip=0;
+                        next;
+                    }
                     (found) {
                         found = 0;
                         if (match($0, "\\s*extern\\s+(volatile\\s+)?bool\\s+")) {
-                            print line;
+                            # We dont print anything for global extern bools
+                            # skip printing next line also (with ^)
+                            skip=1;
+                            next;
                         } else if (match($0, "\\s*((static\\s+)|(volatile\\s+))*bool\\s+")) {
-                            numbools++;
-                            if (numbools == 1) {
+                            if(foundBool) {
+                                modline=gensub(/(^.*:) warning:.*$/, "\\1", "g", line);
+                                print modline " warning: additional global bool found - only one is permitted in this assignment"
+                            } else {
+                                foundBool = 1;
                                 modline=gensub(/(^.*:) warning:.*$/, "\\1", "g", line);
                                 print modline " note: global bool found - one is permitted in this assignment"
-                            } else {
-                                print line;
                             }
                         } else {
                             print line;
@@ -151,7 +159,7 @@ function checkfile() {
                 fi
                 if [[ $globalBoolsFound -gt 1 ]] ; then
                     # Change our note back in to a warning
-                    sed -e 's/note: global bool found - one/warning: global bool found - only one/' < ${TMPOUT}.2 > ${TMPOUT}
+                    sed -e 's/note: global bool found - one/warning: additional global bool found - only one/' < ${TMPOUT}.2 > ${TMPOUT}
                 else
                     cp ${TMPOUT}.2 ${TMPOUT}
                 fi
