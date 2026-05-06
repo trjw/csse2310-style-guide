@@ -17,29 +17,95 @@ void InappropriateCommaOperatorCheck::registerMatchers(MatchFinder* Finder)
     Finder->addMatcher(
             traverse(TK_IgnoreUnlessSpelledInSource,
                     binaryOperator(hasOperatorName(","),
-                            isExpansionInMainFile(),
-
-                            // Exclude use in for and while loops
-                            // (Keep do-while loops)
-                            unless(
-                                anyOf(
-                                    hasAncestor(forStmt(stmt())),
-                                    hasAncestor(whileStmt(stmt()))
-                                )
-                            )
-                        ).bind("comma-op")
+                        isExpansionInMainFile()
+                    ).bind("comma-op")
             ),
-        this);
+            this
+    );
+}
+
+static const Stmt* getParentStmt(const Stmt* S, ASTContext& Ctx) {
+    auto Parents = Ctx.getParents(*S);
+    if (Parents.empty()) {
+        return nullptr;
+    }
+    return Parents[0].get<Stmt>();
+}
+
+bool isInForHeader(const Stmt* Node, const ForStmt* FS, ASTContext& Ctx) {
+    const Stmt* Init = FS->getInit();
+    const Expr* Cond = FS->getCond();
+    const Expr* Inc  = FS->getInc();
+
+    const Stmt* Cur = Node;
+
+    while (Cur) {
+        // If we reach one of the header expressions first → allowed
+        if (Cur == Init || Cur == Cond || Cur == Inc) {
+            return true;
+        }
+
+        // If we reach the for-statement itself → we're in the body
+        if (Cur == FS) {
+            return false;
+        }
+
+        Cur = getParentStmt(Cur, Ctx);
+    }
+
+    return false;
+}
+
+bool isInWhileCondition(const Stmt* Node, const WhileStmt* WS, ASTContext& Ctx) {
+    const Expr* Cond = WS->getCond();
+
+    const Stmt* Cur = Node;
+
+    while (Cur) {
+        // If we reach the condition expression → allowed
+        if (Cur == Cond) {
+            return true;
+        }
+
+        // If we reach the while-statement itself → body
+        if (Cur == WS) {
+            return false;
+        }
+
+        Cur = getParentStmt(Cur, Ctx);
+    }
+
+    return false;
 }
 
 void InappropriateCommaOperatorCheck::check(
         const MatchFinder::MatchResult& Result)
 {
-    const auto* commaOp = Result.Nodes.getNodeAs<BinaryOperator>("comma-op");
-    if(!commaOp) {
-        return;
+
+    const auto* Op = Result.Nodes.getNodeAs<BinaryOperator>("comma-op");
+    ASTContext& Ctx = *Result.Context;
+
+    const Stmt* Cur = Op;
+
+    while (Cur) {
+        if (const auto* FS = llvm::dyn_cast<ForStmt>(Cur)) {
+            if (isInForHeader(Op, FS, Ctx)) {
+                return; // allowed
+            }
+            break;
+        }
+
+        if (const auto* WS = llvm::dyn_cast<WhileStmt>(Cur)) {
+            if (isInWhileCondition(Op, WS, Ctx)) {
+                return; // allowed
+            }
+            break;
+        }
+
+        Cur = getParentStmt(Cur, Ctx);
     }
-    diag(commaOp->getOperatorLoc(),
+
+    diag(Op->getOperatorLoc(),
             "Inappropriate use of the comma operator - use separate statements",
             DiagnosticIDs::Warning);
 }
