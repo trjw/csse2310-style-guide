@@ -43,7 +43,7 @@ fi
 if ! repo_url=$(svn info --show-item url) ; then
     exit 1
 fi
-if ! [[ ${repo_url} =~ ^svn\+ssh://source\.eait\.uq\.edu\.au/csse2310.*/trunk/a[1234]$ ]] ; then
+if ! [[ ${repo_url} =~ ^svn\+ssh://source\.eait\.uq\.edu\.au/(svn/)?csse2310.*/trunk/a[1234]$ ]] ; then
     # Repo URL is not the top level of an assignment checkout
     echo "`pwd` is not a CSSE2310/7231 assignment working directory" >&2
     exit 1
