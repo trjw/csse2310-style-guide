@@ -1,7 +1,9 @@
 #!/bin/bash
-# 2310stylecheck.sh [--globalOK] [file ...]
+# 2310stylecheck.sh [--ignore-clang-tidy] [--globalOK] [file ...]
 #
-# Written by Peter Sutton. Updated Feb 2026.
+# Written by Peter Sutton. Updated May 2026.
+# (--ignore-clang-tidy flag added for use in SVN commit history marking when
+# clang-tidy results should be ignored)
 #
 # Script that checks the style of the given files against the requirements
 # of the CSSE2310/CSSE7231 style guide. If no files are specified, then the
@@ -119,53 +121,61 @@ function checkfile() {
                     --dry-run "$1" >${TMPOUT} 2>&1
             section "Running clang-format on $1"
 
-            clang-tidy --quiet --use-color=0 --load=${clanglib} \
-                    --config-file=${configdir}/.clang-tidy \
-                    "$1" -- 2>/dev/null |
-                sed -E 's@^/[^:*]*/@@' > ${TMPOUT}
-            if [ "$globalBoolOK" = 1 ] ; then
-                gawk 'BEGIN {foundBool = 0; found=0; skip=0; }
-                    /cppcoreguidelines-avoid-non-const-global-variables/ {found=1; line=$0; next;}
-                    skip {
-                        skip=0;
-                        next;
-                    }
-                    (found) {
-                        found = 0;
-                        if (match($0, "\\s*extern\\s+(volatile\\s+)?bool\\s+")) {
-                            # We dont print anything for global extern bools
-                            # skip printing next line also (with ^)
-                            skip=1;
+            if [ "$ignoreClangTidy" = 0 ] ; then
+                clang-tidy --quiet --use-color=0 --load=${clanglib} \
+                        --config-file=${configdir}/.clang-tidy \
+                        "$1" -- 2>/dev/null > ${TMPOUT}.2 
+                status=$?
+                if [ $status -gt 127 ] ; then
+                    echo "clang-tidy exited due to signal - aborting" >&2
+                    exit 1
+                fi
+                sed -E 's@^/[^:*]*/@@' < ${TMPOUT}.2 > ${TMPOUT}
+                if [ "$globalBoolOK" = 1 ] ; then
+                    gawk 'BEGIN {foundBool = 0; found=0; skip=0; }
+                        /cppcoreguidelines-avoid-non-const-global-variables/ {found=1; line=$0; next;}
+                        skip {
+                            skip=0;
                             next;
-                        } else if (match($0, "\\s*((static\\s+)|(volatile\\s+))*bool\\s+")) {
-                            if(foundBool) {
-                                modline=gensub(/(^.*:) warning:.*$/, "\\1", "g", line);
-                                print modline " warning: additional global bool found - only one is permitted in this assignment"
-                            } else {
-                                foundBool = 1;
-                                modline=gensub(/(^.*:) warning:.*$/, "\\1", "g", line);
-                                print modline " note: global bool found - one is permitted in this assignment"
-                            }
-                        } else {
-                            print line;
                         }
-                    }
-                    {
-                        print
-                    }
-                ' < ${TMPOUT} > ${TMPOUT}.2
-                if grep -sqi "note: global bool found" ${TMPOUT}.2 ; then
-                    ((globalBoolsFound++))
+                        (found) {
+                            found = 0;
+                            if (match($0, "\\s*extern\\s+(volatile\\s+)?bool\\s+")) {
+                                # We dont print anything for global extern bools
+                                # skip printing next line also (with ^)
+                                skip=1;
+                                next;
+                            } else if (match($0, "\\s*((static\\s+)|(volatile\\s+))*bool\\s+")) {
+                                if(foundBool) {
+                                    modline=gensub(/(^.*:) warning:.*$/, "\\1", "g", line);
+                                    print modline " warning: additional global bool found - only one is permitted in this assignment"
+                                } else {
+                                    foundBool = 1;
+                                    modline=gensub(/(^.*:) warning:.*$/, "\\1", "g", line);
+                                    print modline " note: global bool found - one is permitted in this assignment"
+                                }
+                            } else {
+                                print line;
+                            }
+                        }
+                        {
+                            print
+                        }
+                    ' < ${TMPOUT} > ${TMPOUT}.2
+                    if grep -sqi "note: global bool found" ${TMPOUT}.2 ; then
+                        ((globalBoolsFound++))
+                    fi
+                    if [[ $globalBoolsFound -gt 1 ]] ; then
+                        # Change our note back in to a warning
+                        sed -e 's/note: global bool found - one/warning: additional global bool found - only one/' < ${TMPOUT}.2 > ${TMPOUT}
+                    else
+                        cp ${TMPOUT}.2 ${TMPOUT}
+                    fi
+                    rm ${TMPOUT}.2
                 fi
-                if [[ $globalBoolsFound -gt 1 ]] ; then
-                    # Change our note back in to a warning
-                    sed -e 's/note: global bool found - one/warning: additional global bool found - only one/' < ${TMPOUT}.2 > ${TMPOUT}
-                else
-                    cp ${TMPOUT}.2 ${TMPOUT}
-                fi
-                rm ${TMPOUT}.2
+                section "Running clang-tidy on $1"
             fi
-            section "Running clang-tidy on $1"
+            cp /dev/null ${TMPOUT}
             if grep -sqi error: ${TMPOUT} ; then
                 clangTidyErrorFound=1
                 echo Skipped > ${TMPOUT}
@@ -196,8 +206,12 @@ files=()
 
 # Process the command line arguments
 globalBoolOK=0
+ignoreClangTidy=0
 while [ "$#" -gt 0 ] ; do
     case "$1" in
+        --ignore-clang-tidy)
+            ignoreClangTidy=1
+            ;;
         --globalOK) 
             globalBoolOK=1
             ;;
