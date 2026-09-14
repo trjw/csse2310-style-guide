@@ -29,6 +29,9 @@ function checkfile() {
     if grep '\[csse2310-file-comment' ${TMPOUT} > ${TMPOUT}.2 ; then
         clangTidyErrorFound=1
         cat ${TMPOUT}.2 | sed -E 's@^/.*/([^/]+\.[hc]:)@\1@'
+    elif grep '@ai command not found' ${TMPOUT} > ${TMPOUT}.2 ; then
+        clangTidyErrorFound=1
+        cat ${TMPOUT}.2 | sed -E 's@^/.*/([^/]+\.[hc]:)@\1@'
     else
         echo "$1: OK"
     fi
