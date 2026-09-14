@@ -84,21 +84,23 @@ echo "Lines of code in previous revision (r${headversion}): $loc"
 svn status > $tmp/.status || exit 1
 echo "Changes in this commit:"
 cat $tmp/.status | sed -e '/^?/s/$/ - not part of this commit - will not be checked/'
-while read status file ; do
-    case $status in 
-        A ) # File added
+while read line; do
+    status="${line:0:7}"
+    file="${line:8}"
+    case $line in 
+        A* ) # File added
             cp "$file" "${tmp}/repo"
             ;;
-        M ) # File modified
+        M* ) # File modified
             cp "$file" "${tmp}/repo"
             ;;
-        R ) # File replaced
+        R* ) # File replaced
             cp "$file" "${tmp}/repo"
             ;;
-        D ) # File deleted - remove it if it is there
+        D* ) # File deleted - remove it if it is there
             rm -f "${tmp}/repo/${file}"
             ;;
-        ? ) # Unknown file - ignore
+        ?* ) # Unknown file - ignore
             ;;
         * )
             echo "Unexpected svn status (${status}) for file ${file}"
@@ -114,12 +116,25 @@ echo "Lines of code after this commit: $newloc"
 linesadded=$((newloc - loc))
 echo "Lines of code added in this commit: $linesadded"
 
-echo "${bold}Checking style on the following files:${normal}"
-ls 2>/dev/null
-2310stylecheck.sh ${globalOK}
-status=$?
+echo "Checking that the following files compile by themselves"
+status=0
+for i in *.[hc] ; do
+    echo -n "$i: "
+    if gcc -Wall -Wextra -pedantic -std=gnu99 -I/local/courses/csse2310/include -c -o /dev/null "$i" 2>/dev/null ; then
+        echo "ok"
+    else
+        echo "${red}${bold}NO - errors found${normal}"
+        status=1
+    fi
+done
+    
 if [[ $linesadded -gt 150 ]] ; then
     echo "${red}${bold}More than 150 lines of code will be added in this commit${normal}" >&2
     ((status++))
+fi
+if [[ $status  -gt 0 ]]  ; then
+    echo "${red}${bold}Fix issues before committing${normal}"
+else
+    echo "${green}${bold}Changes are OK to commit - make sure you use an appropriate commit message${normal}"
 fi
 exit $status
